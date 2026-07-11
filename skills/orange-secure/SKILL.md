@@ -6,7 +6,7 @@ description: 오렌지 빌드로 만든 Next.js + Supabase 앱의 흔한 보안 
 # Orange Build — Secure
 
 오렌지 빌드로 만든 앱의 **흔한 보안 구멍 6가지**를 빠르게 점검·수정한다. 입문자가 공유 가능한
-URL을 받았을 때, **그 URL이 진짜로 공유해도 되는지** 확인하는 단계다.
+URL을 받았을 때 대표적인 키·권한·민감정보 위험이 없는지 확인하는 단계다.
 
 가벼운 검사 — 토큰을 거의 쓰지 않는다. 매 턴 자동 리뷰가 아니라, 사용자가 부를 때만 1회 돈다.
 
@@ -16,7 +16,10 @@ URL을 받았을 때, **그 URL이 진짜로 공유해도 되는지** 확인하�
 
 - `PLAN.md`·`package.json` 없음 → "오렌지 빌드 프로젝트가 아닌 것 같아요. 프로젝트 폴더에서
   실행하세요." 라고 안내하고 끝낸다.
-- `lib/supabase.ts`가 없으면 Supabase 미연결이다. 4번(서버 키)·5번(RLS)은 건너뛴다.
+- Supabase 사용 여부는 특정 클라이언트 파일 하나로 판단하지 않는다. `supabase/config.toml`,
+  `supabase/migrations/`, Supabase SDK import, 관련 환경변수를 함께 본다.
+- service-role 사용 흔적이 없으면 4번은 건너뛸 수 있다. Supabase 사용 흔적이 전혀 없을 때만
+  5번(RLS)을 건너뛴다.
 
 ## 2. 6가지 점검 항목
 
@@ -54,7 +57,8 @@ grep -E '^NEXT_PUBLIC_.*(SERVICE_ROLE|SECRET|PRIVATE)' .env.local .env 2>/dev/nu
    grep -rn "NEXT_PUBLIC_SUPABASE_SERVICE_ROLE\|NEXT_PUBLIC_ANTHROPIC\|NEXT_PUBLIC_OPENAI" app/ components/ lib/ 2>/dev/null
    ```
 3. 클라이언트 컴포넌트(`'use client'` 있거나 `components/`)에서 쓰고 있으면 **그 호출을 서버
-   라우트(`app/api/<이름>/route.ts`)로 옮긴다**. 자세한 패턴은 `phase-build.md`의 LLM API 절 참고.
+   라우트(`app/api/<이름>/route.ts`)로 옮긴다**.
+   `../orange-start/references/phase-build.md`의 비밀값·외부 연동 원칙을 따른다.
 4. Vercel env(`vercel env ls`)에도 같은 변수가 있으면 사용자에게 대시보드에서 접두사를 고치도록 안내.
 5. 키가 한 번이라도 배포·노출됐다면 **반드시 재발급**.
 
@@ -86,26 +90,28 @@ Supabase 클라이언트(`lib/supabase.ts` — anon 키)와 서버용(`lib/supab
 분리한다.
 
 **고치는 법**: `lib/supabase-admin.ts`를 새로 만들고 service_role 클라이언트는 거기에 둔다. 서버
-라우트에서만 import 한다. 자세한 분리 패턴은 `phase-build.md` 참고.
+라우트에서만 import 한다. 클라이언트에는 anon/publishable 키만 둔다.
 
 ### 검사 5 — Supabase 테이블에 RLS가 켜져 있는지
 
-`supabase/` 폴더의 `.sql` 파일들을 본다:
+`supabase/` 아래의 모든 마이그레이션·SQL 파일을 재귀적으로 본다:
 
 ```bash
-ls supabase/*.sql 2>/dev/null
+find supabase -type f -name '*.sql' -print 2>/dev/null
 ```
 
 각 SQL 파일에서 `create table public.<이름>` 다음에 `alter table public.<이름> enable row level security`가
 있는지 확인. 빠진 테이블이 있으면 **CRITICAL** (Supabase가 보낸 경고 메일의 원인).
+SQL 파일이 없지만 Supabase 사용 흔적이 있으면 `OK`가 아니라 **확인 불가**다. 연결된 프로젝트의
+실제 테이블 설정을 CLI나 대시보드에서 확인한다.
 
 **고치는 법**:
 1. 빠진 테이블마다 SQL 파일에 다음을 추가:
    ```sql
    alter table public.<테이블> enable row level security;
    ```
-2. `PLAN.md` `## 설정`의 **로그인** 항목에 따라 정책을 추가한다. 정책 SQL 템플릿은
-   `phase-build.md` "데이터 준비" 절에 시나리오별로 정리돼 있다 — 거기서 골라 붙인다.
+2. `PLAN.md`의 로그인·역할 완료 조건에 따라 최소 정책을 추가한다. 공개 익명 입력과 비공개
+   관리자 조회를 혼동하지 말고, 정책을 만들기 어렵다는 이유로 RLS를 끄지 않는다.
 3. 새 SQL을 Supabase에 적용:
    ```bash
    supabase db query --linked --file supabase/<파일>.sql
@@ -122,8 +128,9 @@ ls supabase/*.sql 2>/dev/null
 (`_enc`·`_hash`)이 붙은 건 제외한다:
 
 ```bash
-grep -rniE 'resident|jumin|주민|ssn|rrn|passport|여권|license|면허|card|카드|account|계좌|bank|biometric|fingerprint|지문|생체|password|passwd|비밀번호' supabase/*.sql 2>/dev/null \
-  | grep -viE '_enc|_hash|password_hash' || echo "OK"
+find supabase -type f -name '*.sql' -exec grep -niE \
+  'resident|jumin|주민|ssn|rrn|passport|여권|license|면허|card|카드|account|계좌|bank|biometric|fingerprint|지문|생체|password|passwd|비밀번호' {} + 2>/dev/null \
+  | grep -viE '_enc|_hash|password_hash' || echo "NO_NAME_MATCH"
 ```
 
 매치가 나오면 사용자에게 보여준다. 평문(`text`)으로 그대로 저장되고 있으면 **CRITICAL**(법 위반
@@ -150,7 +157,7 @@ grep -rniE 'resident|주민|card|카드|account|계좌|password|비밀번호' ap
 
 6가지 검사를 다 끝낸 뒤 한 줄 요약을 출력한다:
 
-- 전부 OK: `✅ 보안 점검 통과 — 공유해도 안전합니다.`
+- 전부 OK: `✅ 6개 휴리스틱에서 문제를 찾지 못했습니다 — 실제 권한·데이터 설정도 최종 확인하세요.`
 - 수정함: `✅ 보안 문제 N건을 수정했습니다. 라이브 URL을 다시 한 번 확인해 보세요.`
 - 사용자가 수정을 거부함: `⚠️  CRITICAL N건이 남아 있습니다. 공유 전에 꼭 고치세요.`
 
@@ -170,16 +177,17 @@ grep -rniE 'resident|주민|card|카드|account|계좌|password|비밀번호' ap
 - **배운 것**: anon 키는 공개돼도 RLS가 막아 주지만, 히스토리에 남는 건 별개 문제다.
 ```
 
-수정 사항이 있었으면 마지막에 커밋을 권한다 (`MEMORY.md`도 함께 담는다):
+수정 사항이 있었으면 이번 보안 수정 파일과 `MEMORY.md`의 정확한 경로만 stage하고 cached 목록을
+확인한 뒤 커밋한다:
 ```bash
-git add -A && git commit -m "보안: 점검 결과 반영" && git push
+git commit -m "보안: 점검 결과 반영" && git push
 ```
 
 ## 원칙
 
-- **한 번에 한 검사**, 결과를 보여주고 사용자가 OK 한 뒤 다음으로. 자동으로 5건을 한꺼번에 고치지
+- **한 번에 한 검사**, 결과를 보여주고 사용자가 OK 한 뒤 다음으로. 자동으로 6건을 한꺼번에 고치지
   않는다 — 입문자는 무엇이 바뀌었는지 알아야 한다.
 - **재발급이 필요한 상황은 명확히 말한다.** 키가 git이나 브라우저에 한 번이라도 노출됐다면 코드만
   고치는 건 충분하지 않다.
-- **공식 보안 도구를 대체하지 않는다.** 더 깊은 검사가 필요하면 README의 "졸업하기" 섹션에서
-  Anthropic 공식 `security-guidance` 플러그인이나 CI 스캐너를 안내한다.
+- **공식 보안 도구를 대체하지 않는다.** 더 깊은 검사가 필요하면 현재 호스트의 공식 보안 검사나
+  CI secret scanner를 함께 사용하도록 안내한다.

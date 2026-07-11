@@ -1,7 +1,7 @@
 {
   "name": "orange-build",
-  "description": "아이디어를 Next.js 웹앱으로 만들어 GitHub·Vercel·Supabase에 배포하는 올인원 바이브코딩 워크플로. 기획 → Stitch 프로토타입 → 연결 → 구현을 한 흐름으로 진행한다.",
-  "version": "1.13.0",
+  "description": "Orange Build App 기획서를 웹앱·AI 작업 스킬·자동화로 구현하고 비공개 저장소·첫 작동 결과·최종 검증까지 이어가는 바이브코딩 워크플로.",
+  "version": "2.0.0",
   "author": {
     "name": "pengdo",
     "email": "pengdo@myorange.io"

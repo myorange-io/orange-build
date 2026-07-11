@@ -7,7 +7,24 @@
 증상: `process.env.NEXT_PUBLIC_SUPABASE_URL`이 `undefined`. Supabase 호출이 실패.
 - `.env.local` 파일이 프로젝트 루트에 있는지 확인한다 (이름이 정확히 `.env.local`).
 - 클라이언트(브라우저)에서 쓰는 변수는 이름이 `NEXT_PUBLIC_`으로 시작해야 한다.
-- env 파일을 바꿨으면 개발 서버를 껐다 켠다 (`npm run dev` 재시작). Next.js는 env를 시작할 때만 읽는다.
+- env 파일을 바꿨으면 `npm run build` 후 다시 배포한다. `NEXT_PUBLIC_*` 값은 빌드 시점에 묶이므로
+  Vercel 환경변수만 바꾸고 재배포하지 않으면 이전 값이 남는다.
+
+## Node.js가 없거나 버전이 낮음
+
+증상: `node: command not found`, create-next-app의 minimum Node version 오류.
+- `phase-connect.md`의 런타임 점검대로 기존 `.nvmrc`·`package.json#engines`를 먼저 본다.
+- macOS는 설치된 Homebrew/버전 관리자, Windows는 `winget install OpenJS.NodeJS.LTS`로 설치한다.
+- 설치 뒤 **새 셸**에서 `node --version && npm --version`을 다시 실행한다. 설치 명령 성공 메시지만
+  보고 넘어가지 않는다.
+
+## Google OAuth가 엉뚱한 계정으로 연결됨
+
+증상: 프로젝트·동의 화면·Stitch가 기대한 계정에 없거나 redirect/permission 오류가 난다.
+- 브라우저 기본 계정을 추측하지 말고 `browser-steps.md`의 다계정 확인 게이트로 돌아간다.
+- Google, Vercel, Supabase 중 하나만 로그아웃하지 말고 각 서비스의 실제 owner/team/project를
+  다시 확인한다.
+- 계정을 바꿨으면 CLI의 `whoami`와 Supabase project ref도 다시 확인한다.
 
 ## Supabase 쿼리가 빈 결과 / 막힘 (RLS)
 
@@ -18,7 +35,7 @@
 - 로그인 없는 MVP(공개 데이터): `create policy "anyone can read" on public.<테이블> for select using (true);`
   쓰기도 공개면 `for insert with check (true)`를 추가한다.
 - 로그인 없는 MVP(비공개 데이터, 폼 제출·관리자 뷰 등): 정책을 두지 말고 쓰기·읽기는 서버 라우트에서
-  `SUPABASE_SERVICE_ROLE_KEY`로 처리한다 (`phase-build.md` 데이터 준비 절 참고).
+  `SUPABASE_SERVICE_ROLE_KEY`로 처리한다 (`phase-build.md`의 데이터·인증 절 참고).
 - 로그인 있는 앱: `auth.uid() = user_id` 정책을 추가한다.
 
 ## Supabase 406 오류
@@ -39,7 +56,7 @@
 
 ## Parsing CSS source code failed
 
-증상: localhost 화면에 'Build Error — Parsing CSS source code failed'.
+증상: production build 또는 배포 로그에 'Parsing CSS source code failed'.
 - 원인: `app/globals.css`가 Tailwind v4 CSS 파서에 안 맞음. 가장 흔한 건 `@import "tailwindcss";`
   **뒤에** 다른 `@import url(...)`(웹폰트 등)를 둔 것 — CSS에서 `@import`는 다른 모든 규칙보다 앞서야 한다.
 - 해결: 그 `@import`를 `@import "tailwindcss";` **위로** 옮긴다. 또는 웹폰트는 `app/layout.tsx`에서
@@ -60,7 +77,7 @@
 - 원인 대부분: **Vercel GitHub App**이 GitHub 계정에 없거나 이 레포 접근 권한이 없다.
 - 해결: https://github.com/apps/vercel 에서 App을 설치하고 해당 레포 접근을 허용한다 (이미
   있으면 Configure에서 레포 추가). 그다음 `vercel git connect --yes`를 다시 실행한다.
-  **이 App 설치를 Claude가 크롬으로 대신할 수 있다** — `browser-steps.md` 참고.
+  연결된 브라우저 도구가 있으면 에이전트가 대신할 수 있다 — `browser-steps.md` 참고.
 - 급하면 `vercel --prod`로 수동 배포할 수 있지만, 근본 해결은 App 설치다.
 
 ## "테이블이 없습니다" / relation does not exist
@@ -80,13 +97,14 @@
 
 증상: `vercel integration add supabase` 또는 대시보드에서 새 프로젝트 생성이 막힌다 —
 "free plan project limit" / "organization has reached its project limit" 류 메시지.
-- 원인: Supabase 무료 플랜은 **조직(계정)당 활성 프로젝트 2개**까지다. 이전 실습·다른 앱으로
-  이미 2개를 만들었으면 더 못 만든다.
+- 원인: 현재 조직의 무료 플랜 프로젝트 한도를 이미 사용했다. 한도는 플랜과 시점에 따라 바뀔 수
+  있으므로 오류 메시지와 대시보드의 현재 제한을 기준으로 판단한다.
 - 해결(권장): https://supabase.com/dashboard 에서 **안 쓰는 기존 프로젝트를 일시정지(pause)
   하거나 삭제**한 뒤 다시 만든다. (삭제 전 데이터가 필요 없는지 확인.)
 - 해결(대안): 다른 Supabase 계정으로 로그인해 거기서 프로젝트를 만든다 — 단, 그 경우
   `supabase login`도 그 계정으로 다시 해야 하고 키도 그 계정 프로젝트에서 가져온다.
-- **예방**: 수업·실습 전에 안 쓰는 옛 프로젝트를 미리 정리해 한도를 비워 둔다.
+- **예방**: 수업·실습 전에 안 쓰는 옛 프로젝트를 미리 정리해 한도를 비워 둔다. 프로젝트를
+  새로 만들 때도 `가장 최근`만으로 선택하지 말고 organization·이름·reference id를 대조한다.
 
 ## Supabase login이 토큰을 저장 못 함 (계속 미인증)
 
@@ -106,8 +124,8 @@
 
   - CLI는 `SUPABASE_ACCESS_TOKEN`이 있으면 그 값을 우선 쓰므로 `supabase login` 없이 동작한다.
   - 이 변수는 토큰(비밀)이다 — `.env.local`이나 코드에 넣지 말고 셸 세션에서만 export 한다.
-- **이 토큰 발급을 Claude가 크롬으로 대신할 수 있다** — `browser-steps.md`의 'Supabase 액세스
-  토큰 발급'을 따른다(연결돼 있으면 사용자는 가만히 있어도 된다).
+- 연결된 브라우저 도구가 있으면 에이전트가 토큰 발급 화면 이동을 대신할 수 있다. 비밀 토큰 값은
+  대화에 출력하지 않는다.
 
 ## Supabase 키가 안 가져와짐
 
@@ -117,7 +135,7 @@
   로그인 계정이 Vercel에 연결된 계정과 같은지 확인한다.
 - **최후 수단(대시보드)** → https://supabase.com/dashboard → 프로젝트 → Settings → API에서
   Project URL과 `anon`(또는 publishable) 키를 복사해 `.env.local`에 넣는다. **이 대시보드
-  작업도 Claude가 크롬으로 대신할 수 있다** — `browser-steps.md`의 'Supabase 대시보드' 참고.
+  작업도 연결된 브라우저 도구가 있으면 에이전트가 대신할 수 있다. `browser-steps.md` 참고.
 
 ## Supabase 테이블 생성 실패 (`supabase db query`)
 
@@ -175,7 +193,10 @@
     예: `<Link href="..." className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-primary-foreground">…</Link>`.
     (Stitch 디자인의 버튼 스타일을 토큰 클래스로 옮기면 일관성이 유지된다.)
 
-## 포트 3000이 이미 사용 중
+## 포트 3000이 이미 사용 중 (로컬 서버를 명시적으로 쓸 때만)
+
+Orange Build 기본 흐름은 localhost 서버 없이 production build→배포로 확인한다. 사용자가 로컬
+디버깅을 명시적으로 원해 `npm run dev`를 실행했을 때만 이 항목을 쓴다.
 
 증상: `npm run dev`가 "Port 3000 is in use".
 - 이전 개발 서버가 떠 있다. 그걸 쓰거나, Next.js가 제안하는 다른 포트(3001 등)를 쓴다.

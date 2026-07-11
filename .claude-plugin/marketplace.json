@@ -1,8 +1,8 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "orange-build",
-  "version": "1.13.0",
-  "description": "경량 바이브코딩 스킬 팩 — 한 Claude Pro 세션 안에 기획부터 배포까지.",
+  "version": "2.0.0",
+  "description": "Orange Build 기획서를 웹앱·AI 작업 스킬·자동화의 실제 결과로 이어가는 교육용 스킬 팩.",
   "owner": {
     "name": "pengdo",
     "email": "pengdo@myorange.io"
@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "orange-build",
-      "description": "아이디어를 Next.js 웹앱으로 만들어 GitHub·Vercel·Supabase에 배포하는 올인원 바이브코딩 워크플로.",
+      "description": "가져온 기획서를 웹앱·AI 작업 스킬·자동화로 구현하고 요구사항 전체를 검증하는 바이브코딩 워크플로.",
       "source": "./",
       "category": "development"
     }

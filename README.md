@@ -1,128 +1,111 @@
 # Orange Build
 
-> 아이디어 하나를 **한 번의 Claude Pro 세션** 안에 기획 → 구현 → 배포까지. 바이브코딩 입문자를 위한 경량 Claude Code 플러그인.
+> [Orange Build App](https://github.com/myorange-io/orange-build-app)에서 만든 기획서를 Codex 또는
+> Claude Code로 가져와, 웹앱·AI 작업 스킬·자동화를 실제 작동 결과까지 구현하는 교육용 플러그인.
 
-바이브코딩 입문자는 늘 같은 벽에 부딪힙니다 — `gstack` 같은 풀 워크플로 도구는 강력하지만,
-기획 단계만으로 Claude Pro 사용량을 거의 다 써 버립니다. 정작 만들고 배포할 사용량이 안 남습니다.
+Orange Build는 기획을 다시 길게 묻지 않습니다. 앱에서 복사한 원본을 보존하고, 핵심 기능·포함
+범위·사용 흐름·성공 기준을 요구사항 ID로 연결한 뒤 구현과 검증을 끝까지 이어갑니다.
 
-**Orange Build는 그 워크플로를 약 10배 가볍게 다시 설계했습니다.** 텔레메트리·서브에이전트·과한
-질문을 걷어내고 — 명령어 하나로 아이디어에서 배포된 웹앱까지, 입문자가 한 세션 안에 *진짜
-결과물*을 손에 쥐도록.
+## 지원 결과물
 
-- **모델** — Sonnet 최신 버전
-- **스택** — Next.js · Tailwind CSS · shadcn/ui · Supabase · Vercel (전부 무료 플랜)
-- **결과물** — 인터넷에 배포된, 공유 가능한 웹앱 URL
+| 결과물 | 첫 번째 눈에 보이는 결과 | 완료 검증 |
+|---|---|---|
+| 웹앱 | 첫 작동 흐름의 Vercel URL | 라이브 핵심 흐름·데이터·권한·상태·production build |
+| AI 작업 스킬 | 실제 대표 요청의 출력 | 구조 validator·긍정/비트리거·fixture·새 컨텍스트 호출 |
+| 자동화 | dry-run의 대상·건수·run id | 중복 방지·재시도·로그·승인된 샘플 live-run |
 
-## 누구를 위한 것
+새 GitHub 저장소는 기본으로 **비공개**이며, 생성 뒤 실제 visibility를 다시 확인합니다.
 
-- **바이브코딩 입문자** — 빈 프롬프트 앞에서 막막한 사람. 단계마다 손을 잡아줍니다.
-- **강사** — 한 세션 분량으로 끝나는, 예측 가능한 실습 워크플로가 필요한 분.
-- 수강생이 만드는 것: 업무 자동화 · 내부 도구·대시보드 · 신청 페이지 · 데이터 정리·분석 ·
-  문서·메일 자동화 · 챗봇/FAQ · 운영 개선 · 발표용 데모 — 전부 Next.js 웹앱으로 표현됩니다.
+## 새 흐름
 
-## 전체 흐름
-
+```text
+기획서 가져오기
+→ 원본 보존 + 요구사항 계약
+→ 결과물 유형별 구현
+→ 첫 작동 결과
+→ (웹앱만, 필요할 때) Stitch 시각 보정
+→ 원본 기획서 전체 대조
+→ 완료
 ```
-기획  →  Stitch 프로토타입  →  연결  →  구현  →  완성
-질문      화면 미리보기        배선     기능     배포·URL
-```
 
-- **기획** — 적응형 인터뷰(현재 방식·참고 앱 파악 → 2~3번의 짧은 질문 라운드). 화면·데이터
-  모델·설정이 담긴 한 페이지 빌드 스펙 `PLAN.md`를 만듭니다.
-- **Stitch 프로토타입** — [Google Stitch](https://stitch.withgoogle.com)에서 화면을 먼저 눈으로
-  봅니다. Claude 사용량을 쓰지 않으니 마음껏 다듬으세요.
-- **연결** — Next.js 앱을 만들어 GitHub·Vercel·Supabase에 CLI로 한 번에 연결하고 자동배포를
-  준비합니다. (빈 화면을 먼저 배포하지 않고 곧바로 구현으로 넘어갑니다.)
-- **구현** — 화면을 하나씩 진짜로 만듭니다. 푸시할 때마다 자동 배포·자동 저장되고, 다 만들면
-  라이브 URL을 받습니다. 비밀번호·주민번호·카드/계좌·바이오정보처럼 개인정보보호법상 암호화
-  의무가 있는 데이터는, 기획 때 "꼭 저장할지"부터 짚고 저장한다면 암호화해 다루도록 안내합니다.
+### Stitch를 뒤로 옮긴 이유
+
+Stitch는 기능 기획 단계가 아니라 선택적인 시각 보정 단계입니다. 웹앱의 첫 작동 URL을 먼저 본 뒤,
+필요할 때만 10분 동안 대표 화면 1개를 다듬습니다. Stitch에 빠진 페이지나 기능은 구현 범위에서
+삭제되지 않으며, Stitch가 추가한 기능도 자동으로 범위에 들어오지 않습니다.
 
 ## 빠른 시작
 
-1. **터미널에서** Claude Code 실행 — `/plugin`은 채팅용 데스크톱 앱이 아니라 **Claude Code**에서만 됩니다.
-2. 플러그인 설치 (아래 [설치](#설치) 참고).
-3. 새 프로젝트 폴더에서 `/model sonnet` → `/orange-start`.
-4. 안내를 따라가면 됩니다 — 아이디어를 말하고, Stitch에서 화면을 보고, 배포까지.
+1. [Orange Build App](https://github.com/myorange-io/orange-build-app)에서 기획서를 완성합니다.
+2. 결과 화면의 **본문 복사**를 누릅니다.
+3. 새 프로젝트 폴더에서 Codex 또는 Claude Code를 엽니다.
+4. 복사한 본문을 붙여넣고 `orange-start`를 호출합니다.
 
-## 사전 준비 (수업 전 1회)
-
-| 항목 | 설치 / 설정 |
-|------|-------------|
-| Node.js 18+ | https://nodejs.org |
-| Git | https://git-scm.com |
-| GitHub 계정 + `gh` CLI | https://cli.github.com → 설치 후 `gh auth login` |
-| Vercel 계정 + `vercel` CLI | `npm install -g vercel` → `vercel login` |
-| Vercel GitHub App | https://github.com/apps/vercel 설치 — GitHub→Vercel 자동배포용 (레포 접근 허용) |
-| Supabase | **미리 가입할 필요 없습니다.** 연결 단계에서 Vercel Marketplace가 Supabase 프로젝트를 자동으로 만들고 계정도 이메일로 자동 연결합니다(결제도 Vercel로 묶임). 중간에 `supabase login` 승인 한 번만 있는데 — 이건 새 가입이 아니라 그 자동 연결된 계정으로 SSO 로그인 1회이고, Claude가 크롬으로 대신할 수도 있습니다. CLI도 연결 단계에서 자동 설치됩니다(macOS=Homebrew, Windows=Scoop). |
-| Claude Code (Pro 플랜) | https://claude.com/claude-code |
+복사 본문에 `아직 코드는 작성하지 마세요`가 있어도 괜찮습니다. `orange-start`는 그것을 이전
+기획 단계의 자료로 취급하고 실제 구현을 시작합니다.
 
 ## 설치
 
-터미널 Claude Code 안에서:
+### Codex
 
+```bash
+codex plugin marketplace add myorange-io/orange-build
+codex plugin add orange-build@orange-build
 ```
+
+새 task에서 `$orange-start` 또는 자연어로 “오렌지 빌드 시작”이라고 요청합니다.
+
+### Claude Code
+
+Claude Code 안에서:
+
+```text
 /plugin marketplace add myorange-io/orange-build
 /plugin install orange-build@orange-build
 ```
 
-## 이렇게 동작합니다
+새 세션에서 `/orange-start`를 실행합니다.
 
-```
-나:     동아리 회비 납부 현황을 관리하는 도구를 만들고 싶어요.
-나:     /orange-start
+## 준비 사항
 
-Claude: [지금은 어떻게 하는지·참고 앱을 묻고 — 2~3 라운드로 화면·데이터·앱 이름을 정함]
-        [PLAN.md 작성 — 화면별 구성·데이터 모델·로그인/LLM 설정까지 한 페이지로]
-        [Stitch 프롬프트 생성] → Stitch에서 화면을 직접 보고 다듬으세요.
+- Git과 GitHub 계정
+- Codex 또는 Claude Code
+- 웹앱이면 Vercel 계정
+- 데이터 저장·OAuth·외부 API는 기획서가 요구할 때만
 
-나:     (Stitch에서 화면 확정 → '프로젝트 다운로드' zip을 폴더에 넣고 복귀)
+Node.js가 필요한 결과물인데 설치되어 있지 않으면 macOS·Windows의 사용 가능한 패키지 관리자로
+설치를 시도하고 버전을 재확인합니다. 스킬이나 Python 자동화에 필요하지 않다면 설치하지 않습니다.
 
-Claude: [Next.js 스캐폴드 → GitHub·Vercel·Supabase 연결 (자동배포 준비)]
-        [곧바로 화면을 하나씩 구현 — 만들 때마다 git push → 자동 배포]
-        ✅ 완성 — 공유 가능한 URL을 받으세요: https://....vercel.app
-```
+Google 계정이 여러 개 로그인되어 있으면 OAuth 승인 전에 사용할 계정을 직접 선택하게 합니다.
+GitHub 사용자, Vercel 팀, Supabase 조직도 실제 identity를 보여주고 맞는지 확인합니다.
 
-명령어 하나로 아이디어에서 배포까지. 막혔거나 사용량이 부족하면 단계 경계에서 멈추고
-`/orange-resume`로 이어가면 됩니다.
+## 명령
 
-## 명령어
+| 스킬 | 하는 일 |
+|---|---|
+| `orange-start` | 가져온 기획서를 유형별로 구현하고 검증까지 진행 |
+| `orange-resume` | REQ 상태와 증거를 읽어 다음 미완료 항목부터 재개 |
+| `orange-secure` | Next.js·Supabase 웹앱의 키 노출·RLS·민감정보 저장 점검 |
 
-| 명령어 | 하는 일 |
-|--------|---------|
-| `/orange-start` | 기획 → Stitch → 연결 → 구현 전 과정을 단계적으로 안내 |
-| `/orange-resume` | 진행 중인 프로젝트의 현황 파악 후 이어가기 |
-| `/orange-secure` | 공유 전 흔한 보안 구멍 6가지(.env 커밋·키 노출·RLS·민감정보 평문 저장 등) 점검·수정 |
+## 결과물에 남는 파일
 
-## 세션 관리 (Pro 사용량 팁)
+- `SOURCE_PLAN.md` — Orange Build App에서 가져온 원본
+- `PLAN.md` — REQ ID·완료 조건·검증 증거가 있는 실행 계약
+- `MEMORY.md` — 결정 이유와 막힌 점·해결 기록
+- `CASE.md` — 수작업을 대신하는 프로젝트일 때 만드는 사례 카드
 
-- 진행 상태는 프로젝트 폴더 안 `PLAN.md`와 git 기록에 저장됩니다 — 외부 저장소가 없습니다.
-- 만드는 **과정**은 프로젝트 폴더 안 `MEMORY.md`에 단계마다 짧게 쌓입니다 — "무엇을·왜·뭐가
-  막혔나". 나중에 복기하거나, 수업에서 "이렇게 만들어졌다" 사례로 보여줄 때 쓰세요.
-- 업무 자동화·도구형 프로젝트는 완성 시 `CASE.md`(업무 자동화 사례 카드)도 한 장 남습니다 —
-  원래 손으로 하던 일을 무엇으로 바꿨는지, 사람이 개입하는 지점은 어디인지를 한 페이지로.
-  다른 사람에게 사례로 공유하거나 나중에 모아 사례집으로 쓰기 좋습니다. (자동화가 없는 단순
-  소개 페이지·데모는 생략됩니다.)
-- 단계가 끝날 때마다 자동으로 저장(commit)됩니다. 세션이 끊겨도 잃는 것이 없습니다.
-- Stitch 프로토타이핑은 Claude 사용량을 쓰지 않습니다 — 좋은 휴식 지점입니다.
-- 사용량이 부족하면 단계 경계에서 멈추고, 다음에 `/orange-resume`로 이어가세요.
+완료 판정은 `PLAN.md`의 필수 요구사항이 모두 PASS일 때만 합니다. 일부가 미검증이면 `N/M 통과`와
+남은 항목을 그대로 보여줍니다.
 
 ## 강사용 노트
 
-- 수강생에게 수업 전 사전 준비를 마치도록 안내하세요. 특히 `/plugin`은 **터미널 Claude Code**에서만
-  동작합니다 — 채팅용 데스크톱 앱이 아닙니다.
-- `/model sonnet`을 첫 단계로 강조하세요. Opus로 시작하면 사용량이 빨리 소진됩니다.
-- LLM API를 쓰는 프로젝트(챗봇 등)는 별도 API 키와 호출 비용이 듭니다 — 나머지 스택은 무료입니다.
-- **스킬을 수정했다면** `.claude-plugin/plugin.json`의 `version`을 올린 뒤 푸시하세요. 버전을
-  올리지 않으면 수강생이 `/plugin` 업데이트를 해도 변경이 반영되지 않습니다.
-
-## 다음 단계 — 졸업하기
-
-오렌지 빌드는 "첫 앱"까지 데려다 주는 도구입니다. 프로젝트가 커지거나 팀 단위로 운영하기
-시작하면, 더 무거운 도구로 갈아탈 때입니다:
-
-- [Claude Code in Large Codebases — 베스트 프랙티스](https://claude.com/blog/how-claude-code-works-in-large-codebases-best-practices-and-where-to-start) — CLAUDE.md 계층화, hooks, skills, plugins, LSP, MCP, subagents까지 7가지 구성요소
-- [gstack](https://github.com/gstack-dev/gstack) — 풀 워크플로 바이브코딩 도구 (기획·리뷰·QA·배포까지)
+- 참가자는 기획서 복사 뒤 곧바로 에이전트에 붙여넣고 `orange-start`를 호출합니다.
+- 웹앱 실습의 첫 피드백은 localhost가 아니라 실제 Vercel URL입니다.
+- Stitch를 진행한다면 기능 토론을 멈추고 시각 위계·색·간격만 보정합니다.
+- 외부 발송·삭제·결제·live 자동화는 dry-run 뒤 대상과 건수를 보여주고 승인받습니다.
+- 수업 전 GitHub·Vercel·Google의 여러 계정 상태를 정리하거나, 사용할 계정을 미리 정해두면
+  OAuth 실수가 줄어듭니다.
 
 ## 라이선스
 
-MIT · v1.13.0
+MIT · v2.0.0
