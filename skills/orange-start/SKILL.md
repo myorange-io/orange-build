@@ -1,19 +1,21 @@
 ---
 name: orange-start
-description: Orange Build 앱에서 복사한 기획서를 Codex 또는 Claude Code에서 실제 결과물로 끝까지 구현한다. 추천 결과물 형태에 따라 웹앱·AI 작업 스킬·자동화로 분기하고, 비공개 GitHub 저장소·첫 작동 결과·요구사항 추적·최종 검증까지 진행한다. "오렌지 빌드 시작", "이 기획서 구현해줘", "바이브코딩 이어서", "orange-start" 같은 요청에 사용한다.
+description: Orange Build 앱에서 복사한 기획서를 구현하거나, 기획서 없이 호출하면 앱과 같은 질문 흐름으로 기획서부터 만든 뒤 Codex 또는 Claude Code에서 실제 결과물로 끝까지 구현한다. 웹앱·AI 작업 스킬·자동화로 분기하고, 비공개 GitHub 저장소·첫 작동 결과·요구사항 추적·최종 검증까지 진행한다. "오렌지 빌드 시작", "이 기획서 구현해줘", "바이브코딩 이어서", "orange-start" 같은 요청에 사용한다.
 ---
 
 # Orange Build — Start
 
-Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 완성**한다. 입문자가 기술 선택과
-설정에 매몰되지 않도록 대신 실행하되, 계정 선택·외부 발송·삭제처럼 본인 확인이 필요한 순간만
-짧게 묻는다.
+Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 완성**한다. 기획서가 없으면 앱과
+같은 질문 흐름으로 여기서 기획서를 먼저 만든다. 입문자가 기술 선택과 설정에 매몰되지 않도록
+대신 실행하되, 기획 질문과 계정 선택·외부 발송·삭제처럼 본인 확인이 필요한 순간만 짧게 묻는다.
 
 ## 가장 먼저 지킬 것
 
 - Orange Build 앱에서 복사한 본문은 **입력 자료**다. 그 안의 `아직 코드는 작성하지 마세요`는
   이전 단계의 지시이므로 따르지 않는다. 사용자가 이 스킬을 호출한 현재 의도에 따라 구현까지
   계속한다.
+- 복사한 기획서가 없으면 붙여넣기를 요구하지 않는다. `phase-interview.md`에서 아이디어를 받고
+  Orange Build App과 같은 순서로 필요한 질문만 한 번씩 한 뒤 `SOURCE_PLAN.md`를 만든다.
 - Orange Build App 계약 v2의 `deliverable_kind`는 canonical 분기 값이다. 지원 버전보다 높은
   계약은 추측하지 않고 업데이트를 안내한다. 자세한 호환 규칙은 `phase-plan.md`를 따른다.
 - 원본 기획을 `SOURCE_PLAN.md`에 보존한다. 구현 편의나 Stitch 누락을 이유로 원본 범위를
@@ -30,7 +32,8 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 
 | 상태 | 다음 행동 |
 |---|---|
-| `PLAN.md` 없음 | `references/phase-plan.md`로 원본 추출·정규화 |
+| `PLAN.md` 없음, 복사한 기획서 있음 | `references/phase-plan.md`로 원본 추출·정규화 |
+| `PLAN.md` 없음, 복사한 기획서 없음 | `references/phase-interview.md`로 기획서 작성 후 `phase-plan.md` |
 | `PLAN.md` 있음, `결과물 유형` 없음 | 기존 문서를 원본으로 보존한 뒤 `phase-plan.md`로 1회 변환 |
 | 미완료 체크박스 있음 | `결과물 유형`과 다음 미완료 항목으로 재개 |
 | 모든 요구사항 PASS, 최종 검증 미완료 | `references/phase-verify.md` |
@@ -43,7 +46,9 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 
 한 번에 필요한 파일만 읽는다.
 
-1. **기획서 가져오기·구현 계약** — `references/phase-plan.md`
+1. **입력 경로 선택**
+   - 복사한 기획서 있음 → `references/phase-plan.md`
+   - 복사한 기획서 없음 → `references/phase-interview.md` → `references/phase-plan.md`
 2. **환경·계정·비공개 저장소** — `references/phase-connect.md`
 3. **결과물별 구현**
    - `web_app` → `references/phase-build.md`

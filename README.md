@@ -1,10 +1,12 @@
 # Orange Build
 
-> [Orange Build App](https://github.com/myorange-io/orange-build-app)에서 만든 기획서를 Codex 또는
-> Claude Code로 가져와, 웹앱·AI 작업 스킬·자동화를 실제 작동 결과까지 구현하는 교육용 플러그인.
+> [Orange Build App](https://github.com/myorange-io/orange-build-app)에서 만든 기획서를 가져오거나,
+> 앱 없이 같은 질문 흐름으로 기획서부터 작성해 웹앱·AI 작업 스킬·자동화를 실제 작동 결과까지
+> 구현하는 Codex·Claude Code 교육용 플러그인.
 
-Orange Build는 기획을 다시 길게 묻지 않습니다. 앱에서 복사한 원본을 보존하고, 핵심 기능·포함
-범위·사용 흐름·성공 기준을 요구사항 ID로 연결한 뒤 구현과 검증을 끝까지 이어갑니다.
+앱에서 복사한 기획서가 있으면 이미 확인한 내용을 다시 묻지 않습니다. 기획서가 없으면 앱과 같은
+7단계 질문 로직으로 필요한 내용만 물어 원본을 만들고, 어느 경로든 핵심 기능·포함 범위·사용
+흐름·성공 기준을 요구사항 ID로 연결한 뒤 구현과 검증을 끝까지 이어갑니다.
 
 ## 지원 결과물
 
@@ -19,7 +21,7 @@ Orange Build는 기획을 다시 길게 묻지 않습니다. 앱에서 복사한
 ## 새 흐름
 
 ```text
-기획서 가져오기
+기획서 가져오기 또는 여기서 작성
 → 원본 보존 + 요구사항 계약
 → 결과물 유형별 구현
 → 첫 작동 결과
@@ -36,6 +38,8 @@ Stitch는 기능 기획 단계가 아니라 선택적인 시각 보정 단계입
 
 ## 빠른 시작
 
+### Orange Build App 기획서가 있을 때
+
 1. [Orange Build App](https://github.com/myorange-io/orange-build-app)에서 기획서를 완성합니다.
 2. 결과 화면의 **orange-start용 복사**를 누릅니다.
 3. 비어 있는 새 프로젝트 폴더를 만들고 그 폴더에서 Codex 또는 Claude Code를 엽니다.
@@ -45,6 +49,17 @@ Stitch는 기능 기획 단계가 아니라 선택적인 시각 보정 단계입
 값을 그대로 사용해 웹앱·AI 작업 스킬·자동화로 분기하고, 원문은 `SOURCE_PLAN.md`에 보존합니다.
 지원하는 계약보다 새 버전이면 추측해 구현하지 않고 플러그인 업데이트를 안내합니다. 기존 v1
 복사문도 표시 이름을 기준으로 계속 지원합니다.
+
+### 기획서가 없을 때
+
+1. 비어 있는 새 프로젝트 폴더에서 Codex 또는 Claude Code를 엽니다.
+2. `orange-start`만 호출합니다.
+3. 만들고 싶은 아이디어를 한두 문장으로 답합니다.
+4. 한 번에 하나씩 나오는 질문에 답합니다.
+
+orange-start는 앱과 같은 순서로 최대 7개를 묻되, 아이디어에서 이미 확인된 단계는 건너뜁니다.
+결과물 유형이 정해지면 웹앱·AI 작업 스킬·자동화에 맞는 질문으로 전환하고, 답변을
+`SOURCE_PLAN.md`에 정리한 뒤 기존 `PLAN.md`·REQ 추적 흐름으로 바로 이어갑니다.
 
 ## 설치
 
@@ -114,13 +129,13 @@ GitHub 사용자, Vercel 팀, Supabase 조직도 실제 identity를 보여주고
 
 | 스킬 | 하는 일 |
 |---|---|
-| `orange-start` | 가져온 기획서를 유형별로 구현하고 검증까지 진행 |
+| `orange-start` | 기획서를 가져오거나 여기서 작성한 뒤 유형별 구현·검증까지 진행 |
 | `orange-resume` | REQ 상태와 증거를 읽어 다음 미완료 항목부터 재개 |
 | `orange-secure` | Next.js·Supabase 웹앱의 키 노출·RLS·민감정보 저장 점검 |
 
 ## 결과물에 남는 파일
 
-- `SOURCE_PLAN.md` — Orange Build App에서 가져온 원본
+- `SOURCE_PLAN.md` — Orange Build App에서 가져왔거나 orange-start 인터뷰로 만든 원본
 - `PLAN.md` — REQ ID·완료 조건·검증 증거가 있는 실행 계약
 - `MEMORY.md` — 결정 이유와 막힌 점·해결 기록
 - `CASE.md` — 수작업을 대신하는 프로젝트일 때 만드는 사례 카드
@@ -130,7 +145,7 @@ GitHub 사용자, Vercel 팀, Supabase 조직도 실제 identity를 보여주고
 
 ## 강사용 노트
 
-- 참가자는 기획서 복사 뒤 곧바로 에이전트에 붙여넣고 `orange-start`를 호출합니다.
+- 참가자는 기획서를 복사해 붙여넣거나, 빈 폴더에서 `orange-start`만 호출해 기획부터 시작합니다.
 - 웹앱 실습의 첫 피드백은 localhost가 아니라 실제 Vercel URL입니다.
 - Stitch를 진행한다면 기능 토론을 멈추고 시각 위계·색·간격만 보정합니다.
 - 외부 발송·삭제·결제·live 자동화는 dry-run 뒤 대상과 건수를 보여주고 승인받습니다.
@@ -139,4 +154,4 @@ GitHub 사용자, Vercel 팀, Supabase 조직도 실제 identity를 보여주고
 
 ## 라이선스
 
-MIT · v2.0.0
+MIT · v2.1.0

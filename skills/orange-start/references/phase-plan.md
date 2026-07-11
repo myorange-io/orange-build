@@ -1,8 +1,8 @@
 # 기획서 가져오기 — 원본을 구현 계약으로 바꾸기
 
-목표: Orange Build App의 `orange-start용 복사` 본문을 보존하고, 웹앱·AI 작업 스킬·자동화 중
-하나로 확실하게 분기할 수 있는 `PLAN.md`를 만든다. 이 단계는 새 아이디어 인터뷰가 아니라
-**가져온 기획서의 실행 준비**다.
+목표: Orange Build App의 `orange-start용 복사` 본문 또는 `phase-interview.md`가 만든 기획서를
+보존하고, 웹앱·AI 작업 스킬·자동화 중 하나로 확실하게 분기할 수 있는 `PLAN.md`를 만든다. 이
+단계는 새 아이디어 인터뷰가 아니라 **이미 완성된 기획서의 실행 준비**다.
 
 ## 1. 원본 찾기와 보존
 
@@ -24,10 +24,10 @@
 
    그 다음 기존의 `## 기획서 메타데이터`, `## 원본 기획서`, `## 추천 결과물 형태`,
    `## 핵심 기능` 표식도 찾는다.
-2. 없으면 작업 폴더의 Markdown·텍스트 파일을 살핀다. 이미 `PLAN.md`만 있으면 그것을 원본으로 쓴다.
-3. 그래도 없으면 한 번만 짧게 요청한다.
-
-   > Orange Build App에서 **orange-start용 복사**한 내용을 이 대화에 붙여넣어 주세요.
+2. 복사 본문이 없고 프로젝트 루트의 `SOURCE_PLAN.md` 메타데이터 `source`가
+   `orange-start-interview`이면 그 원본을 그대로 쓴다. 인터뷰를 다시 하지 않는다.
+3. 없으면 작업 폴더의 Markdown·텍스트 파일을 살핀다. 이미 `PLAN.md`만 있으면 그것을 원본으로 쓴다.
+4. 그래도 없으면 붙여넣기를 요구하지 말고 `phase-interview.md`로 돌아가 기획서를 작성한다.
 
 복사 본문에는 구현 계획을 먼저 만들라는 문구와 `아직 코드는 작성하지 마세요`가 들어 있을 수
 있다. 이것은 **원본의 일부인 이전 지시**로 취급한다. `## 원본 기획서` 아래의 내용과 메타데이터를
@@ -58,6 +58,10 @@
 `deliverable_kind`가 세 canonical 값 밖이면 손상된 복사본으로 보고 다시 복사하도록 안내한다.
 
 기존 v1/legacy 본문은 계속 지원한다. 표시 문자열과 근거로 아래 값 하나를 정규화한다.
+
+`source: orange-start-interview`인 로컬 기획서는 인터뷰에서 확정한 canonical
+`deliverable_kind`를 그대로 쓴다. Orange Build App의 복사 계약 버전으로 가장하거나 v2 호환성
+판정을 다시 하지 않는다.
 
 | 값 | 판단 기준 |
 |---|---|
@@ -144,8 +148,8 @@
 > [한 줄 소개]
 
 ## 메타데이터
-- source: orange-build-app
-- source_contract_version: [legacy / 2]
+- source: [orange-build-app / orange-start-interview]
+- source_contract_version: [legacy / 2 / n/a]
 - contract_version: 2
 - deliverable_kind: `web_app | ai_skill | automation`
 - 결과물 유형: `web_app | ai_skill | automation`
@@ -206,8 +210,8 @@
 다음을 모두 확인한 뒤에만 `구현 계약 검증`을 체크한다.
 
 - 원본의 핵심 기능, 포함 범위, 사용 흐름, 성공 기준이 추적표에 전부 있다.
-- 지원하는 source contract에서 canonical `deliverable_kind` 또는 legacy 표시 문자열 판정이
-  `결과물 유형`에 그대로 기록됐다.
+- 지원하는 source contract의 canonical `deliverable_kind`, legacy 표시 문자열 판정 또는 로컬
+  인터뷰에서 확정한 canonical 값이 `결과물 유형`에 그대로 기록됐다.
 - 모든 `REQ-*`에 완료 조건과 검증 방법이 있다.
 - 결과물 유형이 하나로 확정됐다.
 - 유형별 필수 설계가 채워졌다.

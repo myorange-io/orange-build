@@ -1,20 +1,20 @@
 {
   "name": "orange-build",
-  "version": "2.0.0",
-  "description": "Orange Build App 기획서를 웹앱, AI 작업 스킬, 자동화로 구현하고 비공개 저장소, 첫 작동 결과, 최종 검증까지 이어가는 바이브코딩 워크플로.",
+  "version": "2.1.0",
+  "description": "Orange Build App 기획서를 가져오거나 같은 질문 흐름으로 기획한 뒤 웹앱, AI 작업 스킬, 자동화로 구현하는 바이브코딩 워크플로.",
   "author": {
     "name": "pengdo"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Orange Build",
-    "shortDescription": "기획서를 세 가지 결과물로 끝까지 구현합니다.",
-    "longDescription": "Orange Build App에서 복사한 기획서를 웹앱, AI 작업 스킬, 자동화로 분기해 구현하고 요구사항별 증거로 완료를 검증합니다.",
+    "shortDescription": "기획서를 가져오거나 여기서 작성해 구현합니다.",
+    "longDescription": "Orange Build App에서 복사한 기획서를 가져오거나 같은 질문 흐름으로 기획서를 작성한 뒤 웹앱, AI 작업 스킬, 자동화로 분기해 구현하고 검증합니다.",
     "developerName": "pengdo",
     "category": "Development",
     "capabilities": [
       "skills"
     ],
-    "defaultPrompt": "Orange Build 기획서를 가져와 실제 결과물로 구현해 주세요."
+    "defaultPrompt": "Orange Build 기획서가 있으면 가져와 구현하고, 없으면 아이디어부터 질문해 기획한 뒤 실제 결과물로 완성해 주세요."
   }
 }

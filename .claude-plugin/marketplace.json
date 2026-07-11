@@ -1,8 +1,8 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "orange-build",
-  "version": "2.0.0",
-  "description": "Orange Build 기획서를 웹앱·AI 작업 스킬·자동화의 실제 결과로 이어가는 교육용 스킬 팩.",
+  "version": "2.1.0",
+  "description": "Orange Build 기획서를 가져오거나 여기서 작성해 웹앱·AI 작업 스킬·자동화의 실제 결과로 이어가는 교육용 스킬 팩.",
   "owner": {
     "name": "pengdo",
     "email": "pengdo@myorange.io"
@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "orange-build",
-      "description": "가져온 기획서를 웹앱·AI 작업 스킬·자동화로 구현하고 요구사항 전체를 검증하는 바이브코딩 워크플로.",
+      "description": "기획서를 가져오거나 같은 질문 흐름으로 작성한 뒤 웹앱·AI 작업 스킬·자동화로 구현하고 검증하는 워크플로.",
       "source": "./",
       "category": "development"
     }

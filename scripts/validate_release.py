@@ -8,6 +8,7 @@ import re
 import sys
 from pathlib import Path
 
+from validate_interview_flow import validate_interview_flow
 from validate_plan_fixtures import validate_fixture_contracts
 
 
@@ -106,6 +107,7 @@ def validate_workflow() -> None:
         start,
         (
             "SOURCE_PLAN.md",
+            "phase-interview.md",
             "phase-build-skill.md",
             "phase-build-automation.md",
             "phase-verify.md",
@@ -114,6 +116,7 @@ def validate_workflow() -> None:
 
     refs = ROOT / "skills" / "orange-start" / "references"
     required_refs = (
+        "phase-interview.md",
         "phase-plan.md",
         "phase-connect.md",
         "phase-build.md",
@@ -156,6 +159,7 @@ def validate_workflow() -> None:
     require_text(secure, ("find supabase -type f -name '*.sql'", "6개 휴리스틱에서 문제를 찾지 못했습니다"))
 
     try:
+        validate_interview_flow(emit=False)
         validate_fixture_contracts(emit=False)
     except ValueError as exc:
         fail(f"copy-contract fixtures failed: {exc}")

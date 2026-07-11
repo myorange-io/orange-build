@@ -1,0 +1,29 @@
+{
+  "initial_question": "무엇을 만들고 싶나요? 지금 떠오른 아이디어를 한두 문장으로 알려주세요.",
+  "max_guided_questions": 7,
+  "phase_order": [
+    "target_problem",
+    "blocked_moment",
+    "solution_flow",
+    "data_privacy",
+    "mvp_scope",
+    "ai_human_review",
+    "success_failure"
+  ],
+  "generic_questions": {
+    "target_problem": "이 결과물을 가장 먼저 쓸 사람은 누구이고, 언제 어떤 상황에서 사용하게 될까요?",
+    "blocked_moment": "이 일은 지금 어떻게 처리하고 있고, 그중 시간·누락·반복이 가장 큰 부분은 무엇인가요?",
+    "solution_flow": "사용자가 무엇을 넣으면, 이 서비스가 어떤 결과를 만들어 주면 좋을까요?",
+    "data_privacy": "어떤 자료나 도구를 사용하고, 입력이 없거나 연결할 수 없을 때는 어떻게 해야 할까요?",
+    "mvp_scope": "첫 번째 결과물은 어떤 형태로 만드는 것이 가장 적합할까요?",
+    "ai_human_review": "어디까지 자동으로 처리하고, 사람은 무엇을 반드시 확인하거나 승인해야 할까요?",
+    "success_failure": "어떤 결과를 직접 확인하면 완료이고, 어떤 오류나 누락이 남으면 실패일까요?"
+  },
+  "deliverable_kinds": [
+    "web_app",
+    "ai_skill",
+    "automation"
+  ],
+  "expected_source": "orange-start-interview",
+  "expected_next_reference": "phase-plan.md"
+}
