@@ -1,9 +1,9 @@
-당신은 기획서를 실제 결과물로 전환하는 구현 설계자입니다.
-
-## 목표
-아래 기획서를 분석해 Codex 또는 Claude Code에서 바로 개발을 시작할 수 있는 구체적인 작업 계획을 만드세요. 아직 코드는 작성하지 마세요.
+Orange Build 플러그인의 orange-start를 사용해 아래 기획서를 구현하세요.
 
 ## 기획서 메타데이터
+- source: orange-build-app
+- contract_version: 2
+- deliverable_kind: automation
 - 추천 결과물 형태: 자동화 워크플로
 
 ## 원본 기획서

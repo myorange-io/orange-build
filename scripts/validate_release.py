@@ -8,6 +8,8 @@ import re
 import sys
 from pathlib import Path
 
+from validate_plan_fixtures import validate_fixture_contracts
+
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFESTS = (
@@ -153,31 +155,10 @@ def validate_workflow() -> None:
     secure = ROOT / "skills" / "orange-secure" / "SKILL.md"
     require_text(secure, ("find supabase -type f -name '*.sql'", "6개 휴리스틱에서 문제를 찾지 못했습니다"))
 
-    fixtures = ROOT / "tests" / "fixtures"
-    expected = load_json(fixtures / "expectations.json")
-    fixture_names = ("web-app-plan.md", "ai-skill-plan.md", "automation-plan.md")
-    if set(expected) != set(fixture_names):
-        fail("fixture expectations do not cover exactly the three deliverable types")
-    for filename in fixture_names:
-        fixture = fixtures / filename
-        if not fixture.is_file():
-            fail(f"missing forward-test fixture: {filename}")
-        require_text(fixture, ("## 기획서 메타데이터", "## 원본 기획서", "아직 코드는 작성하지 마세요"))
-        case = expected[filename]
-        require_text(
-            fixture,
-            (
-                case["metadata_marker"],
-                case["excluded_scope"],
-                *case["required_source_terms"],
-            ),
-        )
-        if case["deliverable_type"] not in {"web_app", "ai_skill", "automation"}:
-            fail(f"invalid expected deliverable type for {filename}")
-        if case["first_result"] not in {"production_url", "representative_call", "dry_run"}:
-            fail(f"invalid expected first result for {filename}")
-        if case["stitch"] not in {"after_first_result_only", "not_applicable"}:
-            fail(f"invalid Stitch expectation for {filename}")
+    try:
+        validate_fixture_contracts(emit=False)
+    except ValueError as exc:
+        fail(f"copy-contract fixtures failed: {exc}")
 
     active_text = "\n".join(
         path.read_text(encoding="utf-8")

@@ -37,16 +37,20 @@ Stitch는 기능 기획 단계가 아니라 선택적인 시각 보정 단계입
 ## 빠른 시작
 
 1. [Orange Build App](https://github.com/myorange-io/orange-build-app)에서 기획서를 완성합니다.
-2. 결과 화면의 **본문 복사**를 누릅니다.
-3. 새 프로젝트 폴더에서 Codex 또는 Claude Code를 엽니다.
-4. 복사한 본문을 붙여넣고 `orange-start`를 호출합니다.
+2. 결과 화면의 **orange-start용 복사**를 누릅니다.
+3. 비어 있는 새 프로젝트 폴더를 만들고 그 폴더에서 Codex 또는 Claude Code를 엽니다.
+4. 복사한 본문 전체를 붙여넣고 `orange-start`를 호출합니다.
 
-복사 본문에 `아직 코드는 작성하지 마세요`가 있어도 괜찮습니다. `orange-start`는 그것을 이전
-기획 단계의 자료로 취급하고 실제 구현을 시작합니다.
+복사문에는 `contract_version`과 `deliverable_kind`가 들어 있습니다. orange-start는 이 canonical
+값을 그대로 사용해 웹앱·AI 작업 스킬·자동화로 분기하고, 원문은 `SOURCE_PLAN.md`에 보존합니다.
+지원하는 계약보다 새 버전이면 추측해 구현하지 않고 플러그인 업데이트를 안내합니다. 기존 v1
+복사문도 표시 이름을 기준으로 계속 지원합니다.
 
 ## 설치
 
 ### Codex
+
+처음 설치할 때:
 
 ```bash
 codex plugin marketplace add myorange-io/orange-build
@@ -54,6 +58,22 @@ codex plugin add orange-build@orange-build
 ```
 
 새 task에서 `$orange-start` 또는 자연어로 “오렌지 빌드 시작”이라고 요청합니다.
+
+업데이트할 때:
+
+```bash
+codex plugin marketplace upgrade orange-build
+codex plugin add orange-build@orange-build
+```
+
+예전 `orange-build@personal` v1.11.1이 `codex plugin list`에 보이면, v2를 설치하기 전에 그
+플러그인만 제거합니다. 두 버전이 함께 활성화되면 같은 `orange-start`가 중복 노출될 수 있습니다.
+
+```bash
+codex plugin remove orange-build@personal
+```
+
+업데이트 뒤에는 새 task를 열어야 새 스킬 정의를 읽습니다.
 
 ### Claude Code
 
@@ -65,6 +85,17 @@ Claude Code 안에서:
 ```
 
 새 세션에서 `/orange-start`를 실행합니다.
+
+이미 설치했다면 다음 순서로 업데이트합니다.
+
+```text
+/plugin marketplace update orange-build
+/plugin update orange-build@orange-build
+```
+
+`/plugin list`에 구형 v1.11.1이 다른 marketplace와 함께 보이면 구형 항목만
+`/plugin uninstall <구형-plugin@marketplace>`로 제거한 뒤 새 세션을 엽니다. 같은 이름의
+orange-start를 두 설치본에서 동시에 활성화하지 않습니다.
 
 ## 준비 사항
 
