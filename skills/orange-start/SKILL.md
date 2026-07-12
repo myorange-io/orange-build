@@ -22,6 +22,9 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
   조용히 줄이지 않는다.
 - `PLAN.md`의 요구사항마다 `REQ-01` 같은 ID, 완료 조건, 검증 방법을 둔다. 증거 없이 완료로
   체크하지 않는다.
+- 앱 기획서의 `TEST-01`~`TEST-03`은 `references/verification-loop.md`에 따라 해당 `REQ-*`의
+  검증 계약으로 연결한다. 구형 v2 원문에 TEST가 없으면 이미 받은 내용으로 세 가지를 파생하고
+  이를 묻기 위한 질문은 추가하지 않는다.
 - 특정 모델이나 모델 변경 명령을 권하지 않는다. Codex·Claude Code에서 사용자가 현재 선택한
   모델과 호스트 기본값을 그대로 사용한다.
 - 구현 전에 `phase-preflight.md`로 필요한 설치·가입·계정·브라우저 세팅을 먼저 보여준다.
@@ -64,6 +67,9 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
    - `automation` → `references/phase-build-automation.md`
 5. **전체 대조 검증** — `references/phase-verify.md`
 
+계획·구현·최종 검증에서 공통으로 쓰는 TEST 매핑, 결과물 수량 대조, 증거 등급은
+`references/verification-loop.md`를 따른다.
+
 웹앱의 Stitch 보정은 기본 단계가 아니다. 첫 작동 흐름을 배포해 URL을 보여준 뒤, 사용자가
 원하거나 시각성이 핵심일 때만 `references/phase-design.md`를 읽는다.
 
@@ -103,3 +109,5 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
   `references/memory-log.md`를 따른다.
 - **완료를 과장하지 않기** — 필수 요구사항이 하나라도 FAIL/미검증이면 `완성`이라 하지 않고
   `N/M 통과`와 남은 일을 밝힌 뒤 계속 고친다.
+- **눈으로 보이는 증거까지** — 테스트 명령의 종료 코드만 보지 않고, 입력이 처리 경계를 지나
+  사용자가 보는 결과가 되는지 확인한다. 추론만 한 항목은 통과로 세지 않는다.

@@ -8,6 +8,7 @@ import re
 import sys
 from pathlib import Path
 
+from validate_app_return import validate_app_return
 from validate_interview_flow import validate_interview_flow
 from validate_plan_fixtures import validate_fixture_contracts
 from validate_preflight_fixtures import validate_preflight_fixtures
@@ -114,6 +115,7 @@ def validate_workflow() -> None:
             "beginner-guardrails.md",
             "phase-build-skill.md",
             "phase-build-automation.md",
+            "verification-loop.md",
             "phase-verify.md",
         ),
     )
@@ -129,6 +131,7 @@ def validate_workflow() -> None:
         "phase-build.md",
         "phase-build-skill.md",
         "phase-build-automation.md",
+        "verification-loop.md",
         "phase-design.md",
         "phase-verify.md",
         "browser-steps.md",
@@ -155,16 +158,76 @@ def validate_workflow() -> None:
     if re.search(r"gh repo create[^\n]*--public", connect.read_text(encoding="utf-8")):
         fail("phase-connect.md creates a public GitHub repository")
 
+    verification = refs / "verification-loop.md"
+    require_text(
+        verification,
+        (
+            "TEST-01",
+            "결과물 인벤토리",
+            "RED",
+            "GREEN",
+            "REFACTOR",
+            "TESTED",
+            "PARTIAL",
+            "INFERRED",
+            "P0/P1",
+            "아직 증명하지 못한 것",
+        ),
+    )
+    phase_plan = refs / "phase-plan.md"
+    require_text(
+        phase_plan,
+        (
+            "검증 시나리오 계약",
+            "결과물 인벤토리",
+            "TEST 항목이 없는 기존 v2",
+            "v1/legacy",
+            "공개·비공개 경계",
+        ),
+    )
     web = refs / "phase-build.md"
-    require_text(web, ("vercel --prod", "REQ-*", "phase-design.md"))
+    require_text(
+        web,
+        ("vercel --prod", "REQ-*", "phase-design.md", "TESTED", "결과물 인벤토리", "RED"),
+    )
     skill_build = refs / "phase-build-skill.md"
-    require_text(skill_build, ("스킬 이름·경로·예상 답을 알려주지 않은", "`첫 작동 결과`를 체크"))
+    require_text(
+        skill_build,
+        ("스킬 이름·경로·예상 답을 알려주지 않은", "`첫 작동 결과`를 체크", "TESTED", "RED"),
+    )
     automation_build = refs / "phase-build-automation.md"
-    require_text(automation_build, ("DRY_RUN_PASS", "`첫 작동 결과`를 체크"))
+    require_text(
+        automation_build,
+        ("DRY_RUN_PASS", "`첫 작동 결과`를 체크", "TESTED", "RED"),
+    )
     design = refs / "phase-design.md"
     require_text(design, ("10분", "Do not add or remove screens"))
     verify = refs / "phase-verify.md"
-    require_text(verify, ("SOURCE_PLAN.md", "N/M 통과", "PRIVATE"))
+    require_text(
+        verify,
+        (
+            "SOURCE_PLAN.md",
+            "N/M 통과",
+            "PRIVATE",
+            "독립 완료 리뷰",
+            "아직 증명하지 못한 것",
+            "명시적 동의",
+            "orange-build-app",
+            "사용할 자료·개인정보와 공개·비공개 경계",
+        ),
+    )
+    preflight = refs / "phase-preflight.md"
+    require_text(
+        preflight,
+        ("지금 할 한 동작", "완료 신호", "제가 이어서 할 일", "남은 단계"),
+    )
+    browser_steps = refs / "browser-steps.md"
+    require_text(
+        browser_steps,
+        ("Orange Build App으로 결과 되돌리기", "256KB", "명시적 프라이버시 동의"),
+    )
+    memory_log = refs / "memory-log.md"
+    require_text(memory_log, ("Orange Build App으로 가져갈 때", "256KB", "자신의 말"))
     guardrails = refs / "beginner-guardrails.md"
     require_text(
         guardrails,
@@ -191,11 +254,15 @@ def validate_workflow() -> None:
         ),
     )
     resume = ROOT / "skills" / "orange-resume" / "SKILL.md"
-    require_text(resume, ("phase-preflight.md", "helpful-tools.md", "phase-connect.md"))
+    require_text(
+        resume,
+        ("phase-preflight.md", "helpful-tools.md", "phase-connect.md", "verification-loop.md", "TESTED"),
+    )
     secure = ROOT / "skills" / "orange-secure" / "SKILL.md"
     require_text(secure, ("find supabase -type f -name '*.sql'", "6개 휴리스틱에서 문제를 찾지 못했습니다"))
 
     try:
+        validate_app_return(emit=False)
         validate_interview_flow(emit=False)
         validate_fixture_contracts(emit=False)
         validate_preflight_fixtures(emit=False)

@@ -24,6 +24,49 @@
     "ai_skill",
     "automation"
   ],
+  "verification_scenarios": {
+    "expected_count": 3,
+    "expected_ids": [
+      "TEST-01",
+      "TEST-02",
+      "TEST-03"
+    ],
+    "required_fields": [
+      "준비",
+      "행동",
+      "기대 결과",
+      "통과 증거"
+    ],
+    "derive_from_answers_without_extra_question": true
+  },
+  "idea_suggestions": {
+    "only_when_user_has_no_idea_or_requests_suggestions": true,
+    "suggestion_pool_size": 6,
+    "show_one_at_a_time": true,
+    "unknown_kind_distribution": {
+      "web_app": 2,
+      "ai_skill": 2,
+      "automation": 2
+    },
+    "known_kind_all_six_match": true,
+    "excluded_history_limit": 18,
+    "static_fallback": true,
+    "rotate_without_repeats": true,
+    "exclude_sensitive_data": true,
+    "counts_as_guided_question": false
+  },
+  "skip_all": {
+    "phrases": [
+      "전부 건너뛰기",
+      "지금 정보로 만들어줘"
+    ],
+    "accept_displayed_suggestion_if_no_user_idea": true,
+    "persist_completion_marker": "interview_completion: skip_all",
+    "phase_plan_must_not_reopen_questions": true,
+    "generate_from_current_answers": true,
+    "record_unknowns_as_assumptions": true,
+    "fabricate_missing_answers": false
+  },
   "expected_source": "orange-start-interview",
   "expected_next_reference": "phase-plan.md"
 }

@@ -1,0 +1,13 @@
+{
+  "source_document": "SOURCE_PLAN.md",
+  "source_value": "orange-build-app",
+  "skip_non_app_sources": true,
+  "requires_user_opt_in_before_url_write": true,
+  "live_url_only_when_present": true,
+  "never_guess_plan_url": true,
+  "memory": {
+    "max_bytes": 262144,
+    "requires_separate_explicit_consent": true,
+    "participant_reflection_user_authored": true
+  }
+}
