@@ -1,20 +1,20 @@
 {
   "name": "orange-build",
-  "version": "2.1.0",
-  "description": "Orange Build App 기획서를 가져오거나 같은 질문 흐름으로 기획한 뒤 웹앱, AI 작업 스킬, 자동화로 구현하는 바이브코딩 워크플로.",
+  "version": "2.2.0",
+  "description": "기획서를 가져오거나 여기서 작성하고 필요한 설치, 가입, 브라우저, 도움 도구 준비부터 웹앱, AI 작업 스킬, 자동화 구현까지 돕는 바이브코딩 워크플로.",
   "author": {
     "name": "pengdo"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Orange Build",
-    "shortDescription": "기획서를 가져오거나 여기서 작성해 구현합니다.",
-    "longDescription": "Orange Build App에서 복사한 기획서를 가져오거나 같은 질문 흐름으로 기획서를 작성한 뒤 웹앱, AI 작업 스킬, 자동화로 분기해 구현하고 검증합니다.",
+    "shortDescription": "준비부터 구현·검증까지 초보자를 안내합니다.",
+    "longDescription": "기획서를 가져오거나 작성한 뒤 필요한 설치, 가입, 계정, 브라우저와 Chrome DevTools MCP 같은 도움 도구를 먼저 판정하고 웹앱, AI 작업 스킬, 자동화로 분기해 구현·검증합니다.",
     "developerName": "pengdo",
     "category": "Development",
     "capabilities": [
       "skills"
     ],
-    "defaultPrompt": "Orange Build 기획서가 있으면 가져와 구현하고, 없으면 아이디어부터 질문해 기획한 뒤 실제 결과물로 완성해 주세요."
+    "defaultPrompt": "기획서가 있으면 준비물과 도움 도구를 분석하고, 없으면 아이디어부터 기획한 뒤 필요한 설치와 계정 세팅을 도와 실제 결과물로 완성해 주세요."
   }
 }

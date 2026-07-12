@@ -104,6 +104,7 @@
 원본 기획서는 의도적으로 한 페이지라 구현 세부가 부족할 수 있다. Orange Build App이 이미 확인한
 대상·문제·흐름·핵심 기능·포함/제외 범위·성공 기준·결과물 유형을 다시 묻지 않는다. 이미 답이
 있는 내용은 합리적 기본값을 `가정`으로 표시한다. 구현 방향을 크게 바꾸는 결정만 최대 3개 묻는다.
+`beginner-guardrails.md`를 읽고 요구사항을 작은 검증 단위와 관찰 가능한 증거로 쓴다.
 
 ### `web_app`
 
@@ -179,6 +180,17 @@
 ## 유형별 설계
 [웹앱 화면·데이터·상태 / 스킬 트리거·입출력·리소스 / 자동화 트리거·연결·재시도·로그]
 
+## 사전 준비
+| 기능·항목 | 필수성 | 필요한 이유 | 분류·영향 | 확인 방법 | 상태 |
+|---|---|---|---|---|---|
+| [Node.js / GitHub / Vercel / 외부 계정 등] | REQUIRED | [원본 근거] | 자동 설치 / 사용자 가입 / 브라우저 설정 / 비용 승인 / 필요 없음 | [버전·identity·화면] | MISSING |
+| [browser_runtime_diagnostics / 도움 도구 이름] | HELPFUL | [구현·검증 신호 또는 제외 근거] | [프로젝트 package / Claude local / Codex 사용자 설정] | [health와 실제 호출 / 대체 검증] | CONSENT_REQUIRED |
+
+`REQUIRED`는 `READY | MISSING | USER_ACTION | NOT_NEEDED`, `HELPFUL`은
+`READY | EQUIVALENT | EXISTING_UNSAFE | CONSENT_REQUIRED | INSTALL_APPROVED | WAITING_FOR_SCOPE |
+SKIPPED | FAILED`로 관리한다.
+`HELPFUL`을 건너뛰어도 대체 검증이 있으면 구현을 계속한다.
+
 ## 원본 추적표
 | 원본 항목 | 요구사항 ID |
 |---|---|
@@ -198,6 +210,7 @@
 ## 진행 상황
 - [x] 원본 기획서 보존
 - [ ] 구현 계약 검증
+- [ ] 사전 준비 안내
 - [ ] 환경·계정 확인
 - [ ] 비공개 GitHub 저장소
 - [ ] 첫 작동 결과
@@ -221,4 +234,4 @@
 기록한다. 아직 저장소가 없다면 커밋은 다음 단계에서 함께 한다.
 
 `✅ 기획서 가져오기 완료 — 원본 N개 항목을 요구사항 M개에 연결했습니다.`라고 알리고,
-멈추지 말고 `phase-connect.md`로 이어간다.
+멈추지 말고 `phase-preflight.md`로 이어간다.

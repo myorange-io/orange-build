@@ -22,8 +22,8 @@ description: Orange Build로 진행 중인 웹앱·AI 작업 스킬·자동화 �
   - `ai_skill`: SKILL.md와 최근 validator/호출 결과
   - `automation`: 최근 dry-run/live run id와 트리거 설정
 
-`PLAN.md`가 없으면 Orange Build 앱에서 본문을 복사해 `orange-start`와 함께 붙여넣어 달라고
-안내하고 끝낸다.
+`PLAN.md`가 없으면 `orange-start`로 돌아간다. 복사한 기획서가 있으면 가져오고, 없으면 아이디어
+인터뷰부터 시작할 수 있다고 안내한다.
 
 ## 2. 짧은 현황 보고
 
@@ -42,8 +42,11 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 
 ## 3. 재개 위치
 
-- 구현 계약 또는 환경·저장소 미완료 → `../orange-start/references/phase-plan.md` 또는
-  `../orange-start/references/phase-connect.md`
+- 구현 계약 미완료 → `../orange-start/references/phase-plan.md`
+- 사전 준비 안내 미완료 → `../orange-start/references/phase-preflight.md`와
+  `../orange-start/references/helpful-tools.md`
+- 환경·저장소 미완료 또는 도움 도구 `WAITING_FOR_SCOPE` →
+  `../orange-start/references/phase-connect.md`와 `../orange-start/references/helpful-tools.md`
 - `web_app` REQ 미완료 → `../orange-start/references/phase-build.md`
 - `ai_skill` REQ 미완료 → `../orange-start/references/phase-build-skill.md`
 - `automation` REQ 미완료 → `../orange-start/references/phase-build-automation.md`

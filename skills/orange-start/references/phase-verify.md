@@ -31,6 +31,26 @@
 `구현 위치: 미정`, `NOT_RUN`, `대략 동작`, HTTP 200만 있는 항목은 PASS가 아니다. 증거가 약하면
 다시 검증하거나 테스트를 보강한다.
 
+### 사전 준비 감사
+
+- `REQUIRED` 준비 항목이 모두 `READY`다. `USER_ACTION`이 남았으면 완료가 아니라 blocker이고,
+  `NOT_NEEDED`에는 기획서 근거가 있다.
+- 설치한 도구는 사용자 동의 범위와 버전·import/build 증거가 있다.
+- 필요한 계정·team·organization을 CLI와 브라우저에서 대조했다.
+- 기획서에 필요 없는 Vercel·Supabase·Node.js·외부 계정을 습관적으로 설치·연결하지 않았다.
+- 비밀번호·토큰·개인 이메일을 계획·로그·커밋에 남기지 않았다.
+- `HELPFUL` 도구는 기획서 신호와 부족했던 능력이 기록돼 있다. `SKIPPED`·`FAILED`면 대체 검증이
+  PASS했고, 도움 도구 설치 실패만으로 결과물을 미완료로 판정하지 않았다.
+- 같은 능력의 MCP·connector·프로젝트 package를 중복 설치하지 않았고 현재 세션을 실행한 호스트
+  하나만 변경했다.
+- 기존 MCP가 `EXISTING_UNSAFE`면 사용하지 않았고, 재구성했다면 정확한 변경 동의·원본 설정
+  backup·실패 rollback 증거가 있다.
+- MCP `등록 성공`, `인증 성공`, `현재 세션 실제 도구 호출 성공`을 구분했다. 등록 목록만 보고
+  runtime 진단이 완료됐다고 하지 않았다.
+- Chrome DevTools MCP는 격리·통계/CrUX 차단으로 등록했고, 개인 Chrome profile의 remote debugging에
+  동의 없이 붙지 않았다.
+- Supabase MCP는 개발·테스트 project에 `project_ref`·`read_only=true`·최소 feature로 제한했다.
+
 ## 3. 유형별 완료 게이트
 
 ### `web_app`

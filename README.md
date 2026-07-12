@@ -23,6 +23,7 @@
 ```text
 기획서 가져오기 또는 여기서 작성
 → 원본 보존 + 요구사항 계약
+→ 필요한 설치·가입·브라우저 세팅 안내
 → 결과물 유형별 구현
 → 첫 작동 결과
 → (웹앱만, 필요할 때) Stitch 시각 보정
@@ -112,18 +113,53 @@ Claude Code 안에서:
 `/plugin uninstall <구형-plugin@marketplace>`로 제거한 뒤 새 세션을 엽니다. 같은 이름의
 orange-start를 두 설치본에서 동시에 활성화하지 않습니다.
 
-## 준비 사항
+## 기획서 기반 준비
 
-- Git과 GitHub 계정
-- Codex 또는 Claude Code
-- 웹앱이면 Vercel 계정
-- 데이터 저장·OAuth·외부 API는 기획서가 요구할 때만
+orange-start는 코딩 전에 기획서를 읽고 `시작 전 준비 카드`를 먼저 보여줍니다.
 
-Node.js가 필요한 결과물인데 설치되어 있지 않으면 macOS·Windows의 사용 가능한 패키지 관리자로
-설치를 시도하고 버전을 재확인합니다. 스킬이나 Python 자동화에 필요하지 않다면 설치하지 않습니다.
+- 이미 준비된 도구와 계정
+- 자동 설치할 수 있지만 동의가 필요한 도구
+- 기획서 검증에 도움이 되고 현재 호스트에 같은 능력이 없는 도구
+- 사용자가 직접 가입·로그인·본인확인할 서비스
+- computer use·in-app browser·Chrome 연동으로 대신할 프로젝트·OAuth 설정
+- 비용 승인이 필요하거나 이번 기획에는 필요 없는 서비스
+
+Node.js, GitHub CLI, Vercel CLI, Python 등은 **기획서에 필요한 것만** 골라 정확한 설치 목록과
+영향을 보여준 뒤 한 번 동의받고 설치·버전 확인까지 대신합니다. GitHub·Vercel·Supabase 등 계정이
+없으면 공식 가입 페이지를 열어 직접 요청합니다. 비밀번호·2FA·CAPTCHA·약관·결제·여러 계정 중
+선택은 사용자가 하고, 나머지 저장소·프로젝트·OAuth·callback·최소 권한 설정은 연결된 브라우저
+도구로 최대한 대신합니다.
+
+웹앱에 console·network·performance 진단이 필요하면 Chrome DevTools MCP, 반복 E2E가 필요하면
+프로젝트 로컬 Playwright Test, 반복적인 배포 로그 분석에는 Vercel MCP, Supabase schema·RLS 진단에는
+project-scoped read-only Supabase MCP를 후보로 고릅니다. 현재 세션에 같은 능력이 있으면 설치하지
+않고, 단순 배포에는 기존 Vercel CLI를 그대로 씁니다. 현재 실행 중인 Codex 또는 Claude Code 한쪽만
+설정하며, MCP 등록 범위와 접근 데이터까지 준비 카드에 보여준 뒤 기존 설치 목록과 함께 한 번
+동의받아 자동 설치·인증 확인까지 이어갑니다. 로그인·OAuth consent·2FA와 계정 선택만 사용자가 합니다.
+같은 기능의 기존 MCP라도 health·scope·격리 설정이 안전하지 않으면 `EXISTING_UNSAFE`로 알리고,
+정확한 재구성 동의 없이 덮어쓰거나 사용하지 않습니다.
+
+Chrome DevTools MCP는 격리 브라우저와 사용 통계·CrUX 차단을 기본으로 하고 개인 Chrome profile에는
+별도 동의 없이 연결하지 않습니다. Supabase MCP도 개발 project ref, read-only, 최소 feature가
+확정되기 전에는 broad URL로 등록하지 않습니다.
 
 Google 계정이 여러 개 로그인되어 있으면 OAuth 승인 전에 사용할 계정을 직접 선택하게 합니다.
-GitHub 사용자, Vercel 팀, Supabase 조직도 실제 identity를 보여주고 맞는지 확인합니다.
+GitHub 사용자, Vercel 팀, Supabase 조직도 CLI와 브라우저의 실제 identity를 함께 확인합니다.
+
+## 초보자 보호장치
+
+초보자는 AI 코드가 “거의 맞는” 상태에서 디버깅 시간이 늘고, 첫 화면을 완성으로 오인하거나,
+설치 성공 여부를 판단하기 어려운 경우가 많습니다. Orange Build는 이를 줄이기 위해 다음을
+기본 게이트로 둡니다.
+
+- `SOURCE_PLAN.md`의 모든 핵심 항목을 `REQ-*`와 검증 증거에 연결
+- 한 번에 입력→처리→검토 가능한 작은 흐름 하나 구현
+- lint·typecheck·test·build·실제 URL 또는 dry-run 독립 검증
+- 같은 오류가 두 번 반복되면 재생성을 멈추고 로그·재현 조건·직전 변경 진단
+- 새 패키지의 공식 registry·유지 상태·취약점·lockfile 확인
+- 각 이정표에서 `만든 것 / 직접 확인할 행동 / 아직 안 된 것`을 쉬운 말로 안내
+
+근거와 세부 대응은 플러그인의 `beginner-guardrails.md`에 출처와 함께 포함되어 있습니다.
 
 ## 명령
 
@@ -154,4 +190,4 @@ GitHub 사용자, Vercel 팀, Supabase 조직도 실제 identity를 보여주고
 
 ## 라이선스
 
-MIT · v2.1.0
+MIT · v2.2.0

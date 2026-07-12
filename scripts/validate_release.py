@@ -10,6 +10,7 @@ from pathlib import Path
 
 from validate_interview_flow import validate_interview_flow
 from validate_plan_fixtures import validate_fixture_contracts
+from validate_preflight_fixtures import validate_preflight_fixtures
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -108,6 +109,9 @@ def validate_workflow() -> None:
         (
             "SOURCE_PLAN.md",
             "phase-interview.md",
+            "phase-preflight.md",
+            "helpful-tools.md",
+            "beginner-guardrails.md",
             "phase-build-skill.md",
             "phase-build-automation.md",
             "phase-verify.md",
@@ -116,8 +120,11 @@ def validate_workflow() -> None:
 
     refs = ROOT / "skills" / "orange-start" / "references"
     required_refs = (
+        "beginner-guardrails.md",
         "phase-interview.md",
         "phase-plan.md",
+        "phase-preflight.md",
+        "helpful-tools.md",
         "phase-connect.md",
         "phase-build.md",
         "phase-build-skill.md",
@@ -125,6 +132,7 @@ def validate_workflow() -> None:
         "phase-design.md",
         "phase-verify.md",
         "browser-steps.md",
+        "troubleshooting.md",
     )
     for filename in required_refs:
         if not (refs / filename).is_file():
@@ -138,8 +146,10 @@ def validate_workflow() -> None:
             "--private",
             "visibility",
             "node --version",
+            "process.release.lts",
             "--team",
             "rsync -a --ignore-existing",
+            "동의받지 않은 시스템·글로벌·프로젝트 설치를 실행하지 않는다",
         ),
     )
     if re.search(r"gh repo create[^\n]*--public", connect.read_text(encoding="utf-8")):
@@ -155,26 +165,54 @@ def validate_workflow() -> None:
     require_text(design, ("10분", "Do not add or remove screens"))
     verify = refs / "phase-verify.md"
     require_text(verify, ("SOURCE_PLAN.md", "N/M 통과", "PRIVATE"))
+    guardrails = refs / "beginner-guardrails.md"
+    require_text(
+        guardrails,
+        (
+            "Stack Overflow 2025",
+            "같은 오류가 두 번",
+            "USENIX Security 2025",
+            "초보자용 오류 보고",
+        ),
+    )
+    helpful_tools = refs / "helpful-tools.md"
+    require_text(
+        helpful_tools,
+        (
+            "현재 **이 세션을 실행 중인 호스트 하나만**",
+            "browser_runtime_diagnostics",
+            "npm view chrome-devtools-mcp",
+            "--isolated --no-usage-statistics --no-performance-crux",
+            "claude mcp add --scope local chrome-devtools",
+            "https://mcp.vercel.com/<team-slug>/<project-slug>",
+            "project_ref=<project-ref>&read_only=true&features=<feature-list>",
+            "EXISTING_UNSAFE",
+            "이번 실행에서 새로 만든 entry만",
+        ),
+    )
+    resume = ROOT / "skills" / "orange-resume" / "SKILL.md"
+    require_text(resume, ("phase-preflight.md", "helpful-tools.md", "phase-connect.md"))
     secure = ROOT / "skills" / "orange-secure" / "SKILL.md"
     require_text(secure, ("find supabase -type f -name '*.sql'", "6개 휴리스틱에서 문제를 찾지 못했습니다"))
 
     try:
         validate_interview_flow(emit=False)
         validate_fixture_contracts(emit=False)
+        validate_preflight_fixtures(emit=False)
     except ValueError as exc:
-        fail(f"copy-contract fixtures failed: {exc}")
+        fail(f"workflow fixtures failed: {exc}")
 
-    active_text = "\n".join(
-        path.read_text(encoding="utf-8")
-        for path in sorted((ROOT / "skills").rglob("*.md"))
-    )
+    active_paths = [ROOT / "README.md", *MANIFESTS]
+    active_paths.extend(sorted((ROOT / "skills").rglob("*.md")))
+    active_text = "\n".join(path.read_text(encoding="utf-8") for path in active_paths)
     for pattern, label in (
         (r"gh repo create[^\n]*--public", "public GitHub repository default"),
-        (r"/model sonnet", "Claude-only model command"),
+        (r"(?mi)^\s*(?:[-*]\s*)?`?/model\b", "host-specific model command"),
         (r"AskUserQuestion", "Claude-only question tool"),
         (r"Claude in Chrome", "Claude-only browser dependency"),
         (r"npm run dev \(백그라운드", "mandatory local dev server"),
         (r"(?m)^\s*git add -A(?:\s|$)", "unsafe blanket staging"),
+        (r"\bnpx\s+add-mcp\b", "multi-host MCP installer"),
     ):
         if re.search(pattern, active_text):
             fail(f"workflow regressed to {label}")

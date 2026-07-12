@@ -1,6 +1,17 @@
 # 자주 막히는 곳 — 해결 모음
 
-오류가 났을 때만 읽는다. 증상을 찾아 해결책을 따른다.
+오류가 났을 때만 읽는다. 증상을 찾아 일치하는 절만 따른다. `beginner-guardrails.md`에 따라 같은
+오류가 두 번 반복되면 새 패키지나 대규모 재작성을 멈추고 다음 네 줄을 먼저 보여준다.
+
+```text
+무슨 일: [관찰된 오류]
+가능성 높은 원인: [로그 근거가 있는 원인 하나]
+지금 할 한 동작: [가장 작은 수정 또는 확인]
+영향: [파일·데이터·비용·계정 영향]
+```
+
+직전 검증 성공 지점과 현재 diff를 보존한다. 사용자 파일을 되돌리거나 데이터·프로젝트를 삭제해
+복구하지 않는다. 수정 하나를 적용한 뒤 같은 재현 절차로 확인하고, 실패하면 다음 가설로 간다.
 
 ## env 변수가 안 읽힘 (`undefined`)
 
@@ -70,6 +81,27 @@
 증상: `gh` 또는 `vercel` 명령이 인증 오류.
 - GitHub: `gh auth login`을 다시 실행한다.
 - Vercel: `vercel login`을 다시 실행한다.
+
+## 도움 MCP·Playwright 설치 또는 로딩 실패
+
+증상: `mcp add`는 성공했는데 도구가 보이지 않거나 health/OAuth가 실패한다. Playwright browser
+다운로드가 끝나지 않거나 테스트 runner가 실행되지 않는다.
+
+- 먼저 `helpful-tools.md`의 구분대로 `설정 등록`, `인증`, `현재 세션 실제 호출` 중 어디서
+  실패했는지 확인한다. 등록 성공을 도구 사용 성공으로 간주하지 않는다.
+- 같은 이름이나 같은 능력의 기존 MCP가 있으면 덮어쓰거나 제거하지 않는다. 기존 scope와 health를
+  보여주고 안전하지 않으면 `EXISTING_UNSAFE`로 둔다. 정확한 재구성에 동의했을 때만 비밀을 제외한
+  원래 설정을 백업해 교체하고, 실패하면 그 설정으로 복원한다. 아니면 이번 후보를 건너뛴다.
+- 현재 세션이 새 MCP를 아직 로드하지 못하면 재시작 필요를 한 번만 안내한다. 그동안 기존 browser,
+  CLI, HTTP 검증으로 계속하고 `HELPFUL` 도구 때문에 구현을 멈추지 않는다.
+- 이번 실행에서 새로 만든 Codex entry만 `codex mcp remove <name>`, Claude local entry만
+  `claude mcp remove --scope local <name>`으로 되돌린다. 다른 호스트나 기존 entry는 건드리지 않는다.
+- remote MCP OAuth가 실패하면 이번 login만 logout하고 새 entry만 제거한다. 브라우저 전체 logout,
+  credential 초기화, 계정 전환으로 복구하지 않는다.
+- Playwright 설치 실패 시 기존 lockfile을 삭제하지 않는다. package와 browser download 중 어느 쪽이
+  실패했는지 확인하고, 대체 라이브 흐름 검증을 기록한 뒤 `SKIPPED`로 진행할 수 있다.
+- Chrome DevTools MCP는 개인 profile 연결로 우회하지 않는다. 격리 profile에서 실패 원인을 확인하고,
+  `--autoConnect`나 remote debugging은 별도 동의 없이는 쓰지 않는다.
 
 ## git push가 자동배포 안 됨
 
@@ -152,14 +184,17 @@
 **플랫폼 전용 바이너리**가 없다고 나온다.
 - 원인: npm의 알려진 optional dependencies 버그다 — `package-lock.json`이 있거나 캐시가
   꼬이면 현재 CPU(Apple Silicon = arm64)에 맞는 바이너리를 건너뛰고 설치한다.
-- 해결: `node_modules`와 lock 파일을 지우고 **완전히 다시 설치**한다.
+- 해결 전에 현재 lockfile 변경과 사용자 미커밋 작업을 확인한다. `node_modules` 재생성은 안전하지만
+  lockfile 삭제는 의존성 버전을 바꿀 수 있으므로 영향과 재생성 계획을 설명하고 사용자 확인을 받는다.
+  확인 뒤 `node_modules`와 lock 파일을 지우고 **완전히 다시 설치**한다.
 
   ```bash
   rm -rf node_modules package-lock.json
   npm install
   ```
 
-- 그래도 같으면 npm 캐시를 비우고 다시: `npm cache clean --force && npm install`.
+- 그래도 같으면 캐시 삭제의 전역 영향을 설명하고 확인받은 뒤에만
+  `npm cache clean --force && npm install`을 실행한다.
 
 ## create-next-app이 멈춤 ("directory contains files")
 
