@@ -1,0 +1,146 @@
+{
+  "guided-new-web-implement": {
+    "input": {
+      "existing_project": false,
+      "request_kind": "implement",
+      "deliverable_kind": "web_app",
+      "has_remote": false,
+      "has_deploy_path": false,
+      "missing_prerequisites": true,
+      "explicit_no_deploy": false,
+      "explicit_no_commit": false
+    },
+    "expected": {
+      "profile": "guided",
+      "intent": "implement_and_release",
+      "preflight": "full",
+      "reporting": "guided_milestones",
+      "use_existing_commands": false,
+      "create_repository": true,
+      "commit_push": true,
+      "deploy_or_activate": true,
+      "create_deploy_project": true,
+      "release_evidence": "production_url"
+    }
+  },
+  "adaptive-existing-web-ready": {
+    "input": {
+      "existing_project": true,
+      "request_kind": "implement",
+      "deliverable_kind": "web_app",
+      "has_remote": true,
+      "has_deploy_path": true,
+      "missing_prerequisites": false,
+      "explicit_no_deploy": false,
+      "explicit_no_commit": false
+    },
+    "expected": {
+      "profile": "adaptive",
+      "intent": "implement_and_release",
+      "preflight": "silent_ready",
+      "reporting": "adaptive_compact",
+      "use_existing_commands": true,
+      "create_repository": false,
+      "commit_push": true,
+      "deploy_or_activate": true,
+      "create_deploy_project": false,
+      "release_evidence": "production_url"
+    }
+  },
+  "adaptive-existing-missing-tool": {
+    "input": {
+      "existing_project": true,
+      "request_kind": "implement",
+      "deliverable_kind": "web_app",
+      "has_remote": true,
+      "has_deploy_path": true,
+      "missing_prerequisites": true,
+      "explicit_no_deploy": false,
+      "explicit_no_commit": false
+    },
+    "expected": {
+      "profile": "adaptive",
+      "intent": "implement_and_release",
+      "preflight": "delta_only",
+      "reporting": "adaptive_compact",
+      "use_existing_commands": true,
+      "create_repository": false,
+      "commit_push": true,
+      "deploy_or_activate": true,
+      "create_deploy_project": false,
+      "release_evidence": "production_url"
+    }
+  },
+  "adaptive-plan-only": {
+    "input": {
+      "existing_project": true,
+      "request_kind": "plan",
+      "deliverable_kind": "automation",
+      "has_remote": true,
+      "has_deploy_path": true,
+      "missing_prerequisites": false,
+      "explicit_no_deploy": false,
+      "explicit_no_commit": false
+    },
+    "expected": {
+      "profile": "adaptive",
+      "intent": "plan_only",
+      "preflight": "silent_ready",
+      "reporting": "adaptive_compact",
+      "use_existing_commands": true,
+      "create_repository": false,
+      "commit_push": false,
+      "deploy_or_activate": false,
+      "create_deploy_project": false,
+      "release_evidence": "none"
+    }
+  },
+  "adaptive-verify-only": {
+    "input": {
+      "existing_project": true,
+      "request_kind": "verify",
+      "deliverable_kind": "ai_skill",
+      "has_remote": true,
+      "has_deploy_path": false,
+      "missing_prerequisites": false,
+      "explicit_no_deploy": false,
+      "explicit_no_commit": false
+    },
+    "expected": {
+      "profile": "adaptive",
+      "intent": "verify_only",
+      "preflight": "silent_ready",
+      "reporting": "adaptive_compact",
+      "use_existing_commands": true,
+      "create_repository": false,
+      "commit_push": false,
+      "deploy_or_activate": false,
+      "create_deploy_project": false,
+      "release_evidence": "verification_report"
+    }
+  },
+  "guided-implement-explicit-no-deploy": {
+    "input": {
+      "existing_project": false,
+      "request_kind": "implement",
+      "deliverable_kind": "web_app",
+      "has_remote": false,
+      "has_deploy_path": false,
+      "missing_prerequisites": false,
+      "explicit_no_deploy": true,
+      "explicit_no_commit": false
+    },
+    "expected": {
+      "profile": "guided",
+      "intent": "implement_and_release",
+      "preflight": "full",
+      "reporting": "guided_milestones",
+      "use_existing_commands": false,
+      "create_repository": true,
+      "commit_push": true,
+      "deploy_or_activate": false,
+      "create_deploy_project": false,
+      "release_evidence": "blocked_by_explicit_constraint"
+    }
+  }
+}

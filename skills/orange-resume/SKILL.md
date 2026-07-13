@@ -12,7 +12,8 @@ description: Orange Build로 진행 중인 웹앱·AI 작업 스킬·자동화 �
 
 다음만 읽어 빠르게 파악한다.
 
-- `PLAN.md` 전체: 결과물 유형, REQ 상태, TEST-01~03 상태, 결과물 수량, 변경 기록, 검증 증거
+- `PLAN.md` 전체: 결과물 유형, `execution_profile`, `delivery_intent`, REQ 상태, TEST-01~03 상태,
+  결과물 수량, 변경 기록, 검증 증거
 - `SOURCE_PLAN.md`: PLAN 추적표에 누락 의심이 있을 때만 관련 절 확인
 - `MEMORY.md`: 마지막 1~2개 항목
 - `git status --short --branch`
@@ -35,7 +36,7 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
    직접 확인: [TESTED 수]/[전체 TEST 수]
    다음: [가장 앞선 TODO/FAIL REQ와 완료 조건]
    결과: [라이브 URL / 대표 스킬 결과 / 최근 run id / 아직 없음]
-   저장소: [PRIVATE 확인 / 확인 필요]
+   저장소: [PUBLIC 확인 / 승인된 PRIVATE / 확인 필요]
 ```
 
 `MEMORY.md`의 마지막 결정이나 blocker가 있으면 한 줄 덧붙인다. 테스트가 실패했거나 증거가
@@ -57,7 +58,8 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 - 모든 REQ 구현, 최종 검증 미완료 → `../orange-start/references/phase-verify.md`
 
 현황만 말하고 끝내지 않는다. 사용자가 단순 상태 조회만 요청한 것이 아니라면 해당 파일을 읽고
-다음 미완료 요구사항부터 바로 이어간다.
+다음 미완료 요구사항부터 바로 이어간다. `implement_and_release`면 로컬 구현 이후에도 결과물별
+배포·활성화와 원격 push 완료 조건까지 계속한다.
 
 ## 4. 기록
 

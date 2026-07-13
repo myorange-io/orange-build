@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from validate_app_return import validate_app_return
+from validate_execution_profiles import validate_execution_profiles
 from validate_interview_flow import validate_interview_flow
 from validate_plan_fixtures import validate_fixture_contracts
 from validate_preflight_fixtures import validate_preflight_fixtures
@@ -123,6 +124,7 @@ def validate_workflow() -> None:
     refs = ROOT / "skills" / "orange-start" / "references"
     required_refs = (
         "beginner-guardrails.md",
+        "execution-profiles.md",
         "phase-interview.md",
         "phase-plan.md",
         "phase-preflight.md",
@@ -146,8 +148,9 @@ def validate_workflow() -> None:
         connect,
         (
             "<github-owner>/<slug>",
-            "--private",
+            "--public",
             "visibility",
+            "사용자에게 확인받고 `--private`",
             "node --version",
             "process.release.lts",
             "--team",
@@ -155,8 +158,8 @@ def validate_workflow() -> None:
             "동의받지 않은 시스템·글로벌·프로젝트 설치를 실행하지 않는다",
         ),
     )
-    if re.search(r"gh repo create[^\n]*--public", connect.read_text(encoding="utf-8")):
-        fail("phase-connect.md creates a public GitHub repository")
+    if not re.search(r"gh repo create[^\n]*--public", connect.read_text(encoding="utf-8")):
+        fail("phase-connect.md does not create a public GitHub repository by default")
 
     verification = refs / "verification-loop.md"
     require_text(
@@ -183,6 +186,8 @@ def validate_workflow() -> None:
             "TEST 항목이 없는 기존 v2",
             "v1/legacy",
             "공개·비공개 경계",
+            "execution_profile",
+            "delivery_intent",
         ),
     )
     web = refs / "phase-build.md"
@@ -208,7 +213,7 @@ def validate_workflow() -> None:
         (
             "SOURCE_PLAN.md",
             "N/M 통과",
-            "PRIVATE",
+            "기본 visibility는 `PUBLIC`",
             "독립 완료 리뷰",
             "아직 증명하지 못한 것",
             "명시적 동의",
@@ -219,7 +224,7 @@ def validate_workflow() -> None:
     preflight = refs / "phase-preflight.md"
     require_text(
         preflight,
-        ("지금 할 한 동작", "완료 신호", "제가 이어서 할 일", "남은 단계"),
+        ("지금 할 한 동작", "완료 신호", "제가 이어서 할 일", "남은 단계", "변경분 준비 카드"),
     )
     browser_steps = refs / "browser-steps.md"
     require_text(
@@ -263,6 +268,7 @@ def validate_workflow() -> None:
 
     try:
         validate_app_return(emit=False)
+        validate_execution_profiles(emit=False)
         validate_interview_flow(emit=False)
         validate_fixture_contracts(emit=False)
         validate_preflight_fixtures(emit=False)
@@ -273,7 +279,7 @@ def validate_workflow() -> None:
     active_paths.extend(sorted((ROOT / "skills").rglob("*.md")))
     active_text = "\n".join(path.read_text(encoding="utf-8") for path in active_paths)
     for pattern, label in (
-        (r"gh repo create[^\n]*--public", "public GitHub repository default"),
+        (r"gh repo create[^\n]*--private", "private GitHub repository default"),
         (r"(?mi)^\s*(?:[-*]\s*)?`?/model\b", "host-specific model command"),
         (r"AskUserQuestion", "Claude-only question tool"),
         (r"Claude in Chrome", "Claude-only browser dependency"),

@@ -1,6 +1,6 @@
 ---
 name: orange-start
-description: Orange Build 앱에서 복사한 기획서를 구현하거나, 기획서 없이 호출하면 앱과 같은 질문 흐름으로 기획서부터 만든 뒤 Codex 또는 Claude Code에서 실제 결과물로 끝까지 구현한다. 기획서에서 필요한 설치·가입·계정·브라우저 세팅과 Chrome DevTools MCP 같은 도움 도구를 먼저 판정하고, 동의받은 설치와 설정을 최대한 대신하며, 웹앱·AI 작업 스킬·자동화의 요구사항 추적·첫 작동 결과·최종 검증까지 진행한다. "오렌지 빌드 시작", "이 기획서 구현해줘", "바이브코딩 이어서", "orange-start" 같은 요청에 사용한다.
+description: Orange Build 앱에서 복사한 기획서를 구현하거나, 기획서 없이 호출하면 앱과 같은 질문 흐름으로 기획서부터 만든 뒤 Codex 또는 Claude Code에서 실제 결과물로 끝까지 구현·배포한다. 새 프로젝트는 guided, 기존 프로젝트는 adaptive로 진행해 준비된 환경을 반복 설명하지 않으며, 필요한 설치·가입·계정·브라우저 세팅과 도움 도구를 판정하고 웹앱·AI 작업 스킬·자동화의 요구사항 추적·첫 작동 결과·최종 검증까지 진행한다. "오렌지 빌드 시작", "이 기획서 구현해줘", "바이브코딩 이어서", "orange-start" 같은 요청에 사용한다.
 ---
 
 # Orange Build — Start
@@ -27,11 +27,13 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
   이를 묻기 위한 질문은 추가하지 않는다.
 - 특정 모델이나 모델 변경 명령을 권하지 않는다. Codex·Claude Code에서 사용자가 현재 선택한
   모델과 호스트 기본값을 그대로 사용한다.
+- 가장 먼저 `execution-profiles.md`로 `guided | adaptive`와 완료 의도를 판정한다. 사용자의 숙련도를
+  묻지 않으며, `구현해줘`는 결과물별 구현·검증·commit·push·배포 또는 활성화까지 끝내라는 뜻이다.
 - 구현 전에 `phase-preflight.md`로 필요한 설치·가입·계정·브라우저 세팅을 먼저 보여준다.
   `helpful-tools.md`로 현재 호스트의 능력을 조사해 Chrome DevTools MCP 같은 도움 도구도 기획서에
   필요하고 중복이 아닐 때만 고른다. 설치는 정확한 변경 목록에 동의받은 뒤 대신하고,
   가입·본인확인만 사용자에게 요청한다.
-- 새 GitHub 저장소는 **항상 비공개**로 만들고 생성 직후 실제 visibility를 확인한다.
+- 새 GitHub 저장소는 **기본으로 공개**로 만들고 생성 직후 실제 visibility를 확인한다. 기획서에 비공개가 필요하거나 개인정보·비밀값 위험이 있으면 생성 전에 사용자와 공개 범위를 확인한다.
 - 단계 보고 후 자동으로 다음 단계로 이어간다. 사용자 선택·인증·권한이 꼭 필요한 경우에만
   멈춘다.
 
@@ -56,16 +58,17 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 
 한 번에 필요한 파일만 읽는다.
 
-1. **입력 경로 선택**
+1. **실행 프로필·완료 의도** — `references/execution-profiles.md`
+2. **입력 경로 선택**
    - 복사한 기획서 있음 → `references/phase-plan.md`
    - 복사한 기획서 없음 → `references/phase-interview.md` → `references/phase-plan.md`
-2. **기획서 기반 사전 준비** — `references/phase-preflight.md` + `references/helpful-tools.md`
-3. **환경·계정·비공개 저장소** — `references/phase-connect.md`
-4. **결과물별 구현**
+3. **기획서 기반 사전 준비** — `references/phase-preflight.md` + `references/helpful-tools.md`
+4. **환경·계정·GitHub 저장소** — `references/phase-connect.md`
+5. **결과물별 구현**
    - `web_app` → `references/phase-build.md`
    - `ai_skill` → `references/phase-build-skill.md`
    - `automation` → `references/phase-build-automation.md`
-5. **전체 대조 검증** — `references/phase-verify.md`
+6. **전체 대조 검증과 릴리스** — `references/phase-verify.md`
 
 계획·구현·최종 검증에서 공통으로 쓰는 TEST 매핑, 결과물 수량 대조, 증거 등급은
 `references/verification-loop.md`를 따른다.
@@ -75,12 +78,15 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 
 ## 단계 완료 보고
 
-각 단계가 실제로 끝났을 때만 다음 형식으로 짧게 알린다.
+`guided`는 주요 이정표가 실제로 끝났을 때만 다음 형식으로 짧게 알린다.
 
 ```text
 ✅ [단계] 완료 — [확인한 증거]
 다음: [바로 이어서 할 일]
 ```
+
+`adaptive`는 시작 요약, 실제 사용자 동작이 필요한 blocker, 첫 작동 결과, 최종 결과만 알리고
+내부 단계별 완료 보고는 생략한다.
 
 사용량이나 시간이 부족하면 현재 파일과 체크리스트를 같은 커밋에 저장하고, 다음에
 `orange-resume`을 호출하면 이어갈 수 있다고 알린다.
@@ -111,3 +117,5 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
   `N/M 통과`와 남은 일을 밝힌 뒤 계속 고친다.
 - **눈으로 보이는 증거까지** — 테스트 명령의 종료 코드만 보지 않고, 입력이 처리 경계를 지나
   사용자가 보는 결과가 되는지 확인한다. 추론만 한 항목은 통과로 세지 않는다.
+- **기존 프로젝트 우선** — `adaptive`에서는 기존 지침·검증 명령·CI·배포 설정을 먼저 사용한다.
+  기존 원격과 배포 경로가 있으면 새 저장소나 Vercel 프로젝트를 만들지 않는다.

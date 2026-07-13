@@ -97,7 +97,8 @@
 | 단계 | 스킬 | 남길 것 |
 |------|------|---------|
 | 기획서 가져오기 | orange-start / phase-plan | 원본 보존·유형 선택·REQ 매핑과 가정 |
-| 환경·계정 | orange-start / phase-connect | 런타임·계정 scope·비공개 저장소를 어떻게 확인했고 무엇이 막혔는지 |
+| 실행 방식 | orange-start / execution-profiles | guided/adaptive 판정과 구현·계획·검증 완료 의도 |
+| 환경·계정 | orange-start / phase-connect | 런타임·계정 scope·GitHub 저장소 visibility를 어떻게 확인했고 무엇이 막혔는지 |
 | 구현 | 결과물별 phase-build | 웹앱 흐름·스킬 호출·자동화 run 중 해당 결과의 핵심 결정과 막힘 |
 | 최종 검증 | orange-start / phase-verify | 원본 대비 PASS 수, 보강한 누락, 남은 위험 |
 | 이어가기 | orange-resume | 어디서 왜 멈췄고, 돌아와 무엇부터 어떻게 이었는지 |
@@ -109,7 +110,7 @@
 
 ```markdown
 ### 2026-05-30 환경·계정
-- 정한 것: 웹앱 배포 계정과 비공개 저장소를 연결했다.
+- 정한 것: 웹앱 배포 계정과 공개 저장소를 연결했다.
 - 막힌 점: 로그인 계정이 달랐는데 해결함.
 ```
 

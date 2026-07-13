@@ -1,7 +1,7 @@
-# 환경·계정·비공개 저장소 준비
+# 환경·계정·GitHub 저장소 준비
 
 목표: `phase-preflight.md`의 준비 카드와 설치 동의 범위 안에서 필요한 도구만 준비하고, 사용할
-계정을 확인한 뒤 비공개 GitHub 저장소를 만든다. `helpful-tools.md`에서 고른 도움 도구도 현재
+계정을 확인한 뒤 기본 공개 GitHub 저장소를 만든다. `helpful-tools.md`에서 고른 도움 도구도 현재
 호스트 하나에만 준비한다. 웹앱이라고 해서 Supabase를, 스킬이라고 해서 Node.js나 MCP를 무조건
 설치하지 않는다.
 
@@ -16,8 +16,11 @@ git remote -v
 ```
 
 - 기존 파일·변경·원격이 있으면 재사용한다. 사용자 변경을 덮어쓰거나 정리하지 않는다.
-- 기존 GitHub 저장소가 공개라면 **자동으로 visibility를 바꾸지 않는다**. 현재 상태와 비공개 전환
-  영향을 알리고 확인받는다.
+- `adaptive`면 `execution-profiles.md`에 따라 프로젝트의 `AGENTS.md`, `CLAUDE.md`, README,
+  package·runtime 설정, CI와 배포 설정을 먼저 읽는다. 기존 명령과 배포 경로가 Orange Build의
+  새 프로젝트 기본값보다 우선한다.
+- 기존 GitHub 저장소의 visibility는 **자동으로 바꾸지 않는다**. 현재 상태와 변경 영향을 알리고
+  확인받는다.
 - `SOURCE_PLAN.md`와 `PLAN.md`가 git에 들어가도 되는지 개인정보·비밀값을 먼저 살핀다. 실제 고객
   데이터, 토큰, 비밀번호가 있으면 제거하거나 예시값으로 바꾼다.
 - 커밋할 때 전체 파일 일괄 stage를 하지 않는다. `git status --short`로 이번 단계가 만든 파일을 가려내고,
@@ -205,9 +208,9 @@ Orange Build 프로젝트다. `SOURCE_PLAN.md`는 원본, `PLAN.md`는 실행 �
 아직 특정 프레임워크를 만들지 않는다. 트리거와 배포 위치를 `PLAN.md`에서 확인하고
 `phase-build-automation.md`가 가장 작은 실행 구조를 만들게 한다.
 
-## 5. 비공개 GitHub 저장소
+## 5. GitHub 저장소
 
-새 저장소면 기술 이름 slug를 사용한다. 3단계에서 고른 GitHub 사용자 또는 조직을
+Git 원격이 없는 새 저장소만 기술 이름 slug를 사용한다. 3단계에서 고른 GitHub 사용자 또는 조직을
 `<github-owner>`로 명시한다. owner를 생략해 CLI 기본 계정에 만들지 않는다.
 
 ```bash
@@ -216,22 +219,27 @@ git add -- SOURCE_PLAN.md PLAN.md MEMORY.md
 # 생성한 프로젝트 파일은 git status에서 확인한 정확한 경로만 추가한다.
 git diff --cached --name-only
 git commit -m "기획서와 구현 계약"
-gh repo create <github-owner>/<slug> --private --source=. --remote=origin --push
+gh repo create <github-owner>/<slug> --public --source=. --remote=origin --push
 gh repo view --json visibility,url --jq '"\(.visibility) \(.url)"'
 ```
 
-출력이 반드시 `PRIVATE`여야 한다. 새로 만든 저장소가 아니라면 `gh repo view`로 기존 visibility를
-확인하고, 공개 저장소를 비공개로 바꾸기 전에는 사용자 확인을 받는다.
+출력이 기본적으로 `PUBLIC`인지 확인한다. 기획서에 비공개가 필요하거나 개인정보·비밀값 위험이
+있으면 생성 전에 사용자에게 확인받고 `--private`로 만든다. 새로 만든 저장소가 아니라면
+`gh repo view`로 기존 visibility를 확인하며, visibility 변경은 항상 사용자 확인 후에만 한다.
 
-`PLAN.md`의 `비공개 GitHub 저장소`를 체크하고 GitHub URL을 `검증 증거`에 남긴다. visibility
+`PLAN.md`의 `GitHub 저장소`를 체크하고 GitHub URL을 `검증 증거`에 남긴다. visibility
 확인과 체크 변경을 같은 커밋으로 push한다.
+
+기존 원격이 있으면 `gh repo create`를 실행하지 않는다. 현재 원격 URL·visibility·push 권한을
+확인하고 그대로 사용한다.
 
 ## 6. 웹앱 배포 연결
 
 `web_app`만 실행한다. 첫 화면을 localhost에 띄우지 않고, 첫 완결 흐름을 만든 뒤 즉시
 프로덕션 배포할 수 있도록 연결만 준비한다.
 
-개인 scope면 `vercel link --yes --project <slug>`를, 팀을 골랐다면 아래처럼 팀 id/slug를 명시한다.
+기존 CI·배포 설정이 있으면 그 경로를 먼저 사용한다. 배포 경로가 없을 때만 개인 scope면
+`vercel link --yes --project <slug>`를, 팀을 골랐다면 아래처럼 팀 id/slug를 명시한다.
 
 ```bash
 vercel link --yes --project <slug> --team <vercel-team-id-or-slug>
@@ -239,7 +247,7 @@ vercel git connect --yes
 ```
 
 - Vercel 프로젝트 scope가 3단계에서 확인한 사용자·팀인지 확인한다.
-- 비공개 GitHub 저장소를 쓰므로 Vercel GitHub App이 **그 저장소에 접근 가능**한지 확인한다.
+- GitHub 저장소를 쓰므로 Vercel GitHub App이 **그 저장소에 접근 가능**한지 확인한다.
   브라우저 작업은 `browser-steps.md`를 따른다.
 - 이 단계에서는 빈 앱을 보여주기 위한 `npm run dev`를 실행하지 않는다.
 - 실제 `vercel --prod`와 URL 전달은 `phase-build.md`의 첫 완결 흐름 직후 한다.
@@ -278,7 +286,7 @@ Google OAuth 로그인이 있는 앱이면 Google 계정·OAuth 프로젝트·re
 
 `PLAN.md`의 `사전 준비 안내`와 `환경·계정 확인`을 체크하고, 확인한 **계정 이름이 아니라 확인
 절차와 선택한 scope**, 설치 동의 범위, 설치한 도구, 도움 도구의 `READY | EQUIVALENT | SKIPPED`
-상태와 실제 호출 또는 대체 검증, 비공개 저장소 검증을 `MEMORY.md`에 기록한다. 개인 이메일과 토큰은
+상태와 실제 호출 또는 대체 검증, GitHub 저장소 visibility 검증을 `MEMORY.md`에 기록한다. 개인 이메일과 토큰은
 기록하지 않는다.
 
 변경된 계획·설정·체크 상태를 한 커밋에 담아 push한다.
@@ -287,9 +295,10 @@ Google OAuth 로그인이 있는 앱이면 Google 계정·OAuth 프로젝트·re
 `git diff --cached --name-only`로 확인한 뒤 commit한다.
 
 ```bash
-git commit -m "환경과 비공개 저장소 준비"
+git commit -m "환경과 GitHub 저장소 준비"
 git push
 ```
 
-`✅ 준비 완료 — 비공개 저장소와 실행 환경을 확인했습니다.`라고 알리고 결과물 유형에 맞는 구현
+`guided`면 `✅ 준비 완료 — GitHub 저장소와 실행 환경을 확인했습니다.`라고 알린다. `adaptive`면
+사용자 동작이나 변경분이 없을 때 내부 보고를 생략한다. 두 프로필 모두 결과물 유형에 맞는 구현
 파일로 바로 이어간다.

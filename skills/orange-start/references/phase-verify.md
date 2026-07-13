@@ -148,13 +148,18 @@ git status --short
 git log -5 --oneline
 ```
 
-- GitHub visibility는 `PRIVATE`여야 한다. 기존 공개 저장소를 사용하기로 명시한 예외만 변경 기록에 둔다.
+- 새 GitHub 저장소의 기본 visibility는 `PUBLIC`이어야 한다. 기획서에 비공개가 필요하거나 개인정보·비밀값 위험으로 `PRIVATE`를 선택했다면 사용자 확인과 이유가 변경 기록에 있어야 한다. 기존 저장소는 확인한 visibility와 사용자 결정이 일치해야 한다.
 - 비밀값·실데이터·불필요한 빌드 산출물이 추적되지 않아야 한다.
 - 코드·테스트·PLAN 상태가 서로 다른 커밋으로 어긋났으면 하나의 최종 정리 커밋으로 맞춘다.
 
 ## 6. 정직한 완료 판정
 
 필수 REQ 수와 PASS 수, 원본·파생 TEST 수와 `TESTED` 수를 각각 센다.
+
+`delivery_intent`가 `implement_and_release`면 로컬 구현·build만으로 완료하지 않는다. 웹앱은 실제
+production URL, AI 스킬은 commit·push와 계획된 설치 대상의 새 컨텍스트 호출, 자동화는 승인된
+live-run·트리거·결과 재조회가 있어야 한다. 사용자 권한이나 외부 장애가 남으면 한 동작을 요청하고
+해결 뒤 같은 완료 게이트로 자동 재개한다.
 
 - REQ와 TEST가 모두 PASS이고 P0/P1 없음: `PLAN.md`의 `최종 검증`을 체크하고 완료
 - 일부 `FAIL | NOT_RUN | PARTIAL | INFERRED`: 완료라 하지 말고 REQ `N/M 통과`, TEST `T/K`와 남은 ID를
@@ -196,7 +201,7 @@ URL을 기획서에서 추측하지 않는다. 연결된 브라우저에 해당 
 ```text
 ✅ Orange Build 완료 — M/M 요구사항 PASS · T/K TEST TESTED
 - 결과물: [라이브 URL / 대표 스킬 호출 결과 / 자동화 run id]
-- GitHub: [PRIVATE 저장소 URL]
+- GitHub: [PUBLIC / 승인된 PRIVATE 저장소 URL]
 - 검증: [핵심 검증 2~4개]
 - 아직 증명하지 못한 것: [없음 / TEST·REQ·P2/P3와 이유]
 - 다음 버전: [원본 제외 범위]

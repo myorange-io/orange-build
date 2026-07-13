@@ -3,6 +3,10 @@
 목표: `PLAN.md`의 반복 작업을 Codex와 Claude Code가 모두 읽을 수 있는 작고 검증 가능한 스킬로
 만든다. 설명문만 작성하고 끝내지 않고, 실제 예시 입력으로 호출 결과까지 확인한다.
 
+`delivery_intent`가 `implement_and_release`면 실제 호출 확인에서 멈추지 않는다. 정확한 파일을
+commit·push하고, 기획서에 marketplace·설치 대상이 있으면 그 대상에서 새 컨텍스트 호출까지
+확인해야 완료다.
+
 시작할 때 `verification-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ 연결과 결과물 인벤토리를
 구현 순서와 완료 증거의 기준으로 삼는다.
 

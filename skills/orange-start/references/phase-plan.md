@@ -180,6 +180,8 @@ TEST 항목이 없는 기존 v2는 `verification-loop.md`에 따라 추가 질�
 - contract_version: 2
 - deliverable_kind: `web_app | ai_skill | automation`
 - 결과물 유형: `web_app | ai_skill | automation`
+- execution_profile: `guided | adaptive`
+- delivery_intent: `implement_and_release | plan_only | verify_only`
 - 기술 이름(slug): `[ascii-kebab-case]`
 
 ## 원본 목표
@@ -256,7 +258,7 @@ SKIPPED | FAILED`로 관리한다.
 - [ ] 구현 계약 검증
 - [ ] 사전 준비 안내
 - [ ] 환경·계정 확인
-- [ ] 비공개 GitHub 저장소
+- [ ] GitHub 저장소
 - [ ] 첫 작동 결과
 - [ ] 전체 요구사항 구현
 - [ ] 최종 검증
@@ -278,11 +280,12 @@ SKIPPED | FAILED`로 관리한다.
 - 모든 TEST가 하나 이상의 REQ에, 모든 REQ가 TEST 또는 보조 검증에 연결됐다.
 - 결과물 인벤토리에 원본이 약속한 경로·파일·출력·트리거의 예상 목록과 수량이 있다.
 - 결과물 유형이 하나로 확정됐다.
+- `execution_profile`과 `delivery_intent`가 `execution-profiles.md` 규칙으로 확정됐다.
 - 유형별 필수 설계가 채워졌다.
 - 제외 범위를 넓혔다면 사용자의 명시적 결정과 이유가 `변경 기록`에 있다.
 
 `MEMORY.md`를 만들거나 기존 파일에 `기획서 가져오기` 항목을 덧붙여 유형 선택과 주요 가정을
 기록한다. 아직 저장소가 없다면 커밋은 다음 단계에서 함께 한다.
 
-`✅ 기획서 가져오기 완료 — 원본 N개 항목을 요구사항 M개에 연결했습니다.`라고 알리고,
-멈추지 말고 `phase-preflight.md`로 이어간다.
+`guided`면 `✅ 기획서 가져오기 완료 — 원본 N개 항목을 요구사항 M개에 연결했습니다.`라고 알린다.
+`adaptive`면 내부 보고를 생략한다. 두 프로필 모두 멈추지 말고 `phase-preflight.md`로 이어간다.

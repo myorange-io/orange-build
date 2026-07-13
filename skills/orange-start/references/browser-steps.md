@@ -99,12 +99,12 @@ CLI가 device login 또는 브라우저 OAuth를 열면:
 
 브라우저에서 성공 메시지가 나왔다는 이유만으로 끝내지 않는다.
 
-## 5. Vercel GitHub App과 비공개 저장소
+## 5. Vercel GitHub App과 GitHub 저장소
 
 `https://github.com/apps/vercel`에서 Install 또는 Configure를 연다.
 
 - Vercel에 연결할 GitHub owner가 3단계에서 확인한 계정인지 본다.
-- 저장소 접근은 가능하면 **Only select repositories**로 두고 이번 PRIVATE 저장소를 포함한다.
+- 저장소 접근은 가능하면 **Only select repositories**로 두고 이번 저장소를 포함한다.
 - 저장 후 `vercel git connect --yes`를 다시 실행하고, push 뒤 실제 배포가 생기는지 확인한다.
 - 다른 GitHub 계정의 App을 설치해 놓고 현재 저장소 권한이 없는 경우가 흔하므로 설치 여부만 보지
   말고 저장소 이름까지 확인한다.

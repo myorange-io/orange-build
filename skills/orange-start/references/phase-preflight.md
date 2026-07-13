@@ -5,6 +5,10 @@
 받아 실행 계획을 확정한다. 실제 설치·인증·identity 검증은 바로 이어지는 `phase-connect.md`에서
 자동으로 수행한다.
 
+먼저 `execution-profiles.md`의 프로필을 적용한다. `guided`는 아래 전체 준비 카드를 보여준다.
+`adaptive`는 읽기 전용 확인에서 모두 준비됐으면 카드를 생략하고, 실제 누락·권한·안전하지 않은
+설정만 **변경분 준비 카드**로 보여준 뒤 기존 프로젝트의 첫 REQ로 바로 이어간다.
+
 ## 1. 준비물 추론
 
 기획서의 결과물 유형, 사용자 흐름, 데이터, 로그인, 외부 연동, 배포 위치를 읽고 필요한 항목만
@@ -37,9 +41,10 @@
 후보로 두며, Codex와 Claude Code 양쪽을 한꺼번에 설정하지 않는다. `HELPFUL`과 기획서 완료 증거에
 꼭 필요한 `REQUIRED`를 구분한다.
 
-## 2. 준비 카드 먼저 보여주기
+## 2. 필요한 경우 준비 카드 보여주기
 
-설치나 브라우저 이동 전에 상태를 읽기 전용으로 확인하고 아래 형식으로 한 번에 알린다.
+설치나 브라우저 이동 전에 상태를 읽기 전용으로 확인한다. `guided`, 또는 `adaptive`에서 실제 변경이
+필요할 때만 아래 형식으로 한 번에 알린다.
 
 ```text
 시작 전 준비 카드
@@ -106,7 +111,7 @@ identity 검증까지 통과하면 `READY`로 바꾼다. 필수 항목에 `MISSI
 
 | 서비스 | 공식 시작점 | 사용자에게 맡길 일 | 에이전트가 이어서 할 일 |
 |---|---|---|---|
-| GitHub | `https://github.com/signup` | 계정 생성, 이메일 확인, 2FA | `gh auth login`, owner 확인, PRIVATE repo |
+| GitHub | `https://github.com/signup` | 계정 생성, 이메일 확인, 2FA | `gh auth login`, owner 확인, 기본 PUBLIC repo |
 | Vercel | `https://vercel.com/signup` | 가입·로그인·본인확인 | CLI device login, team/project, GitHub App |
 | Supabase | `https://supabase.com/dashboard/sign-up` | 가입·로그인·본인확인 | organization/project, CLI link, RLS |
 | Google | `https://accounts.google.com/` | 계정 선택, 로그인, 2FA, consent | Cloud project·OAuth·redirect URL 설정 |
@@ -147,9 +152,10 @@ console·network·performance 능력이 없을 때만 동의받은 Chrome DevToo
 - project ref가 필요한 Supabase MCP는 broad URL로 먼저 등록하지 않고 `WAITING_FOR_SCOPE`다.
 - 아직 실행하지 않은 설치·인증·브라우저 세팅을 `READY`나 완료로 표시하지 않았다.
 
-`PLAN.md`의 `사전 준비 안내`를 체크한 뒤
+`PLAN.md`의 `사전 준비 안내`를 체크한다. `guided`면
 `✅ 사전 준비 계획 확정 — 자동 설치 [N]개, 사용자 동작 [M]개, 도움 도구 [K]개를 확인했습니다.`라고
-알리고 멈추지 말고 `phase-connect.md`에서 실제 준비를 실행한다.
+알린다. `adaptive`면 실제 변경분이나 blocker가 없을 때 내부 보고를 생략한다. 두 프로필 모두
+멈추지 말고 `phase-connect.md`에서 실제 준비를 실행한다.
 
 설치·인증 명령이 달라졌을 가능성이 있으면 실행 당일 아래 공식 문서를 다시 확인한다.
 

@@ -3,6 +3,10 @@
 목표: `PLAN.md`의 요구사항을 완결 흐름 단위로 구현하고, localhost 개발 서버 대신 첫 흐름을
 프로덕션에 바로 배포해 URL을 보여준다. 이후에도 같은 URL에서 기능을 확인한다.
 
+`adaptive`에서는 먼저 `execution-profiles.md`를 읽고 기존 framework, package script, test, CI와
+배포 경로를 사용한다. 기존 배포 경로가 있으면 아래 Vercel 명령 대신 그 프로젝트의 production
+절차로 같은 완료 증거를 만든다.
+
 시작할 때 `verification-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ 연결과 결과물 인벤토리를
 구현 순서의 기준으로 삼고, TEST의 기대 결과나 통과 증거를 구현 편의에 맞게 줄이지 않는다.
 
@@ -97,9 +101,10 @@ Stitch 파일이 없다는 이유로 경로나 기능을 빼지 않는다.
    `TESTED | PARTIAL | INFERRED` 등급을 붙인다. PASS는 명령 성공뿐 아니라 TEST의 준비와 행동을
    실제 수행해 기대 결과와 통과 증거를 관찰한 `TESTED`일 때만 쓴다.
 
-### 첫 슬라이스는 즉시 프로덕션 배포
+### 첫 슬라이스는 기존 production 경로로 즉시 배포
 
-개발 서버를 켜거나 localhost를 사용자에게 열라고 하지 않는다. production build가 통과하면:
+개발 서버를 켜거나 localhost를 사용자에게 열라고 하지 않는다. production build가 통과하면 기존
+배포 경로를 우선하고, 기존 경로가 없을 때 Vercel을 사용한다.
 
 ```bash
 git commit -m "구현: 첫 작동 흐름"

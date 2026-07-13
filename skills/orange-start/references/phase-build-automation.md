@@ -3,6 +3,9 @@
 목표: `PLAN.md`의 반복 작업을 안전하게 다시 실행할 수 있는 자동화로 만들고, dry-run·중복 방지·
 실패 기록까지 확인한다. 단순 스크립트 한 번 실행을 자동화 완성으로 부르지 않는다.
 
+`delivery_intent`가 `implement_and_release`면 dry-run에서 멈추지 않는다. 외부 쓰기는 기존 승인
+게이트를 지키되, 승인된 샘플 live-run과 선택한 트리거 활성화·최근 실행 결과 재조회까지 이어간다.
+
 시작할 때 `verification-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ 연결과 결과물 인벤토리를
 구현 순서와 완료 증거의 기준으로 삼는다.
 
@@ -93,7 +96,7 @@ README.md                실행·중지·복구 runbook
 - 먼저 `workflow_dispatch`로 수동 검증한 뒤 schedule을 켠다.
 - cron이 UTC임을 README에 적고 사용자의 시간대로 환산한 값을 확인한다.
 - workflow에는 timeout, concurrency 또는 중복 실행 방지, 최소 permissions를 둔다.
-- 저장소가 PRIVATE인지 다시 확인한다.
+- 저장소 visibility가 `PLAN.md`의 공개 범위와 일치하는지 다시 확인한다.
 
 ### Webhook
 
