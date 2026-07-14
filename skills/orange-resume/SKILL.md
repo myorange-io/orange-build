@@ -45,7 +45,12 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 ## 3. 재개 위치
 
 아래 구현·검증 파일과 함께 `../orange-start/references/verification-loop.md`의 TEST↔REQ 매핑,
-증거 등급, 결과물 수량 대조를 다시 적용한다.
+증거 등급, 결과물 수량 대조와 `../orange-start/references/self-improvement-loop.md`의 자동 수정·
+사람 결정 경계를 다시 적용한다.
+
+웹앱의 미완료 항목이 UI 용어·참고 화면·시각 QA와 관련되면
+`../orange-start/references/ui-language-and-references.md`도 읽고 기존 기준선과 채택·거절 기록을
+이어간다.
 
 - 구현 계약 미완료 → `../orange-start/references/phase-plan.md`
 - 사전 준비 안내 미완료 → `../orange-start/references/phase-preflight.md`와
@@ -59,7 +64,8 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 
 현황만 말하고 끝내지 않는다. 사용자가 단순 상태 조회만 요청한 것이 아니라면 해당 파일을 읽고
 다음 미완료 요구사항부터 바로 이어간다. `implement_and_release`면 로컬 구현 이후에도 결과물별
-배포·활성화와 원격 push 완료 조건까지 계속한다.
+배포·활성화와 원격 push 완료 조건까지 계속한다. 실패·누락이 원본 범위 안의 안전한 수정이면
+질문하지 않고 고쳐 같은 검증을 다시 실행한다.
 
 ## 4. 기록
 

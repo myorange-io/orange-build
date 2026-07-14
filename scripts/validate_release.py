@@ -9,10 +9,12 @@ import sys
 from pathlib import Path
 
 from validate_app_return import validate_app_return
+from validate_evidence_ui import validate_evidence_ui
 from validate_execution_profiles import validate_execution_profiles
 from validate_interview_flow import validate_interview_flow
 from validate_plan_fixtures import validate_fixture_contracts
 from validate_preflight_fixtures import validate_preflight_fixtures
+from validate_self_improvement import validate_self_improvement
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -117,6 +119,8 @@ def validate_workflow() -> None:
             "phase-build-skill.md",
             "phase-build-automation.md",
             "verification-loop.md",
+            "self-improvement-loop.md",
+            "ui-language-and-references.md",
             "phase-verify.md",
         ),
     )
@@ -134,6 +138,8 @@ def validate_workflow() -> None:
         "phase-build-skill.md",
         "phase-build-automation.md",
         "verification-loop.md",
+        "self-improvement-loop.md",
+        "ui-language-and-references.md",
         "phase-design.md",
         "phase-verify.md",
         "browser-steps.md",
@@ -177,6 +183,32 @@ def validate_workflow() -> None:
             "아직 증명하지 못한 것",
         ),
     )
+    self_improvement = refs / "self-improvement-loop.md"
+    require_text(
+        self_improvement,
+        (
+            "최신 고성능 모델",
+            "AI가 묻지 않고 고칠 것",
+            "사람이 결정할 것",
+            "DIAGNOSE",
+            "web_app",
+            "ai_skill",
+            "automation",
+            "후보 변경 채택 게이트",
+            "trajectory digest",
+        ),
+    )
+    ui_language = refs / "ui-language-and-references.md"
+    require_text(
+        ui_language,
+        (
+            "Name That UI",
+            "canonical UI 이름",
+            "variants가 reroll보다 먼저",
+            "functional QA와 visual QA 분리",
+            "MengTo/Skills",
+        ),
+    )
     phase_plan = refs / "phase-plan.md"
     require_text(
         phase_plan,
@@ -193,20 +225,29 @@ def validate_workflow() -> None:
     web = refs / "phase-build.md"
     require_text(
         web,
-        ("vercel --prod", "REQ-*", "phase-design.md", "TESTED", "결과물 인벤토리", "RED"),
+        (
+            "vercel --prod",
+            "REQ-*",
+            "phase-design.md",
+            "TESTED",
+            "결과물 인벤토리",
+            "RED",
+            "self-improvement-loop.md",
+            "ui-language-and-references.md",
+        ),
     )
     skill_build = refs / "phase-build-skill.md"
     require_text(
         skill_build,
-        ("스킬 이름·경로·예상 답을 알려주지 않은", "`첫 작동 결과`를 체크", "TESTED", "RED"),
+        ("스킬 이름·경로·예상 답을 알려주지 않은", "`첫 작동 결과`를 체크", "TESTED", "RED", "self-improvement-loop.md"),
     )
     automation_build = refs / "phase-build-automation.md"
     require_text(
         automation_build,
-        ("DRY_RUN_PASS", "`첫 작동 결과`를 체크", "TESTED", "RED"),
+        ("DRY_RUN_PASS", "`첫 작동 결과`를 체크", "TESTED", "RED", "self-improvement-loop.md"),
     )
     design = refs / "phase-design.md"
-    require_text(design, ("10분", "Do not add or remove screens"))
+    require_text(design, ("10분", "Do not add or remove screens", "Name That UI", "1~2개 변수"))
     verify = refs / "phase-verify.md"
     require_text(
         verify,
@@ -219,6 +260,7 @@ def validate_workflow() -> None:
             "명시적 동의",
             "orange-build-app",
             "사용할 자료·개인정보와 공개·비공개 경계",
+            "AI가 발견해 자동으로 고친 것",
         ),
     )
     preflight = refs / "phase-preflight.md"
@@ -261,17 +303,27 @@ def validate_workflow() -> None:
     resume = ROOT / "skills" / "orange-resume" / "SKILL.md"
     require_text(
         resume,
-        ("phase-preflight.md", "helpful-tools.md", "phase-connect.md", "verification-loop.md", "TESTED"),
+        (
+            "phase-preflight.md",
+            "helpful-tools.md",
+            "phase-connect.md",
+            "verification-loop.md",
+            "self-improvement-loop.md",
+            "ui-language-and-references.md",
+            "TESTED",
+        ),
     )
     secure = ROOT / "skills" / "orange-secure" / "SKILL.md"
     require_text(secure, ("find supabase -type f -name '*.sql'", "6개 휴리스틱에서 문제를 찾지 못했습니다"))
 
     try:
         validate_app_return(emit=False)
+        validate_evidence_ui(emit=False)
         validate_execution_profiles(emit=False)
         validate_interview_flow(emit=False)
         validate_fixture_contracts(emit=False)
         validate_preflight_fixtures(emit=False)
+        validate_self_improvement(emit=False)
     except ValueError as exc:
         fail(f"workflow fixtures failed: {exc}")
 

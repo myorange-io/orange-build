@@ -25,8 +25,9 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 - 앱 기획서의 `TEST-01`~`TEST-03`은 `references/verification-loop.md`에 따라 해당 `REQ-*`의
   검증 계약으로 연결한다. 구형 v2 원문에 TEST가 없으면 이미 받은 내용으로 세 가지를 파생하고
   이를 묻기 위한 질문은 추가하지 않는다.
-- 특정 모델이나 모델 변경 명령을 권하지 않는다. Codex·Claude Code에서 사용자가 현재 선택한
-  모델과 호스트 기본값을 그대로 사용한다.
+- Claude Max 또는 ChatGPT Pro에서 Codex를 쓰는 교육 환경과 현재 호스트의 최신 고성능 모델을
+  전제로 한다. 특정 모델명·모델 변경 명령은 고정하지 않고 `self-improvement-loop.md`에 따라
+  계획·도구 호출·자가 테스트·자동 수정 능력을 충분히 사용한다.
 - 가장 먼저 `execution-profiles.md`로 `guided | adaptive`와 완료 의도를 판정한다. 사용자의 숙련도를
   묻지 않으며, `구현해줘`는 결과물별 구현·검증·commit·push·배포 또는 활성화까지 끝내라는 뜻이다.
 - 구현 전에 `phase-preflight.md`로 필요한 설치·가입·계정·브라우저 세팅을 먼저 보여준다.
@@ -71,7 +72,13 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 6. **전체 대조 검증과 릴리스** — `references/phase-verify.md`
 
 계획·구현·최종 검증에서 공통으로 쓰는 TEST 매핑, 결과물 수량 대조, 증거 등급은
-`references/verification-loop.md`를 따른다.
+`references/verification-loop.md`를 따른다. 구현과 검증 중 발견한 안전한 결함은
+`references/self-improvement-loop.md`에 따라 묻지 않고 수정·재검증하며, 범위·비용·권한·삭제·
+외부 발송처럼 중요한 결정만 사람에게 돌린다.
+
+웹앱에서 사용자의 UI 표현이 모호하거나 참고 화면을 반영하거나 visual QA를 할 때만
+`references/ui-language-and-references.md`를 읽는다. Name That UI는 UI 이름과 동작을 정확히 찾는
+사전으로 사용하고, 참고 화면은 기능 범위가 아니라 layout·hierarchy·type·color의 증거로만 쓴다.
 
 웹앱의 Stitch 보정은 기본 단계가 아니다. 첫 작동 흐름을 배포해 URL을 보여준 뒤, 사용자가
 원하거나 시각성이 핵심일 때만 `references/phase-design.md`를 읽는다.
@@ -101,6 +108,9 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 - **단순한 구현, 완전한 범위** — 코드는 단순하게 만들되 계획된 기능이나 실패 처리를 생략하지 않는다.
 - **초보자 보호장치** — 계획과 구현 때 `references/beginner-guardrails.md`를 적용한다. 같은 오류가
   두 번 반복되면 새 코드 생성을 멈추고 로그·재현 조건·직전 변경부터 진단한다.
+- **자가 개선이 기본** — 첫 GREEN이나 첫 배포를 완성으로 보지 않는다. 테스트·실제 결과·원본 대조에서
+  발견한 버그와 누락은 AI가 자동으로 고치고 같은 증거를 다시 확인한다. 선택의 책임이 필요한
+  항목만 `references/self-improvement-loop.md`의 사람 결정 게이트로 보낸다.
 - **원자적 저장** — 코드·테스트·`PLAN.md` 체크 상태·`MEMORY.md`를 한 커밋에 담은 뒤 push한다.
 - **호스트 중립** — Codex에서는 현재 도구와 `AGENTS.md`, Claude Code에서는 현재 도구와
   `CLAUDE.md`를 사용한다. 특정 호스트 전용 명령이 없으면 자연어 호출로 폴백한다.

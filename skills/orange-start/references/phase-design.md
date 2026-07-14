@@ -3,6 +3,9 @@
 목표: 이미 작동하는 웹앱의 **시각 방향만** 짧게 보정한다. Stitch에서 기능·페이지·데이터를 다시
 기획하지 않는다.
 
+시작할 때 `ui-language-and-references.md`를 읽는다. UI 이름을 정확히 고정하고 참고자료를 GOAL·
+UI INVENTORY·LAYOUT·HIERARCHY·TYPE·COLOR·CONSTRAINTS로 분해한 뒤 Stitch 프롬프트에 사용한다.
+
 ## 적용 조건
 
 - `web_app`에만 적용한다.
@@ -31,6 +34,10 @@ Focus only on hierarchy, spacing, typography, color, and responsive layout.
 
 이어서 대표 화면의 실제 UI 목록과 원하는 시각 방향을 넣는다. `modern`, `clean` 같은 형용사만
 쓰지 말고 강조색·배경·밀도·참고 서비스의 어느 부분을 참고할지 구체적으로 적는다.
+
+사용자가 `팝업`, `옆에서 나오는 것`, `잠깐 뜨는 알림`처럼 말했다면 Name That UI에서 behavior가
+맞는 canonical 이름을 찾아 `modal dialog + scrim`, `drawer`, `popover`, `toast`처럼 고정한다.
+Stitch가 새 UI 패턴을 만들게 하지 말고 그 이름의 trigger·dismissal·focus 동작도 보존 목록에 넣는다.
 
 ## 2. Google 계정 확인
 
@@ -65,4 +72,5 @@ production build와 관련 테스트를 실행하고 push한 뒤 같은 프로�
 전후 차이와 유지한 기능 목록을 `MEMORY.md`에 짧게 기록한다.
 
 Stitch 결과가 기존보다 낫지 않으면 사용하지 않고 기본 디자인으로 돌아간다. 더 많은 변형을 위해
-구현을 멈추지 않는다.
+구현을 멈추지 않는다. 변경할 때는 spacing·type·accent·arrangement 중 1~2개 변수만 바꾸고 같은
+viewport·데이터·상태의 before/after와 functional regression을 비교한다.

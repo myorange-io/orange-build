@@ -6,8 +6,8 @@
 `delivery_intent`가 `implement_and_release`면 dry-run에서 멈추지 않는다. 외부 쓰기는 기존 승인
 게이트를 지키되, 승인된 샘플 live-run과 선택한 트리거 활성화·최근 실행 결과 재조회까지 이어간다.
 
-시작할 때 `verification-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ 연결과 결과물 인벤토리를
-구현 순서와 완료 증거의 기준으로 삼는다.
+시작할 때 `verification-loop.md`와 `self-improvement-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ
+연결과 결과물 인벤토리를 구현 순서와 완료 증거의 기준으로 삼는다.
 
 ## 1. 실행 계약 확인
 
@@ -126,6 +126,10 @@ README.md                실행·중지·복구 runbook
 실제 외부 변경 승인을 받지 못해 5번을 못 했다면 `DRY_RUN_PASS`이지 `PASS`가 아니다. 완성이라고
 과장하지 않고 남은 live 검증을 표시한다. 증거마다 `TESTED | PARTIAL | INFERRED` 등급을 붙이고,
 필수 TEST는 실제 트리거부터 결과 재조회까지 기대 결과를 관찰한 `TESTED`일 때만 PASS다.
+
+fixture 실패, 중복 결과, 잘못된 재시도, 로그 누락, dry-run/live 경로 불일치는 AI가 자동 수정하고
+1~4를 다시 실행한다. 외부 쓰기·트리거 활성화·권한 확대·비용·삭제는 기존 사람 승인 게이트를
+통과하기 전 실행하지 않는다.
 
 검증 뒤 결과물 인벤토리의 예상 트리거·파일·매핑·runbook·로그 수량과 실제 수량을 대조한다.
 REQ와 연결된 예상 결과물 경로에서만 placeholder, 빈 handler, 고정 성공값, no-op을 점검하고,

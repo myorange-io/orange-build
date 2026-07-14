@@ -7,8 +7,13 @@
 배포 경로를 사용한다. 기존 배포 경로가 있으면 아래 Vercel 명령 대신 그 프로젝트의 production
 절차로 같은 완료 증거를 만든다.
 
-시작할 때 `verification-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ 연결과 결과물 인벤토리를
-구현 순서의 기준으로 삼고, TEST의 기대 결과나 통과 증거를 구현 편의에 맞게 줄이지 않는다.
+시작할 때 `verification-loop.md`와 `self-improvement-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ
+연결과 결과물 인벤토리를 구현 순서의 기준으로 삼고, TEST의 기대 결과나 통과 증거를 구현 편의에
+맞게 줄이지 않는다.
+
+UI 요소를 일상어로 설명했거나 참고 화면을 반영하거나 visual QA가 필요한 경우에만
+`ui-language-and-references.md`를 함께 읽는다. canonical UI 이름과 interaction·accessibility
+acceptance check를 구현·테스트에서 같은 용어로 쓴다.
 
 ## 1. 구현 순서 만들기
 
@@ -101,6 +106,14 @@ Stitch 파일이 없다는 이유로 경로나 기능을 빼지 않는다.
    `TESTED | PARTIAL | INFERRED` 등급을 붙인다. PASS는 명령 성공뿐 아니라 TEST의 준비와 행동을
    실제 수행해 기대 결과와 통과 증거를 관찰한 `TESTED`일 때만 쓴다.
 
+가까운 검증이나 실제 브라우저 관찰에서 failing test, console·network 오류, 누락된 상태·경로,
+저장 불일치를 찾으면 승인 질문 없이 수정하고 2~6을 반복한다. 원본 범위·비용·권한·데이터·외부
+발송이 바뀌는 해결책만 사람 결정 게이트로 보낸다.
+
+각 후보는 기준선과 같은 입력·viewport·상태로 비교한다. 목표 결함이 실제로 좋아지고 보호된 REQ·
+TEST·기존 test/build가 회귀하지 않을 때만 채택한다. 동일하거나 `PARTIAL`인 후보는 버리고, 최종
+후보는 수정에 직접 쓰지 않은 인접 입력이나 상태 1개도 확인한다.
+
 ### 첫 슬라이스는 기존 production 경로로 즉시 배포
 
 개발 서버를 켜거나 localhost를 사용자에게 열라고 하지 않는다. production build가 통과하면 기존
@@ -171,8 +184,10 @@ Stitch에 빠진 화면을 `PLAN.md`에서 삭제하지 않는다.
 - [ ] 결과물 인벤토리의 예상 목록·수량과 실제 경로·흐름·연동·역할별 상태 수량이 일치한다.
 - [ ] REQ와 연결된 예상 결과물 경로에서 placeholder, 빈 handler, 고정 성공값, no-op이 없다.
 - [ ] TEST-01~03의 준비·행동을 production에서 수행하고 `TESTED` 증거를 남겼다.
+- [ ] UI가 핵심이면 functional QA와 visual QA를 분리하고 desktop/mobile 및 상호작용 뒤 상태를 확인했다.
 
-여기서 발견한 누락은 REQ 상태를 TODO/FAIL로 되돌리고 고친다. 화면이 200을 반환한다는 것만으로
+여기서 발견한 누락은 REQ 상태를 TODO/FAIL로 되돌리고 자동으로 고친 뒤 전체 점검을 다시 실행한다.
+화면이 200을 반환한다는 것만으로
 기능을 PASS 처리하지 않는다. 저장소 전체의 무관한 TODO·예제 placeholder까지 이번 결과물의
 blocker로 확장하지 않고, 점검 범위는 REQ와 결과물 인벤토리에 연결된 경로로 제한한다.
 

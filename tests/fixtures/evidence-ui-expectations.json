@@ -1,0 +1,33 @@
+{
+  "candidate_gates": {
+    "improved-tested-no-regression": {
+      "input": {"target_improved": true, "protected_regression": false, "evidence": "TESTED"},
+      "expected": "ACCEPT"
+    },
+    "equal-result": {
+      "input": {"target_improved": false, "protected_regression": false, "evidence": "TESTED"},
+      "expected": "REJECT"
+    },
+    "partial-evidence": {
+      "input": {"target_improved": true, "protected_regression": false, "evidence": "PARTIAL"},
+      "expected": "REJECT"
+    },
+    "protected-regression": {
+      "input": {"target_improved": true, "protected_regression": true, "evidence": "TESTED"},
+      "expected": "REJECT_ROLLBACK"
+    }
+  },
+  "failure_classes": {
+    "missing-rule": {"input": "missing_rule", "expected": "CONTRACT_DEFECT"},
+    "known-rule-not-followed": {"input": "known_rule_not_followed", "expected": "EXECUTION_LAPSE"},
+    "auth-required": {"input": "auth_or_external", "expected": "EXTERNAL_BLOCKER"}
+  },
+  "ui_terms": {
+    "dark-layer-behind-modal": {"input": "modal_background_layer", "expected": "scrim"},
+    "brief-save-message": {"input": "brief_nonblocking_status", "expected": "toast"},
+    "predictable-loading-shape": {"input": "predictable_loading_placeholder", "expected": "skeleton"},
+    "search-with-suggestions": {"input": "search_select_suggestions", "expected": "combobox"},
+    "no-items-guidance": {"input": "no_content_guidance", "expected": "empty_state"},
+    "three-dots-actions": {"input": "three_dots_actions", "expected": "overflow_menu"}
+  }
+}

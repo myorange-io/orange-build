@@ -11,6 +11,14 @@
 “구현해줘”라고 요청하면 로컬 코드나 build에서 멈추지 않습니다. 웹앱은 production URL, AI 작업
 스킬은 새 컨텍스트 호출과 원격 저장, 자동화는 승인된 live-run과 트리거 확인까지 완료합니다.
 
+교육 환경은 [Claude Max](https://support.anthropic.com/en/articles/11049762-choosing-a-claude-ai-plan)
+또는 [ChatGPT Pro에서 Codex](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)를
+사용하는 것처럼 반복 구현·검증을 감당할 수 있는 구독 환경을 기본 전제로 합니다. Max와 Pro는
+모델명이 아니며, Orange Build는 특정 모델명을
+고정하지 않고 현재 호스트와 계정에서 사용할 수 있는 최신 고성능 모델의 계획·도구 사용·검토 능력을
+활용합니다. 모델 선택 명령을 대신 실행하지 않으며, 제한적인 모델이 선택된 것이 분명할 때만 호스트
+설정에서 최신 고성능 모델을 고르도록 한 번 안내합니다.
+
 ## 지원 결과물
 
 | 결과물 | 첫 번째 눈에 보이는 결과 | 완료 검증 |
@@ -30,6 +38,7 @@
 → 필요한 설치·가입·브라우저 세팅 안내
 → 결과물 유형별 구현
 → 첫 작동 결과
+→ 자가 테스트 · 실제 결과 관찰 · 자동 수정
 → (웹앱만, 필요할 때) Stitch 시각 보정
 → 원본 기획서 전체 대조
 → 완료
@@ -187,6 +196,55 @@ GitHub 사용자, Vercel 팀, Supabase 조직도 CLI와 브라우저의 실제 i
 
 근거와 세부 대응은 플러그인의 `beginner-guardrails.md`에 출처와 함께 포함되어 있습니다.
 
+## AI 자가 테스트와 사람의 결정
+
+Orange Build는 첫 GREEN이나 첫 배포를 완료로 보지 않습니다. 각 REQ와 TEST마다 가장 가까운
+검증을 실행하고, 웹앱은 production URL의 실제 흐름·console·network·저장 후 재조회, AI 스킬은
+fixture와 새 컨텍스트 호출, 자동화는 dry-run·중복·재시도·결과 재조회까지 관찰합니다. 테스트 실패,
+명백한 버그, 요구사항에 적힌 경로·상태·출력 누락은 AI가 묻지 않고 수정한 뒤 같은 검증과 영향을
+받는 전체 게이트를 다시 실행합니다.
+
+사람은 중요한 결정에 집중합니다.
+
+- 제품 범위·핵심 흐름·브랜드 방향을 바꾸는 선택
+- 비용·결제·권한 확대·개인정보·공개 범위 변경
+- 삭제·마이그레이션·외부 발송·live 자동화 활성화
+- 여러 계정·team·organization·production 대상 중 선택
+- 테스트를 약화하거나 요구사항을 미완료로 남길지 결정
+
+같은 오류가 두 번 반복되면 AI는 사용자에게 넘기기 전에 진단 모드로 바꿔 로그·재현 조건·직전
+변경과 가설을 판별합니다. 계정 인증·외부 장애·사람 선택처럼 실제로 해결할 수 없는 blocker가
+확인된 때만 사용자가 할 한 동작을 요청합니다. 최종 보고에는 AI가 발견해 자동으로 고친 항목과
+사람이 결정한 항목을 나누어 보여줍니다.
+
+개선 후보는 한 번에 원인 하나와 변수 1~2개만 바꿉니다. 실행 흔적에서 마지막 정상 경계와 처음
+어긋난 경계를 찾고, 기준선보다 실제 결과가 좋아지며 기존 REQ·TEST·build가 회귀하지 않을 때만
+채택합니다. 같거나 증거가 약한 후보는 버리고, 최종 후보는 수정에 직접 사용하지 않은 인접 입력·
+상태 하나로도 확인합니다. 세션 기록만으로 Orange Build 자체 지침을 자동 변경하지 않습니다.
+
+## 정확한 UI 이름과 참고 화면 활용
+
+사용자가 “팝업 뒤의 어두운 것”, “잠깐 뜨는 알림”, “검색하면서 고르는 입력”처럼 설명하면
+[Name That UI](https://namethatui.com/)를 UI 시각 사전으로 사용해 `scrim`, `toast`, `combobox`처럼
+정확한 이름과 동작을 찾습니다. 이름은 구현·프롬프트·테스트에서 통일하고 focus, keyboard,
+dismissal, background blocking 같은 접근성 acceptance check로 연결합니다. UI 이름이 이미 명확하면
+이 단계를 드러내거나 질문하지 않습니다.
+
+참고 화면·스크린샷·Stitch 결과는 복제 대상이 아니라 layout·hierarchy·type·color·component의
+증거로 분해합니다. 기능과 UI inventory는 잠그고 spacing·type scale·accent·arrangement 중 1~2개만
+바꿔 같은 viewport·데이터·상태에서 before/after를 비교합니다. functional QA와 visual QA를 나누고
+desktop/mobile, loading·empty·error·success와 상호작용 뒤 상태까지 확인합니다.
+
+이 개선에는 다음 프로젝트의 방법을 선택적으로 반영했습니다. 별도 최적화 프레임워크나 Python
+패키지를 설치하지 않고 Orange Build의 호스트 중립 절차로 재구성했습니다.
+
+- [NousResearch/hermes-agent-self-evolution](https://github.com/NousResearch/hermes-agent-self-evolution):
+  실행 흔적 기반 원인 분석, 의미 보존, 전체 테스트·회귀 게이트
+- [microsoft/SkillOpt](https://github.com/microsoft/SkillOpt): 제한된 후보 patch, 기준선 비교,
+  validation-gated accept/reject와 거절 기록
+- [MengTo/Skills](https://github.com/MengTo/Skills): specs over vibes, screenshot evidence,
+  design-system prompt와 작은 visual iteration
+
 ## 명령
 
 | 스킬 | 하는 일 |
@@ -218,4 +276,4 @@ GitHub 사용자, Vercel 팀, Supabase 조직도 CLI와 브라우저의 실제 i
 
 ## 라이선스
 
-MIT · v2.4.0
+MIT · v2.5.0

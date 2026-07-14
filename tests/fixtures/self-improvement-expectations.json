@@ -1,0 +1,38 @@
+{
+  "failing-test-auto-repair": {
+    "input": {"signal": "test_failure", "same_failure_count": 1, "real_blocker": false},
+    "expected": {"action": "AUTO_REPAIR", "ask_user": false}
+  },
+  "requirement-gap-auto-repair": {
+    "input": {"signal": "requirement_gap", "same_failure_count": 0, "real_blocker": false},
+    "expected": {"action": "AUTO_REPAIR", "ask_user": false}
+  },
+  "ui-runtime-error-auto-repair": {
+    "input": {"signal": "runtime_error", "same_failure_count": 1, "real_blocker": false},
+    "expected": {"action": "AUTO_REPAIR", "ask_user": false}
+  },
+  "same-failure-switches-to-diagnosis": {
+    "input": {"signal": "test_failure", "same_failure_count": 2, "real_blocker": false},
+    "expected": {"action": "DIAGNOSE", "ask_user": false}
+  },
+  "scope-tradeoff-needs-human": {
+    "input": {"signal": "scope_tradeoff", "same_failure_count": 0, "real_blocker": false},
+    "expected": {"action": "HUMAN_DECISION", "ask_user": true}
+  },
+  "permission-expansion-needs-human": {
+    "input": {"signal": "permission_expansion", "same_failure_count": 0, "real_blocker": false},
+    "expected": {"action": "HUMAN_DECISION", "ask_user": true}
+  },
+  "external-write-needs-human": {
+    "input": {"signal": "external_write", "same_failure_count": 0, "real_blocker": false},
+    "expected": {"action": "HUMAN_DECISION", "ask_user": true}
+  },
+  "auth-blocker-needs-one-action": {
+    "input": {"signal": "test_failure", "same_failure_count": 3, "real_blocker": true},
+    "expected": {"action": "HUMAN_ACTION", "ask_user": true}
+  },
+  "verified-result-completes": {
+    "input": {"signal": "verified", "same_failure_count": 0, "real_blocker": false},
+    "expected": {"action": "COMPLETE", "ask_user": false}
+  }
+}

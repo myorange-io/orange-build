@@ -7,8 +7,8 @@
 commit·push하고, 기획서에 marketplace·설치 대상이 있으면 그 대상에서 새 컨텍스트 호출까지
 확인해야 완료다.
 
-시작할 때 `verification-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ 연결과 결과물 인벤토리를
-구현 순서와 완료 증거의 기준으로 삼는다.
+시작할 때 `verification-loop.md`와 `self-improvement-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ
+연결과 결과물 인벤토리를 구현 순서와 완료 증거의 기준으로 삼는다.
 
 ## 1. 스킬 계약 확정
 
@@ -102,6 +102,10 @@ discovery 경로에서 **새 컨텍스트**를 열고, 스킬 이름·경로·�
 script/reference 사용 → 약속한 최종 출력 경계를 새 컨텍스트에서 끝까지 관찰해야 `TESTED`다.
 source 경로를 알려준 실행만 통과하거나 일부 출력만 맞으면 `PARTIAL`, 파일을 읽고 동작을 예상했으면
 `INFERRED`이며 TEST PASS가 아니다.
+
+trigger 누락, 비트리거 오개입, 깨진 출력·fixture, 도구 없음 폴백은 AI가 승인 질문 없이 수정하고
+같은 새 컨텍스트 시나리오를 다시 실행한다. 출력 목적·대상·외부 권한·개인정보 경계를 바꿔야 할
+때만 사람 결정을 받는다.
 
 포워드 테스트 뒤 결과물 인벤토리의 예상 파일·출력·fixture 수량과 실제 수량을 대조한다. 점검 범위는
 REQ와 연결된 예상 결과물 경로로 제한하고, 그 안의 placeholder, 빈 script, 고정 성공 출력, no-op을

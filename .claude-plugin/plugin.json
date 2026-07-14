@@ -1,7 +1,7 @@
 {
   "name": "orange-build",
-  "description": "기획서를 가져오거나 여기서 작성하고 새 프로젝트와 기존 프로젝트에 맞춰 준비부터 웹앱·AI 작업 스킬·자동화 구현·배포·검증까지 돕는 바이브코딩 워크플로.",
-  "version": "2.4.0",
+  "description": "기획서를 가져오거나 여기서 작성하고 최신 고성능 모델이 웹앱·AI 작업 스킬·자동화를 자가 테스트·자동 개선해 배포까지 완성하도록 돕는 바이브코딩 워크플로.",
+  "version": "2.5.0",
   "author": {
     "name": "pengdo",
     "email": "pengdo@myorange.io"
