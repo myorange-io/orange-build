@@ -1,0 +1,4 @@
+interface:
+  display_name: "Orange Design"
+  short_description: "완료된 웹앱에 맞는 디자인 사례를 추천하고 개선합니다."
+  default_prompt: "Use $orange-design to recommend linked design references for my completed web app and improve the chosen direction without changing functionality."

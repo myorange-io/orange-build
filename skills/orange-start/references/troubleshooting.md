@@ -31,7 +31,7 @@
 
 ## Google OAuth가 엉뚱한 계정으로 연결됨
 
-증상: 프로젝트·동의 화면·Stitch가 기대한 계정에 없거나 redirect/permission 오류가 난다.
+증상: 프로젝트·동의 화면·Google OAuth가 기대한 계정에 없거나 redirect/permission 오류가 난다.
 - 브라우저 기본 계정을 추측하지 말고 `browser-steps.md`의 다계정 확인 게이트로 돌아간다.
 - Google, Vercel, Supabase 중 하나만 로그아웃하지 말고 각 서비스의 실제 owner/team/project를
   다시 확인한다.
@@ -226,7 +226,7 @@
   - **누락 패키지**: 오류에 나온 패키지를 그대로 설치한다 — 예: `npm install @base-ui/react`.
   - **`asChild` 미지원**: `asChild`로 감싸지 말고, **링크에 버튼 클래스를 직접 준다.**
     예: `<Link href="..." className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-primary-foreground">…</Link>`.
-    (Stitch 디자인의 버튼 스타일을 토큰 클래스로 옮기면 일관성이 유지된다.)
+    (버튼 스타일은 토큰 클래스로 옮기면 일관성이 유지된다.)
 
 ## 포트 3000이 이미 사용 중 (로컬 서버를 명시적으로 쓸 때만)
 

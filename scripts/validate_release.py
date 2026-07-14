@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from validate_app_return import validate_app_return
+from validate_design_routing import validate_design_routing
 from validate_evidence_ui import validate_evidence_ui
 from validate_execution_profiles import validate_execution_profiles
 from validate_interview_flow import validate_interview_flow
@@ -120,7 +121,7 @@ def validate_workflow() -> None:
             "phase-build-automation.md",
             "verification-loop.md",
             "self-improvement-loop.md",
-            "ui-language-and-references.md",
+            "orange-design",
             "phase-verify.md",
         ),
     )
@@ -139,8 +140,6 @@ def validate_workflow() -> None:
         "phase-build-automation.md",
         "verification-loop.md",
         "self-improvement-loop.md",
-        "ui-language-and-references.md",
-        "phase-design.md",
         "phase-verify.md",
         "browser-steps.md",
         "troubleshooting.md",
@@ -198,17 +197,6 @@ def validate_workflow() -> None:
             "trajectory digest",
         ),
     )
-    ui_language = refs / "ui-language-and-references.md"
-    require_text(
-        ui_language,
-        (
-            "Name That UI",
-            "canonical UI 이름",
-            "variants가 reroll보다 먼저",
-            "functional QA와 visual QA 분리",
-            "MengTo/Skills",
-        ),
-    )
     phase_plan = refs / "phase-plan.md"
     require_text(
         phase_plan,
@@ -228,12 +216,11 @@ def validate_workflow() -> None:
         (
             "vercel --prod",
             "REQ-*",
-            "phase-design.md",
             "TESTED",
             "결과물 인벤토리",
             "RED",
             "self-improvement-loop.md",
-            "ui-language-and-references.md",
+            "orange-design",
         ),
     )
     skill_build = refs / "phase-build-skill.md"
@@ -246,8 +233,51 @@ def validate_workflow() -> None:
         automation_build,
         ("DRY_RUN_PASS", "`첫 작동 결과`를 체크", "TESTED", "RED", "self-improvement-loop.md"),
     )
-    design = refs / "phase-design.md"
-    require_text(design, ("10분", "Do not add or remove screens", "Name That UI", "1~2개 변수"))
+    design_skill = ROOT / "skills" / "orange-design" / "SKILL.md"
+    require_text(
+        design_skill,
+        (
+            "최종 검증",
+            "DESIGN.md",
+            "getdesign.md",
+            "Stitch",
+            "기능·페이지·데이터",
+            "functional/visual QA",
+        ),
+    )
+    design_refs = ROOT / "skills" / "orange-design" / "references"
+    for filename in (
+        "design-system-extraction.md",
+        "getdesign.md",
+        "design-recommendations.md",
+        "stitch-design.md",
+        "ui-language-and-references.md",
+    ):
+        if not (design_refs / filename).is_file():
+            fail(f"missing orange-design reference: {filename}")
+    require_text(
+        design_refs / "design-system-extraction.md",
+        ("사용자가 제공", "DESIGN.md 초안", "로그인·paywall·robots", "user review required"),
+    )
+    require_text(
+        design_refs / "getdesign.md",
+        ("getdesign.md", "독립 분석", "reference only", "외부 코드"),
+    )
+    require_text(
+        design_refs / "design-recommendations.md",
+        (
+            "최대 두 개",
+            "분석 화면 링크",
+            "원본 서비스 화면",
+            "URL-encoded query",
+            "A/B/현재 디자인 유지",
+            "추천이 곧 적용 승인은",
+        ),
+    )
+    require_text(
+        design_refs / "stitch-design.md",
+        ("10분", "Do not add or remove screens", "Google 계정", "1~2개 변수"),
+    )
     verify = refs / "phase-verify.md"
     require_text(
         verify,
@@ -309,7 +339,7 @@ def validate_workflow() -> None:
             "phase-connect.md",
             "verification-loop.md",
             "self-improvement-loop.md",
-            "ui-language-and-references.md",
+            "orange-design",
             "TESTED",
         ),
     )
@@ -318,6 +348,7 @@ def validate_workflow() -> None:
 
     try:
         validate_app_return(emit=False)
+        validate_design_routing(emit=False)
         validate_evidence_ui(emit=False)
         validate_execution_profiles(emit=False)
         validate_interview_flow(emit=False)
@@ -341,6 +372,9 @@ def validate_workflow() -> None:
     ):
         if re.search(pattern, active_text):
             fail(f"workflow regressed to {label}")
+
+    if "phase-design.md" in start.read_text(encoding="utf-8"):
+        fail("orange-start must not route its default flow to phase-design.md")
 
 
 def main() -> None:

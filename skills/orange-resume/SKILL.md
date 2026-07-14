@@ -48,9 +48,8 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 증거 등급, 결과물 수량 대조와 `../orange-start/references/self-improvement-loop.md`의 자동 수정·
 사람 결정 경계를 다시 적용한다.
 
-웹앱의 미완료 항목이 UI 용어·참고 화면·시각 QA와 관련되면
-`../orange-start/references/ui-language-and-references.md`도 읽고 기존 기준선과 채택·거절 기록을
-이어간다.
+최종 검증이 끝난 웹앱에서 사용자가 디자인 개선을 명시적으로 요청한 경우에만 `orange-design`으로
+전환한다. 미완료 REQ를 디자인 변경으로 처리하지 않는다.
 
 - 구현 계약 미완료 → `../orange-start/references/phase-plan.md`
 - 사전 준비 안내 미완료 → `../orange-start/references/phase-preflight.md`와

@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "tests" / "fixtures" / "evidence-ui-expectations.json"
 REFS = ROOT / "skills" / "orange-start" / "references"
+DESIGN_REFS = ROOT / "skills" / "orange-design" / "references"
 
 
 def candidate_gate(spec: dict) -> str:
@@ -79,7 +80,7 @@ def validate_evidence_ui(*, emit: bool = True) -> list[str]:
         if required not in improvement:
             raise ValueError(f"self-improvement-loop.md is missing: {required}")
 
-    ui_reference = (REFS / "ui-language-and-references.md").read_text(encoding="utf-8")
+    ui_reference = (DESIGN_REFS / "ui-language-and-references.md").read_text(encoding="utf-8")
     for required in (
         "Name That UI",
         "canonical UI 이름",
@@ -91,7 +92,7 @@ def validate_evidence_ui(*, emit: bool = True) -> list[str]:
         "사이트를 대량 scrape",
     ):
         if required not in ui_reference:
-            raise ValueError(f"ui-language-and-references.md is missing: {required}")
+            raise ValueError(f"orange-design ui-language-and-references.md is missing: {required}")
 
     if emit:
         print("\n".join(lines))

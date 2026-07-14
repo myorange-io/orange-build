@@ -1,0 +1,106 @@
+{
+  "routing": {
+    "incomplete-web-app": {
+      "input": {
+        "intent": "design_improvement",
+        "final_verification_passed": false,
+        "has_project_design_md": false,
+        "organization_homepage": "",
+        "extraction_approved": false
+      },
+      "expected": "RETURN_TO_ORANGE_START"
+    },
+    "completed-project-system": {
+      "input": {
+        "intent": "design_improvement",
+        "final_verification_passed": true,
+        "has_project_design_md": true,
+        "organization_homepage": "https://example.org",
+        "extraction_approved": false
+      },
+      "expected": "USE_PROJECT_DESIGN_MD"
+    },
+    "completed-org-homepage-approved": {
+      "input": {
+        "intent": "design_improvement",
+        "final_verification_passed": true,
+        "has_project_design_md": false,
+        "organization_homepage": "https://example.org",
+        "extraction_approved": true
+      },
+      "expected": "EXTRACT_DESIGN_MD_DRAFT"
+    },
+    "completed-org-homepage-needs-consent": {
+      "input": {
+        "intent": "design_improvement",
+        "final_verification_passed": true,
+        "has_project_design_md": false,
+        "organization_homepage": "https://example.org",
+        "extraction_approved": false
+      },
+      "expected": "REQUEST_EXTRACTION_CONSENT"
+    },
+    "completed-no-system": {
+      "input": {
+        "intent": "design_improvement",
+        "final_verification_passed": true,
+        "has_project_design_md": false,
+        "organization_homepage": "",
+        "extraction_approved": false
+      },
+      "expected": "USE_GETDESIGN_REFERENCE"
+    },
+    "functional-gap": {
+      "input": {
+        "intent": "functional_implementation",
+        "final_verification_passed": true,
+        "has_project_design_md": false,
+        "organization_homepage": "",
+        "extraction_approved": false
+      },
+      "expected": "ORANGE_START"
+    }
+  },
+  "stitch": {
+    "not-requested": {"input": {"stitch_requested": false}, "expected": "SKIP_STITCH"},
+    "explicit-request": {"input": {"stitch_requested": true}, "expected": "USE_STITCH_REFERENCE"}
+  },
+  "recommendations": {
+    "not-finally-verified": {
+      "input": {
+        "final_verification_passed": false,
+        "has_project_design_md": false,
+        "compare_new_direction": false,
+        "catalog_links_verified": true
+      },
+      "expected": "RETURN_TO_ORANGE_START"
+    },
+    "approved-system-no-comparison": {
+      "input": {
+        "final_verification_passed": true,
+        "has_project_design_md": true,
+        "compare_new_direction": false,
+        "catalog_links_verified": true
+      },
+      "expected": "KEEP_APPROVED_SYSTEM"
+    },
+    "unverified-catalog": {
+      "input": {
+        "final_verification_passed": true,
+        "has_project_design_md": false,
+        "compare_new_direction": false,
+        "catalog_links_verified": false
+      },
+      "expected": "PROVIDE_CATALOG_SEARCH_LINK"
+    },
+    "verified-options": {
+      "input": {
+        "final_verification_passed": true,
+        "has_project_design_md": false,
+        "compare_new_direction": false,
+        "catalog_links_verified": true
+      },
+      "expected": "PROPOSE_UP_TO_TWO_LINKED_OPTIONS"
+    }
+  }
+}

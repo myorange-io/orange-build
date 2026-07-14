@@ -18,7 +18,7 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
   Orange Build App과 같은 순서로 필요한 질문만 한 번씩 한 뒤 `SOURCE_PLAN.md`를 만든다.
 - Orange Build App 계약 v2의 `deliverable_kind`는 canonical 분기 값이다. 지원 버전보다 높은
   계약은 추측하지 않고 업데이트를 안내한다. 자세한 호환 규칙은 `phase-plan.md`를 따른다.
-- 원본 기획을 `SOURCE_PLAN.md`에 보존한다. 구현 편의나 Stitch 누락을 이유로 원본 범위를
+- 원본 기획을 `SOURCE_PLAN.md`에 보존한다. 구현 편의나 디자인 참고자료의 누락을 이유로 원본 범위를
   조용히 줄이지 않는다.
 - `PLAN.md`의 요구사항마다 `REQ-01` 같은 ID, 완료 조건, 검증 방법을 둔다. 증거 없이 완료로
   체크하지 않는다.
@@ -76,12 +76,9 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 `references/self-improvement-loop.md`에 따라 묻지 않고 수정·재검증하며, 범위·비용·권한·삭제·
 외부 발송처럼 중요한 결정만 사람에게 돌린다.
 
-웹앱에서 사용자의 UI 표현이 모호하거나 참고 화면을 반영하거나 visual QA를 할 때만
-`references/ui-language-and-references.md`를 읽는다. Name That UI는 UI 이름과 동작을 정확히 찾는
-사전으로 사용하고, 참고 화면은 기능 범위가 아니라 layout·hierarchy·type·color의 증거로만 쓴다.
-
-웹앱의 Stitch 보정은 기본 단계가 아니다. 첫 작동 흐름을 배포해 URL을 보여준 뒤, 사용자가
-원하거나 시각성이 핵심일 때만 `references/phase-design.md`를 읽는다.
+웹앱의 기본 구현은 기능·상태·반응형·접근성·최종 검증까지 끝낸다. 최종 검증 후 디자인이 마음에
+들지 않는다는 요청이 있을 때만 별도 `orange-design`을 호출한다. 기본 `orange-start` 흐름에서
+Stitch나 디자인 시안 생성 단계를 열지 않는다.
 
 ## 단계 완료 보고
 

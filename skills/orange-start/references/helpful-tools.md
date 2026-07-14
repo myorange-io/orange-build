@@ -48,7 +48,6 @@ claude mcp list
 - GitHub 저장소 생성·push·visibility 확인은 기존 `gh`로 충분하므로 GitHub MCP를 기본 추가하지 않는다.
 - Gmail·Slack·Notion을 결과물에서 쓴다는 사실만으로 해당 호스트 MCP를 설치하지 않는다. 이미 제공된
   connector를 우선하고, 없으면 구현 SDK와 OAuth만 준비한다.
-- Stitch·Figma 링크는 디자인 입력이다. 디자인 connector 설치를 구현 필수 조건으로 만들지 않는다.
 - AI 스킬이나 Python 자동화에 선택적 npm MCP 하나를 쓰기 위해 Node.js를 새로 설치하지 않는다.
 - `HELPFUL` 후보가 실패하거나 사용자가 건너뛰면 대체 검증을 기록하고 구현을 계속한다. 기획서상
   완료 증거를 만들 방법이 전혀 없는 `REQUIRED` 능력만 blocker다.
