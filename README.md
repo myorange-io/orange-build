@@ -1,6 +1,6 @@
 # Orange Build
 
-> [Orange Build App](https://github.com/myorange-io/orange-build-app)에서 만든 기획서를 가져오거나,
+> [Orange Build App](https://build.myorange.io/)에서 만든 기획서를 가져오거나,
 > 앱 없이 같은 질문 흐름으로 기획서부터 작성해 웹앱·AI 작업 스킬·자동화를 실제 작동 결과까지
 > 구현하는 Codex·Claude Code 교육용 플러그인.
 
@@ -67,7 +67,7 @@ Stitch는 기능 기획 단계가 아니라 선택적인 시각 보정 단계입
 
 ### Orange Build App 기획서가 있을 때
 
-1. [Orange Build App](https://github.com/myorange-io/orange-build-app)에서 기획서를 완성합니다.
+1. [Orange Build App](https://build.myorange.io/)에서 기획서를 완성합니다.
 2. 결과 화면의 **orange-start용 복사**를 누릅니다.
 3. 비어 있는 새 프로젝트 폴더를 만들고 그 폴더에서 Codex 또는 Claude Code를 엽니다.
 4. 복사한 본문 전체를 붙여넣고 `orange-start`를 호출합니다.
