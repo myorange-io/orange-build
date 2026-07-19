@@ -1,0 +1,4 @@
+interface:
+  display_name: "Orange Secure"
+  short_description: "Orange Build 웹앱의 배포 전 보안을 점검합니다."
+  default_prompt: "Use $orange-secure to inspect this Orange Build web app for common deployment security risks and show each finding before changing it."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Orange Resume"
+  short_description: "중단된 Orange Build 작업을 증거에서 이어갑니다."
+  default_prompt: "Use $orange-resume to inspect the existing plan and evidence, then continue the next incomplete requirement through release."

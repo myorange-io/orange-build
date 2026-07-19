@@ -76,6 +76,8 @@ handler/script, 고정 성공값, no-op 점검은 **REQ와 연결된 예상 결�
 - 설치한 도구는 사용자 동의 범위와 버전·import/build 증거가 있다.
 - 필요한 계정·team·organization을 CLI와 브라우저에서 대조했다.
 - 기획서에 필요 없는 Vercel·Supabase·Node.js·외부 계정을 습관적으로 설치·연결하지 않았다.
+- `web_app`의 `web_delivery_target`이 `existing | codex_sites | vercel_supabase` 중 하나이고 판정
+  이유가 있으며, 선택되지 않은 배포·DB 서비스는 설치하지 않았다.
 - 비밀번호·토큰·개인 이메일을 계획·로그·커밋에 남기지 않았다.
 - `HELPFUL` 도구는 기획서 신호와 부족했던 능력이 기록돼 있다. `SKIPPED`·`FAILED`면 대체 검증이
   PASS했고, 도움 도구 설치 실패만으로 결과물을 미완료로 판정하지 않았다.
@@ -94,12 +96,16 @@ handler/script, 고정 성공값, no-op 점검은 **REQ와 연결된 예상 결�
 ### `web_app`
 
 - production build·lint·테스트 통과
-- Vercel production 배포 READY와 공유 URL
+- 선택한 배포의 terminal success와 공유할 production URL
+- `codex_sites`는 유효한 `.openai/hosting.json`, saved version, deployment `succeeded`, 검증 commit과
+  GitHub·Sites source 일치, 계획한 Sites 접근 범위 확인
+- `vercel_supabase`는 Vercel production `READY`; Supabase를 쓰면 RLS·정책·서버 전용 키 확인
 - 핵심 사용자 흐름을 라이브 URL에서 처음부터 끝까지 실행
-- 저장 후 재조회 또는 외부 연동 결과 재확인
+- 저장 후 재조회 또는 외부 연동 결과 재확인. Sites D1/R2를 쓰면 각 binding의 실제 왕복 증거 확인
 - 로그인 없음·로그인·권한 없음 등 계획된 역할 검증
 - 로딩·빈 상태·오류·성공 피드백과 모바일 핵심 흐름 확인
-- `.env` 미추적, 서버 전용 키 미노출, RLS·정책 확인
+- `.env` 미추적, 서버 전용 키 미노출, 선택한 저장소의 authorization·접근 정책 확인
+- `.openai/hosting.json`에는 Sites secret·개인정보가 없고 runtime 값은 Sites 설정에서 관리
 - `PLAN.md`의 모든 경로가 실제 존재
 - UI가 핵심이면 canonical component 이름에 맞는 focus·keyboard·dismissal·blocking 동작 확인
 - functional QA와 visual QA를 분리해 desktop/mobile, loading·empty·error·success, 상호작용 뒤 상태 확인
@@ -152,6 +158,8 @@ git log -5 --oneline
 ```
 
 - 새 GitHub 저장소의 기본 visibility는 `PUBLIC`이어야 한다. 기획서에 비공개가 필요하거나 개인정보·비밀값 위험으로 `PRIVATE`를 선택했다면 사용자 확인과 이유가 변경 기록에 있어야 한다. 기존 저장소는 확인한 visibility와 사용자 결정이 일치해야 한다.
+- Sites 방문자 접근 범위는 GitHub visibility와 별도로 확인한다. 새 Site는 검토 중 제한된 접근을
+  유지하고, 기획서에 확정된 대상과 안전 검토가 있을 때만 그 범위로 공개한다.
 - 비밀값·실데이터·불필요한 빌드 산출물이 추적되지 않아야 한다.
 - 코드·테스트·PLAN 상태가 서로 다른 커밋으로 어긋났으면 하나의 최종 정리 커밋으로 맞춘다.
 
@@ -204,6 +212,7 @@ URL을 기획서에서 추측하지 않는다. 연결된 브라우저에 해당 
 ```text
 ✅ Orange Build 완료 — M/M 요구사항 PASS · T/K TEST TESTED
 - 결과물: [라이브 URL / 대표 스킬 호출 결과 / 자동화 run id]
+- 배포: [existing / Codex Sites / Vercel·Supabase / 해당 없음]
 - GitHub: [PUBLIC / 승인된 PRIVATE 저장소 URL]
 - 검증: [핵심 검증 2~4개]
 - AI가 발견해 자동으로 고친 것: [없음 / 대표 항목 1~3개]

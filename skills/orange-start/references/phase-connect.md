@@ -65,8 +65,8 @@ LTS metadata를 다시 실행해 실제 성공을 확인한다. 버전이 여전
 - `git --version`; 없으면 OS의 공식 개발 도구 또는 패키지 관리자로 설치한다.
 - `gh --version`과 `gh auth status`; 없으면 macOS는 `brew install gh`, Windows는
   `winget install --id GitHub.cli`, Linux는 배포판별 GitHub 공식 패키지 경로를 쓴다.
-- 웹앱을 Vercel에 배포할 때만 `vercel --version`; 없으면 `npm install -g vercel`
-- Supabase가 선택된 웹앱일 때만 `supabase --version`; 없으면 macOS는 Homebrew, Windows는
+- `web_delivery_target: vercel_supabase`일 때만 `vercel --version`; 없으면 `npm install -g vercel`
+- `web_delivery_target: vercel_supabase`에서 Supabase가 선택됐을 때만 `supabase --version`; 없으면 macOS는 Homebrew, Windows는
   Scoop 등 공식 설치 경로를 사용한다. 프로젝트 로컬 방식이면 `npm install supabase --save-dev`와
   `npx supabase`를 쓰며 `npm install -g supabase`는 쓰지 않는다.
 
@@ -132,6 +132,7 @@ supabase projects list --output json  # Supabase가 필요한 경우
 ```text
 계정 확인
 - GitHub: [login]
+- Sites: [사용 가능 / 폴백 / 기존 project]
 - Vercel: [user / team]
 - Supabase: [organization / project 또는 미사용]
 - Google OAuth: [확인 전 / 선택한 계정]
@@ -163,7 +164,12 @@ supabase projects list --output json  # Supabase가 필요한 경우
 
 ### `web_app`
 
-기존 앱이 없을 때만 현재 폴더를 보존하며 Next.js 앱을 만든다.
+`web_delivery_target`을 먼저 확인한다.
+
+- `codex_sites`: 여기서 Next.js를 만들지 않는다. `phase-build.md`가 `codex-sites.md`와 설치된
+  `sites-building`을 사용해 Sites starter와 `.openai/hosting.json`을 준비한다.
+- `existing`: 기존 앱 구조를 그대로 사용한다.
+- `vercel_supabase`: 기존 앱이 없을 때만 현재 폴더를 보존하며 아래 Next.js 앱을 만든다.
 
 ```bash
 TMP=$(mktemp -d)
@@ -177,7 +183,8 @@ npm install
 - 복사 전 동명 파일을 확인한다. `--ignore-existing`으로 기존 파일을 덮어쓰지 않고, `.gitignore`처럼
   양쪽 내용이 필요한 파일은 diff를 읽어 필요한 줄만 합친다. `rsync`가 없으면 파일 목록을 비교해
   동명 파일을 제외하고 명시적으로 복사한다.
-- `PLAN.md`가 요구할 때만 SDK를 설치한다. 데이터 저장이 없으면 Supabase를 붙이지 않는다.
+- `PLAN.md`가 요구할 때만 SDK를 설치한다. `codex_sites`에는 Supabase를 붙이지 않고 D1/R2 선택을
+  `codex-sites.md`에 맡긴다. 데이터 저장이 없으면 어느 DB도 붙이지 않는다.
 - UI 컴포넌트가 필요한 앱이면 shadcn/ui를 기본 스타일로 초기화하고 필요한 컴포넌트만 추가한다.
 - 기본 Next.js 홍보 화면은 제거한다. 아직 별도 `준비 중` 화면을 배포하지 않고, 구현 단계에서
   첫 완결 흐름을 만든 뒤 바로 배포한다.
@@ -238,8 +245,28 @@ gh repo view --json visibility,url --jq '"\(.visibility) \(.url)"'
 `web_app`만 실행한다. 첫 화면을 localhost에 띄우지 않고, 첫 완결 흐름을 만든 뒤 즉시
 프로덕션 배포할 수 있도록 연결만 준비한다.
 
-기존 CI·배포 설정이 있으면 그 경로를 먼저 사용한다. 배포 경로가 없을 때만 개인 scope면
-`vercel link --yes --project <slug>`를, 팀을 골랐다면 아래처럼 팀 id/slug를 명시한다.
+`PLAN.md`의 `web_delivery_target`을 따른다.
+
+### `existing`
+
+기존 CI·배포·DB·인증 설정을 읽고 그대로 재사용한다. 새 Sites·Vercel·Supabase project를 만들지
+않는다.
+
+### `codex_sites`
+
+- 현재 세션에 `create_site`, `save_site_version`, production deploy, deployment status 확인에 해당하는
+  Sites 도구가 실제로 있는지 확인한다.
+- 이 단계에서는 `create_site`를 호출하지 않는다. `phase-build.md`에서 첫 완결 흐름과 production
+  build가 준비된 뒤 설치된 `sites-building`·`sites-hosting` 순서로 한 번만 생성·저장·배포한다.
+- Sites 내부 preview를 위한 개발 서버는 Sites workflow가 관리한다. 사용자에게 실행을 맡기거나
+  localhost를 첫 결과로 전달하지 않는다.
+- Sites가 사용할 수 없거나 호환성 오류가 확인되면 `codex-sites.md`에 따라
+  `web_delivery_target: vercel_supabase`와 이유를 기록하고 아래 준비부터 자동 재개한다.
+
+### `vercel_supabase`
+
+기존 배포 경로가 없는 새 프로젝트에서 개인 scope면 `vercel link --yes --project <slug>`를, 팀을
+골랐다면 아래처럼 team id/slug를 명시한다.
 
 ```bash
 vercel link --yes --project <slug> --team <vercel-team-id-or-slug>
@@ -254,15 +281,20 @@ vercel git connect --yes
 
 ### 데이터·인증이 필요한 경우만
 
-`PLAN.md` 요구사항에 영구 저장이 있을 때만 데이터 저장소를 연결한다. Supabase를 선택했다면:
+`PLAN.md` 요구사항에 영구 저장이 있을 때만 데이터 저장소를 연결한다.
 
-1. Vercel/Supabase 조직과 프로젝트 이름을 먼저 확인한다.
-2. 새 프로젝트 생성 또는 기존 프로젝트 사용을 `PLAN.md` 가정에 기록한다.
-3. 프로젝트 URL과 publishable/anon 키만 클라이언트 환경변수로 둔다.
-4. 비공개 폼 처리나 관리자 작업에 service-role이 필요하면 **서버 전용**
-   `SUPABASE_SERVICE_ROLE_KEY`를 로컬·Vercel 비밀 환경변수에 저장한다. `NEXT_PUBLIC_`을 붙이지 않는다.
-5. 키 값을 대화·로그·파일 출력에 노출하지 않고, `.env.local`은 커밋하지 않는다.
-6. 모든 public 테이블에 RLS와 계획에 맞는 정책을 둔다.
+- `codex_sites`: D1/R2 logical binding, schema·migration, runtime secret은 `codex-sites.md`와
+  `sites-building`에서 준비한다. 별도 Supabase project를 만들지 않는다.
+- `existing`: 기존 저장소와 인증 경계를 유지한다.
+- `vercel_supabase`: Supabase를 선택했다면 아래를 따른다.
+
+  1. Vercel/Supabase 조직과 프로젝트 이름을 먼저 확인한다.
+  2. 새 프로젝트 생성 또는 기존 프로젝트 사용을 `PLAN.md` 가정에 기록한다.
+  3. 프로젝트 URL과 publishable/anon 키만 클라이언트 환경변수로 둔다.
+  4. 비공개 폼 처리나 관리자 작업에 service-role이 필요하면 **서버 전용**
+     `SUPABASE_SERVICE_ROLE_KEY`를 로컬·Vercel 비밀 환경변수에 저장한다. `NEXT_PUBLIC_`을 붙이지 않는다.
+  5. 키 값을 대화·로그·파일 출력에 노출하지 않고, `.env.local`은 커밋하지 않는다.
+  6. 모든 public 테이블에 RLS와 계획에 맞는 정책을 둔다.
 
 Google OAuth 로그인이 있는 앱이면 Google 계정·OAuth 프로젝트·redirect URL 소유자가 같은지
 `browser-steps.md`에 따라 확인한다.
@@ -275,6 +307,7 @@ Google OAuth 로그인이 있는 앱이면 Google 계정·OAuth 프로젝트·re
 - 모든 `REQUIRED` 준비 항목이 `READY`이고, `NOT_NEEDED`에는 제외 근거가 있다.
 - CLI와 브라우저의 user/team/organization이 선택한 대상과 일치한다.
 - 필요한 저장소·프로젝트·OAuth 연결이 존재하고 최소 권한이다.
+- `web_app`의 `web_delivery_target`과 한 줄 판정 이유가 기록돼 있고 `pending`이 아니다.
 - 비밀값은 안전한 환경변수 저장소에 있고 대화·로그·커밋에는 없다.
 - 유료·외부 영향 작업은 별도 승인을 받았거나 아직 실행하지 않았다.
 - 필요 없는 서비스는 설치·가입·연결하지 않았다.

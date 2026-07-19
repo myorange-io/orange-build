@@ -64,6 +64,17 @@ codex plugin add orange-build@orange-build
 
 새 task에서 `$orange-start` 또는 “오렌지 빌드 시작”이라고 요청합니다.
 
+Orange Build 교육에서는 Codex의 모델 선택기에서 **GPT-5.6**을 사용합니다. 플러그인은 모델이나 추론
+수준을 자동 변경하지 않습니다. GPT-5.6에는 산출물·보호할 요구사항·완료 증거·사람이 결정할 경계만
+명확히 주고, 조사 순서와 도구 선택은 맡깁니다. 탐색·테스트·로그 분석처럼 독립된 읽기 중심 작업이
+둘 이상일 때만 서브에이전트를 제한적으로 병렬 사용하고, 같은 파일의 동시 수정과 배포·발송·삭제
+같은 외부 변경은 한 흐름에서 순차 처리합니다.
+
+이 방식은 OpenAI의 [Customization overview](https://learn.chatgpt.com/docs/customization/overview)와
+[GPT-5.6 model guidance](https://developers.openai.com/api/docs/guides/model-guidance?model=gpt-5.6)를
+따릅니다. 저장소의 지속 규칙은 작은 `AGENTS.md`에, 반복 구현 절차는 스킬과 필요한 reference에,
+GitHub·브라우저·배포 같은 외부 시스템 연결은 현재 제공되는 도구나 MCP에 둡니다.
+
 업데이트할 때는 다음을 실행한 뒤 새 task를 엽니다.
 
 ```bash
@@ -110,15 +121,43 @@ Orange Build는 숙련도를 묻지 않고 작업 폴더를 보고 실행 방식
 두 방식 모두 원본 요구사항 추적과 완료 검증을 유지합니다. `orange-resume`을 호출하면 `PLAN.md`,
 검증 증거, 최근 커밋을 읽고 다음 미완료 요구사항부터 이어서 진행합니다.
 
+Codex에서는 `orange-start`와 `orange-resume`이 GPT-5.6 실행 프로필을 적용합니다. Claude Code에서는
+같은 결과 계약과 사람 결정 게이트를 유지하되 현재 계정의 최신 고성능 모델을 사용합니다.
+
+### Codex Sites 우선 배포
+
+새 웹앱을 Codex 데스크톱·웹에서 시작하고 현재 Sites 기능과 기획서가 호환되면 **Codex Sites를
+기본 배포 경로**로 사용합니다. 별도의 Vercel·Supabase 가입 없이 정적·full-stack 웹앱을 배포하고,
+필요한 구조화 데이터는 D1, 업로드 파일은 R2, ChatGPT·workspace 사용자는 Sites 인증 경로로
+구현합니다. Sites 내부 preview는 에이전트가 관리하며 참가자에게 주는 첫 결과는 production URL입니다.
+
+다음 경우에는 기존 경로나 Vercel·Supabase로 자동 폴백합니다.
+
+- 이미 작동하는 배포·DB·인증 경로가 있는 기존 프로젝트
+- Claude Code 또는 Sites 관리 기능이 없는 Codex 표면
+- 특정 외부 OAuth가 핵심인데 현재 Sites 지원을 확인할 수 없는 경우
+- 지원되지 않는 framework·private network·database·background service가 필요한 경우
+- Sites의 public beta, plan·region·workspace·quota 제한으로 실제 배포할 수 없는 경우
+- 결제카드·금융 거래·의료정보·아동 대상·데이터 residency처럼 Sites 정책과 맞지 않는 경우
+
+Sites는 디자인 시안을 고르는 단계로 사용하지 않습니다. 기본 `orange-start`에서는 디자인 picker와
+Stitch를 건너뛰고 기획서대로 구현하며, 디자인 개선은 최종 검증 뒤 `orange-design`에서만 진행합니다.
+Sites 방문자 접근 범위는 GitHub 저장소 공개 여부와 별개로 검증합니다. 새 GitHub 저장소의 기본
+visibility는 계속 `PUBLIC`이고, Sites는 기획서에 정한 대상에게만 공개합니다.
+
+현재 Sites는 public beta이며 플랜·지역·workspace 설정에 따라 가용성과 한도가 달라질 수 있습니다.
+자세한 내용은 [OpenAI Sites 문서](https://learn.chatgpt.com/docs/sites)와
+[Sites 내부 앱 사례](https://learn.chatgpt.com/use-cases/build-and-deploy-internal-apps)를 참고하세요.
+
 ### 준비·설치·계정
 
-기획서를 읽고 필요한 도구·계정·권한·브라우저 설정만 확인합니다. Node.js, GitHub CLI, Vercel CLI,
-Python, MCP와 프로젝트 package는 필요한 경우에만 정확한 변경 목록을 보여주고 한 번 동의받은 뒤
-설치·등록·상태 확인까지 진행합니다.
+기획서를 읽고 필요한 도구·계정·권한·브라우저 설정만 확인합니다. Node.js, GitHub CLI, Sites,
+Vercel CLI, Python, MCP와 프로젝트 package는 선택한 경로에 필요한 경우에만 정확한 변경 목록을
+보여주고 한 번 동의받은 뒤 설치·등록·상태 확인까지 진행합니다.
 
 가입·로그인·2FA·CAPTCHA·약관·결제·여러 계정 중 선택은 사용자가 직접 합니다. 그 외 저장소 생성,
 프로젝트 연결, OAuth callback, 최소 권한 설정, 브라우저 이동은 현재 사용할 수 있는 도구로 최대한
-도와줍니다. GitHub·Vercel·Supabase·Google 등 여러 계정이 로그인된 경우에는 대상 계정과 조직을
+도와줍니다. GitHub·Sites workspace·Vercel·Supabase·Google 등 여러 계정이 로그인된 경우에는 대상 계정과 조직을
 확인한 뒤 진행합니다.
 
 새 GitHub 저장소는 기본으로 공개로 만들고 실제 visibility를 다시 확인합니다. 기획서에 비공개가
@@ -130,7 +169,8 @@ Python, MCP와 프로젝트 package는 필요한 경우에만 정확한 변경 �
 검증 방법, 실제 증거를 기록합니다. 모든 요구사항은 TEST 또는 보조 검증에 연결되고, `TESTED`,
 `PARTIAL`, `INFERRED`를 구분합니다.
 
-웹앱은 localhost를 기본 결과로 사용하지 않습니다. 첫 완결 흐름을 production에 배포하고 URL에서
+웹앱은 localhost를 기본 결과로 사용하지 않습니다. Sites가 내부 preview를 사용하더라도 참가자가
+관리하지 않으며, 첫 완결 흐름을 production에 배포하고 URL에서
 입력→처리→결과, console·network, 저장 후 재조회, 권한·오류·모바일 상태를 확인합니다. AI 작업
 스킬은 새 컨텍스트의 실제 호출을, 자동화는 fixture·dry-run·중복 방지·재시도·결과 재조회를
 확인합니다.

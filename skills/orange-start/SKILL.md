@@ -25,15 +25,18 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 - 앱 기획서의 `TEST-01`~`TEST-03`은 `references/verification-loop.md`에 따라 해당 `REQ-*`의
   검증 계약으로 연결한다. 구형 v2 원문에 TEST가 없으면 이미 받은 내용으로 세 가지를 파생하고
   이를 묻기 위한 질문은 추가하지 않는다.
-- Claude Max 또는 ChatGPT Pro에서 Codex를 쓰는 교육 환경과 현재 호스트의 최신 고성능 모델을
-  전제로 한다. 특정 모델명·모델 변경 명령은 고정하지 않고 `self-improvement-loop.md`에 따라
-  계획·도구 호출·자가 테스트·자동 수정 능력을 충분히 사용한다.
+- Codex에서는 사용자가 **GPT-5.6**을 선택한 교육 환경을 전제로 한다. 모델을 바꾸는 명령이나 설정은
+  실행하지 않고 `codex-gpt-5p6.md`에 따라 결과 계약, 자율 도구 사용, 안전한 병렬화와 검증 능력을
+  충분히 사용한다. Claude Code에서는 현재 계정의 최신 고성능 모델을 사용한다.
 - 가장 먼저 `execution-profiles.md`로 `guided | adaptive`와 완료 의도를 판정한다. 사용자의 숙련도를
   묻지 않으며, `구현해줘`는 결과물별 구현·검증·commit·push·배포 또는 활성화까지 끝내라는 뜻이다.
 - 구현 전에 `phase-preflight.md`로 필요한 설치·가입·계정·브라우저 세팅을 먼저 보여준다.
   `helpful-tools.md`로 현재 호스트의 능력을 조사해 Chrome DevTools MCP 같은 도움 도구도 기획서에
   필요하고 중복이 아닐 때만 고른다. 설치는 정확한 변경 목록에 동의받은 뒤 대신하고,
   가입·본인확인만 사용자에게 요청한다.
+- `web_app`이면 `codex-sites.md`로 배포 대상을 고른다. 새 guided 프로젝트를 Codex 데스크톱·웹에서
+  진행하고 Sites가 호환되면 `codex_sites`를 우선하며, 기존 배포 경로·Claude Code·미지원 기능·
+  Sites 비활성화에는 기존 경로나 `vercel_supabase`로 폴백한다.
 - 새 GitHub 저장소는 **기본으로 공개**로 만들고 생성 직후 실제 visibility를 확인한다. 기획서에 비공개가 필요하거나 개인정보·비밀값 위험이 있으면 생성 전에 사용자와 공개 범위를 확인한다.
 - 단계 보고 후 자동으로 다음 단계로 이어간다. 사용자 선택·인증·권한이 꼭 필요한 경우에만
   멈춘다.
@@ -57,13 +60,15 @@ Orange Build 앱의 기획서를 **덜 만들지 않고 실제 작동 결과로 
 
 ## 실행 순서
 
-한 번에 필요한 파일만 읽는다.
+한 번에 필요한 파일만 읽는다. Codex에서 실행 중이면 먼저 `references/codex-gpt-5p6.md`를 읽고,
+Claude Code에서는 건너뛴다.
 
 1. **실행 프로필·완료 의도** — `references/execution-profiles.md`
 2. **입력 경로 선택**
    - 복사한 기획서 있음 → `references/phase-plan.md`
    - 복사한 기획서 없음 → `references/phase-interview.md` → `references/phase-plan.md`
 3. **기획서 기반 사전 준비** — `references/phase-preflight.md` + `references/helpful-tools.md`
+   - `web_app` → `references/codex-sites.md`로 배포·저장 경로 확정
 4. **환경·계정·GitHub 저장소** — `references/phase-connect.md`
 5. **결과물별 구현**
    - `web_app` → `references/phase-build.md`
@@ -100,8 +105,9 @@ Stitch나 디자인 시안 생성 단계를 열지 않는다.
 - **원본이 약속이다** — 핵심 기능·포함 범위·사용 흐름·성공 기준을 모두 요구사항에 매핑한다.
 - **작동 흐름 단위** — 화면이나 파일 하나가 아니라 입력→처리→검토 가능한 결과가 이어지는
   세로 슬라이스를 끝낸다.
-- **첫 결과를 빨리** — 웹앱은 localhost 개발 서버를 기본으로 열지 않고 첫 슬라이스를 바로
-  프로덕션에 배포해 URL을 준다. 스킬은 실제 호출 결과, 자동화는 dry-run 기록을 먼저 보여준다.
+- **첫 결과를 빨리** — 웹앱은 localhost를 사용자 결과로 주지 않고 첫 슬라이스를 프로덕션에 배포해
+  URL을 준다. Sites가 내부 HMR preview를 한 번 열어도 사용자가 실행·관리하게 하지 않는다. 스킬은
+  실제 호출 결과, 자동화는 dry-run 기록을 먼저 보여준다.
 - **단순한 구현, 완전한 범위** — 코드는 단순하게 만들되 계획된 기능이나 실패 처리를 생략하지 않는다.
 - **초보자 보호장치** — 계획과 구현 때 `references/beginner-guardrails.md`를 적용한다. 같은 오류가
   두 번 반복되면 새 코드 생성을 멈추고 로그·재현 조건·직전 변경부터 진단한다.
@@ -125,4 +131,4 @@ Stitch나 디자인 시안 생성 단계를 열지 않는다.
 - **눈으로 보이는 증거까지** — 테스트 명령의 종료 코드만 보지 않고, 입력이 처리 경계를 지나
   사용자가 보는 결과가 되는지 확인한다. 추론만 한 항목은 통과로 세지 않는다.
 - **기존 프로젝트 우선** — `adaptive`에서는 기존 지침·검증 명령·CI·배포 설정을 먼저 사용한다.
-  기존 원격과 배포 경로가 있으면 새 저장소나 Vercel 프로젝트를 만들지 않는다.
+  기존 원격과 배포 경로가 있으면 새 저장소나 Sites·Vercel 프로젝트를 만들지 않는다.

@@ -48,8 +48,9 @@ adaptive는 안전장치를 없애는 모드가 아니다. 이미 준비된 것�
 `구현해줘`는 로컬 파일을 수정하거나 build만 통과한 상태를 뜻하지 않는다. 사용자 권한이나 외부
 서비스 장애로 실제로 막히지 않는 한 다음 결과물별 릴리스 조건까지 계속한다.
 
-- `web_app`: 기존 배포 경로가 있으면 그 경로, 없으면 Vercel production 배포를 사용해 실제 URL과
-  핵심 흐름을 확인한다.
+- `web_app`: 기존 배포 경로가 있으면 그대로 사용한다. 새 guided 프로젝트는 `codex-sites.md`로
+  `codex_sites | vercel_supabase`를 판정하고, 선택한 production 배포의 실제 URL과 핵심 흐름을
+  확인한다.
 - `ai_skill`: 구현 파일·fixture·새 컨텍스트 호출을 검증하고 정확한 파일을 commit·push한다. 별도
   marketplace나 배포 대상이 기획서에 있으면 그 설치·활성화까지 확인한다.
 - `automation`: dry-run뿐 아니라 승인된 샘플 live-run, 선택한 트리거 활성화, 최근 run과 결과
@@ -68,9 +69,9 @@ adaptive는 안전장치를 없애는 모드가 아니다. 이미 준비된 것�
 3. `.github/workflows/`, `vercel.json`과 다른 배포 설정
 4. Git 원격·현재 브랜치·기존 변경
 
-충돌하지 않는 한 위 프로젝트 규칙이 Orange Build의 Next.js·Vercel 기본값보다 우선한다. 기존
+충돌하지 않는 한 위 프로젝트 규칙이 Orange Build의 Sites·Next.js·Vercel 기본값보다 우선한다. 기존
 프로젝트를 다른 framework나 배포 서비스로 옮기지 않는다. 원격이 있으면 새 GitHub 저장소를 만들지
-않고, 배포 경로가 있으면 새 Vercel 프로젝트를 만들지 않는다.
+않고, 배포 경로가 있으면 새 Sites·Vercel 프로젝트를 만들지 않는다.
 
 ## 4. 사전 준비와 도움 도구
 

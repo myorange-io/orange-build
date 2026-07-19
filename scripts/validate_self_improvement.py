@@ -69,7 +69,7 @@ def validate_self_improvement(*, emit: bool = True) -> list[str]:
 
     reference = REFERENCE.read_text(encoding="utf-8")
     for required in (
-        "최신 고성능 모델",
+        "Codex는 GPT-5.6 선택을 기본 전제",
         "Max와 Pro는 모델명이 아니라 사용 환경의 전제다",
         "AI가 묻지 않고 고칠 것",
         "사람이 결정할 것",

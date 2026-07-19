@@ -182,6 +182,8 @@ TEST 항목이 없는 기존 v2는 `verification-loop.md`에 따라 추가 질�
 - 결과물 유형: `web_app | ai_skill | automation`
 - execution_profile: `guided | adaptive`
 - delivery_intent: `implement_and_release | plan_only | verify_only`
+- web_delivery_target: `pending | existing | codex_sites | vercel_supabase | n/a`
+- web_delivery_reason: [사전 준비에서 확정할 한 줄 근거 / 웹앱 아님]
 - 기술 이름(slug): `[ascii-kebab-case]`
 
 ## 원본 목표

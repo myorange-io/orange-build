@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from validate_app_return import validate_app_return
+from validate_codex_gpt56 import validate_codex_gpt56
 from validate_design_routing import validate_design_routing
 from validate_evidence_ui import validate_evidence_ui
 from validate_execution_profiles import validate_execution_profiles
@@ -16,6 +17,7 @@ from validate_interview_flow import validate_interview_flow
 from validate_plan_fixtures import validate_fixture_contracts
 from validate_preflight_fixtures import validate_preflight_fixtures
 from validate_self_improvement import validate_self_improvement
+from validate_sites_routing import validate_sites_routing
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -98,6 +100,13 @@ def validate_skills() -> None:
             )
         if not meta.get("description"):
             fail(f"missing skill description: {skill_file.relative_to(ROOT)}")
+        openai_meta = skill_dir / "agents" / "openai.yaml"
+        if not openai_meta.is_file():
+            fail(f"missing Codex skill metadata: {openai_meta.relative_to(ROOT)}")
+        require_text(
+            openai_meta,
+            ("display_name:", "short_description:", "default_prompt:", f"${skill_dir.name}"),
+        )
 
 
 def require_text(path: Path, snippets: tuple[str, ...]) -> None:
@@ -121,10 +130,32 @@ def validate_workflow() -> None:
             "phase-build-automation.md",
             "verification-loop.md",
             "self-improvement-loop.md",
+            "codex-gpt-5p6.md",
+            "codex-sites.md",
             "orange-design",
             "phase-verify.md",
         ),
     )
+    readme = ROOT / "README.md"
+    require_text(
+        readme,
+        (
+            "Codex의 모델 선택기에서 **GPT-5.6**",
+            "Customization overview",
+            "GPT-5.6 model guidance",
+            "같은 파일의 동시 수정",
+        ),
+    )
+    codex_manifest = load_json(ROOT / ".codex-plugin" / "plugin.json")
+    codex_copy = " ".join(
+        (
+            codex_manifest.get("description", ""),
+            codex_manifest.get("interface", {}).get("longDescription", ""),
+            codex_manifest.get("interface", {}).get("defaultPrompt", ""),
+        )
+    )
+    if "GPT-5.6" not in codex_copy:
+        fail("Codex plugin metadata does not declare the GPT-5.6 execution baseline")
 
     refs = ROOT / "skills" / "orange-start" / "references"
     required_refs = (
@@ -140,6 +171,8 @@ def validate_workflow() -> None:
         "phase-build-automation.md",
         "verification-loop.md",
         "self-improvement-loop.md",
+        "codex-gpt-5p6.md",
+        "codex-sites.md",
         "phase-verify.md",
         "browser-steps.md",
         "troubleshooting.md",
@@ -186,7 +219,7 @@ def validate_workflow() -> None:
     require_text(
         self_improvement,
         (
-            "최신 고성능 모델",
+            "GPT-5.6",
             "AI가 묻지 않고 고칠 것",
             "사람이 결정할 것",
             "DIAGNOSE",
@@ -195,6 +228,32 @@ def validate_workflow() -> None:
             "automation",
             "후보 변경 채택 게이트",
             "trajectory digest",
+        ),
+    )
+    codex_profile = refs / "codex-gpt-5p6.md"
+    require_text(
+        codex_profile,
+        (
+            "목표 산출물",
+            "보호 계약",
+            "사람 게이트",
+            "programmatic tool calling",
+            "서브에이전트 사용 경계",
+            "같은 파일이나",
+        ),
+    )
+    sites_profile = refs / "codex-sites.md"
+    require_text(
+        sites_profile,
+        (
+            "web_delivery_target",
+            "codex_sites",
+            "vercel_supabase",
+            "디자인 picker 없이",
+            "D1",
+            "R2",
+            "deployment status `succeeded`",
+            "Sites source repository가",
         ),
     )
     phase_plan = refs / "phase-plan.md"
@@ -215,6 +274,8 @@ def validate_workflow() -> None:
         web,
         (
             "vercel --prod",
+            "web_delivery_target",
+            "codex-sites.md",
             "REQ-*",
             "TESTED",
             "결과물 인벤토리",
@@ -291,12 +352,14 @@ def validate_workflow() -> None:
             "orange-build-app",
             "사용할 자료·개인정보와 공개·비공개 경계",
             "AI가 발견해 자동으로 고친 것",
+            "codex_sites",
+            "deployment `succeeded`",
         ),
     )
     preflight = refs / "phase-preflight.md"
     require_text(
         preflight,
-        ("지금 할 한 동작", "완료 신호", "제가 이어서 할 일", "남은 단계", "변경분 준비 카드"),
+        ("지금 할 한 동작", "완료 신호", "제가 이어서 할 일", "남은 단계", "변경분 준비 카드", "web_delivery_target"),
     )
     browser_steps = refs / "browser-steps.md"
     require_text(
@@ -339,6 +402,7 @@ def validate_workflow() -> None:
             "phase-connect.md",
             "verification-loop.md",
             "self-improvement-loop.md",
+            "codex-gpt-5p6.md",
             "orange-design",
             "TESTED",
         ),
@@ -348,6 +412,7 @@ def validate_workflow() -> None:
 
     try:
         validate_app_return(emit=False)
+        validate_codex_gpt56(emit=False)
         validate_design_routing(emit=False)
         validate_evidence_ui(emit=False)
         validate_execution_profiles(emit=False)
@@ -355,6 +420,7 @@ def validate_workflow() -> None:
         validate_fixture_contracts(emit=False)
         validate_preflight_fixtures(emit=False)
         validate_self_improvement(emit=False)
+        validate_sites_routing(emit=False)
     except ValueError as exc:
         fail(f"workflow fixtures failed: {exc}")
 

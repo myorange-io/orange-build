@@ -1,0 +1,4 @@
+interface:
+  display_name: "Orange Start"
+  short_description: "기획부터 구현·검증·배포까지 결과물을 완성합니다."
+  default_prompt: "Use $orange-start to turn my plan or idea into a tested, deployed result while keeping important decisions with me."

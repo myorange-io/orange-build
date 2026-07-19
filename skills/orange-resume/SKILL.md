@@ -8,12 +8,16 @@ description: Orange Build로 진행 중인 웹앱·AI 작업 스킬·자동화 �
 세션이 끊긴 프로젝트를 `PLAN.md`의 요구사항 계약과 검증 증거에서 복원한다. `package.json`이나
 `design/` 유무로 단계를 추측하지 않는다.
 
+Codex에서 실행 중이면 `../orange-start/references/codex-gpt-5p6.md`를 먼저 읽어 GPT-5.6 실행
+프로필을 복원한다. Claude Code에서는 이 파일을 건너뛰고 현재 고성능 모델로 같은 완료 계약을
+적용한다.
+
 ## 1. 현재 상태 읽기
 
 다음만 읽어 빠르게 파악한다.
 
 - `PLAN.md` 전체: 결과물 유형, `execution_profile`, `delivery_intent`, REQ 상태, TEST-01~03 상태,
-  결과물 수량, 변경 기록, 검증 증거
+  `web_delivery_target`, 결과물 수량, 변경 기록, 검증 증거
 - `SOURCE_PLAN.md`: PLAN 추적표에 누락 의심이 있을 때만 관련 절 확인
 - `MEMORY.md`: 마지막 1~2개 항목
 - `git status --short --branch`
@@ -65,6 +69,10 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 다음 미완료 요구사항부터 바로 이어간다. `implement_and_release`면 로컬 구현 이후에도 결과물별
 배포·활성화와 원격 push 완료 조건까지 계속한다. 실패·누락이 원본 범위 안의 안전한 수정이면
 질문하지 않고 고쳐 같은 검증을 다시 실행한다.
+
+`web_delivery_target: codex_sites`면 구현·배포 전에
+`../orange-start/references/codex-sites.md`를 함께 읽는다. `existing`이나 `vercel_supabase`를 Sites로
+바꾸거나 기존 Sites 프로젝트를 다른 공급자로 옮기지 않는다.
 
 ## 4. 기록
 

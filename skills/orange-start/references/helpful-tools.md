@@ -26,7 +26,7 @@ claude mcp list
 | `browser_navigation` | 실제 페이지 열기·읽기·클릭·스크린샷 성공 |
 | `browser_runtime_diagnostics` | DOM과 console·network를 읽고 필요시 performance trace 실행 가능. MCP면 health·scope·격리·연결 옵션도 안전함 |
 | `repeatable_e2e` | 프로젝트에서 같은 사용자 흐름을 독립 테스트로 반복 실행 가능 |
-| `deployment_observability` | 선택한 Vercel team/project의 배포와 로그를 구조적으로 조회 가능 |
+| `deployment_observability` | 선택한 Sites project 또는 Vercel team/project의 배포 상태와 로그를 구조적으로 조회 가능 |
 | `database_diagnostics` | 선택한 개발용 Supabase project의 schema·migration·advisor를 제한된 범위로 조회 가능 |
 
 같은 이름의 MCP가 아니라도 능력의 실제 호출과 필요한 안전 설정이 확인되면 `EQUIVALENT`로 기록하고
@@ -45,6 +45,10 @@ claude mcp list
 | 반복적인 Vercel 배포·프로젝트·로그 분석 | `deployment_observability` | Vercel 공식 remote MCP | 단순 배포만 필요해 Vercel CLI로 충분 |
 | Supabase schema·RLS·migration·advisor 조회 | `database_diagnostics` | project-scoped read-only Supabase MCP | project ref 미확정, production뿐, 기존 connector가 있음 |
 
+- `web_delivery_target: codex_sites`이면 현재 세션의 Sites project·version·deployment status 도구가
+  `deployment_observability`를 제공한다. 실제 호출 가능 여부를 확인하고 Vercel MCP를 추가하지 않는다.
+- Sites 관리 도구가 없거나 호출이 실패하면 도움 MCP를 임의 설치하지 않고 `codex-sites.md`의
+  `vercel_supabase` 폴백을 따른다.
 - GitHub 저장소 생성·push·visibility 확인은 기존 `gh`로 충분하므로 GitHub MCP를 기본 추가하지 않는다.
 - Gmail·Slack·Notion을 결과물에서 쓴다는 사실만으로 해당 호스트 MCP를 설치하지 않는다. 이미 제공된
   connector를 우선하고, 없으면 구현 SDK와 OAuth만 준비한다.
@@ -132,7 +136,14 @@ npx playwright --version
 않는다. 설치 뒤 핵심 REQ 한 흐름의 테스트를 만들고 `npx playwright test`가 반복 통과해야
 `repeatable_e2e`를 `READY`로 둔다.
 
-## 6. Vercel MCP
+## 6. Sites 배포 관측
+
+`web_delivery_target: codex_sites`에서는 현재 세션에 이미 제공된 Sites 도구만 사용한다. project 생성,
+version 저장, production 배포, deployment status 조회가 실제로 호출 가능하면 `READY`다. 별도 MCP를
+설치하거나 Sites credential을 로컬 설정에 복사하지 않는다. 배포가 terminal state가 될 때까지
+상태를 조회하되 같은 create·deploy mutation을 반복 호출하지 않는다.
+
+## 7. Vercel MCP
 
 단순 `vercel --prod` 배포에는 설치하지 않는다. 여러 배포의 상태·로그·project를 반복 분석해야 하고
 기존 도구로 그 능력이 없을 때만 Vercel 공식 remote MCP를 현재 호스트에 추가한다. identity 게이트로
@@ -154,7 +165,7 @@ OAuth 전에 Beta 서비스임과 접근할 team/project를 보여준다. 로그
 `https://mcp.vercel.com`은 여러 프로젝트 조회가 원본 기획에 꼭 필요할 때만 넓어지는 접근 범위를
 준비 카드에서 별도 승인받아 쓴다. MCP mutation tool 호출의 사람 확인은 계속 유지한다.
 
-## 7. Supabase MCP
+## 8. Supabase MCP
 
 Supabase **개발·테스트 프로젝트**의 reference id가 확정된 뒤에만 추가한다. production에는 연결하지
 않는다. 쓰기는 migration 파일과 CLI 검증으로 수행하고 MCP는 기본적으로 project scope·read-only·
@@ -180,7 +191,7 @@ claude mcp login supabase
 `project_ref`, `read_only=true`, 필요한 `features` 중 하나라도 빠지면 자동 설치하지 않는다. 읽기 전용을
 해제하거나 feature를 늘리는 일은 별도 권한 확대이므로 실행 직전에 다시 확인한다.
 
-## 8. 검증·재시작·롤백
+## 9. 검증·재시작·롤백
 
 설치 전 MCP 이름·scope 목록을 저장하고, 설치 뒤 현재 호스트에서만 확인한다.
 

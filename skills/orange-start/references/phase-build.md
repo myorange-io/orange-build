@@ -1,11 +1,12 @@
 # 웹앱 구현 — 첫 작동 흐름을 바로 배포하기
 
-목표: `PLAN.md`의 요구사항을 완결 흐름 단위로 구현하고, localhost 개발 서버 대신 첫 흐름을
-프로덕션에 바로 배포해 URL을 보여준다. 이후에도 같은 URL에서 기능을 확인한다.
+목표: `PLAN.md`의 요구사항을 완결 흐름 단위로 구현하고, localhost가 아닌 첫 production URL을
+보여준다. 이후에도 같은 URL에서 기능을 확인한다.
 
 `adaptive`에서는 먼저 `execution-profiles.md`를 읽고 기존 framework, package script, test, CI와
-배포 경로를 사용한다. 기존 배포 경로가 있으면 아래 Vercel 명령 대신 그 프로젝트의 production
-절차로 같은 완료 증거를 만든다.
+배포 경로를 사용한다. `web_delivery_target: codex_sites`면 `codex-sites.md`와 설치된
+`sites-building`·`sites-hosting`을, `vercel_supabase`면 아래 Vercel 폴백을 사용한다. 기존 경로면
+그 프로젝트의 production 절차로 같은 완료 증거를 만든다.
 
 시작할 때 `verification-loop.md`와 `self-improvement-loop.md`를 읽는다. `PLAN.md`의 TEST↔REQ
 연결과 결과물 인벤토리를 구현 순서의 기준으로 삼고, TEST의 기대 결과나 통과 증거를 구현 편의에
@@ -59,7 +60,8 @@
 
 - 데이터 모델은 화면 모양이 아니라 완료 조건에서 역산한다.
 - 마이그레이션이나 스키마 파일을 저장소에 남겨 재현 가능하게 한다.
-- Supabase의 모든 public 테이블은 RLS를 켜고 로그인·역할에 맞는 정책을 둔다.
+- `codex_sites`는 D1 schema·migration과 서버 측 authorization을, `vercel_supabase`의 Supabase는
+  모든 public 테이블의 RLS와 로그인·역할 정책을 둔다.
 - 공개 익명 입력과 비공개 관리자 조회가 함께 있으면, 클라이언트에 service-role 키를 주지 말고
   서버 라우트에서만 처리한다.
 - 쓰기 성공만 확인하지 말고 **다시 조회해 같은 값이 보이는지** 검증한다.
@@ -68,8 +70,8 @@
 
 - 로그인 필요 여부와 역할을 `PLAN.md`대로 구현한다.
 - 로그인·로그아웃·세션 없음·권한 없음 경로를 각각 확인한다.
-- Google OAuth를 쓰면 여러 계정 중 어느 계정과 OAuth 프로젝트를 사용하는지
-  `browser-steps.md`로 확인한다.
+- Sites의 Sign in with ChatGPT·workspace identity는 authorization을 서버에서 확인한다. Google
+  OAuth를 쓰면 여러 계정 중 어느 계정과 OAuth 프로젝트를 사용하는지 `browser-steps.md`로 확인한다.
 
 ### 비밀값과 민감정보
 
@@ -110,10 +112,16 @@
 TEST·기존 test/build가 회귀하지 않을 때만 채택한다. 동일하거나 `PARTIAL`인 후보는 버리고, 최종
 후보는 수정에 직접 쓰지 않은 인접 입력이나 상태 1개도 확인한다.
 
-### 첫 슬라이스는 기존 production 경로로 즉시 배포
+### 첫 슬라이스는 선택한 production 경로로 즉시 배포
 
-개발 서버를 켜거나 localhost를 사용자에게 열라고 하지 않는다. production build가 통과하면 기존
-배포 경로를 우선하고, 기존 경로가 없을 때 Vercel을 사용한다.
+localhost를 사용자 결과로 주거나 사용자가 개발 서버를 관리하게 하지 않는다. production build가
+통과하면 `web_delivery_target`을 따른다.
+
+- `existing`: 기존 production 절차로 배포한다.
+- `codex_sites`: 디자인 picker 없이 `codex-sites.md`와 설치된 Sites workflow로 정확한 source
+  commit을 저장·배포하고 deployment status `succeeded`를 확인한다. Sites가 내부 preview를 한 번
+  여는 것은 허용하되 첫 결과는 production URL이다.
+- `vercel_supabase`: 아래 명령으로 Vercel production에 배포한다.
 
 ```bash
 git commit -m "구현: 첫 작동 흐름"
@@ -124,9 +132,10 @@ vercel --prod --yes
 commit 전에는 이번 슬라이스의 코드·테스트·`PLAN.md`·`MEMORY.md`만 정확한 경로로 stage하고
 `git diff --cached --name-only`를 확인한다. 기존 사용자 변경을 함께 넣지 않는다.
 
-Vercel이 반환한 프로덕션 URL을 즉시 보여준다. 이어서 다음을 확인한다.
+선택한 배포 경로가 반환한 프로덕션 URL을 즉시 보여준다. 이어서 다음을 확인한다.
 
-- 배포 상태가 READY이고 루트 및 관련 경로가 2xx/예상 redirect를 반환한다.
+- 배포 상태가 Sites `succeeded`, Vercel `READY` 또는 기존 공급자의 terminal success이고 루트 및
+  관련 경로가 2xx/예상 redirect를 반환한다.
 - 연결된 브라우저 도구가 있으면 URL에서 실제 입력→처리→결과 흐름을 수행한다.
 - 브라우저 도구가 없으면 API·HTTP 테스트를 실행하고, 시각 확인이 필요한 마지막 한 단계만
   사용자에게 요청한다.
@@ -162,10 +171,13 @@ Vercel이 반환한 프로덕션 URL을 즉시 보여준다. 이어서 다음을
 - [ ] 저장 후 재조회, 로그인 역할, 외부 연동이 계획대로 동작한다.
 - [ ] 로딩·빈 상태·오류·성공 피드백이 있다.
 - [ ] 모바일 폭에서도 핵심 행동이 가능하다.
-- [ ] 공개 테이블의 RLS·정책과 서버 전용 키를 확인했다.
+- [ ] Sites는 서버 authorization·D1/R2 binding·runtime secret을, Supabase는 RLS·정책·서버 전용
+      키를 확인했다.
 - [ ] `git ls-files`에 `.env`·토큰·실데이터가 없다.
 - [ ] `npm run build`와 관련 테스트가 통과한다.
-- [ ] Vercel production 배포가 READY다.
+- [ ] 선택한 production 배포가 terminal success이고 공유할 정확한 URL이 있다.
+- [ ] `codex_sites`면 saved version·검증 commit·Sites source·GitHub origin이 일치하고 D1/R2 왕복
+      검증과 방문자 접근 범위를 확인했다.
 - [ ] 결과물 인벤토리의 예상 목록·수량과 실제 경로·흐름·연동·역할별 상태 수량이 일치한다.
 - [ ] REQ와 연결된 예상 결과물 경로에서 placeholder, 빈 handler, 고정 성공값, no-op이 없다.
 - [ ] TEST-01~03의 준비·행동을 production에서 수행하고 `TESTED` 증거를 남겼다.

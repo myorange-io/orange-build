@@ -1,0 +1,163 @@
+{
+  "new-codex-simple-site": {
+    "input": {
+      "kind": "web_app",
+      "execution_profile": "guided",
+      "host_surface": "codex_app",
+      "sites_available": true,
+      "sites_compatible": true,
+      "hosting_json": false,
+      "existing_deployment": false,
+      "external_identity_provider": false,
+      "sites_external_auth_confirmed": false,
+      "structured_data": false,
+      "uploads": false
+    },
+    "expected": {"target": "codex_sites", "storage": "none", "human_gate": false}
+  },
+  "new-codex-d1-r2-site": {
+    "input": {
+      "kind": "web_app",
+      "execution_profile": "guided",
+      "host_surface": "codex_app",
+      "sites_available": true,
+      "sites_compatible": true,
+      "hosting_json": false,
+      "existing_deployment": false,
+      "external_identity_provider": false,
+      "sites_external_auth_confirmed": false,
+      "structured_data": true,
+      "uploads": true
+    },
+    "expected": {"target": "codex_sites", "storage": "sites_d1_r2", "human_gate": false}
+  },
+  "existing-sites-project": {
+    "input": {
+      "kind": "web_app",
+      "execution_profile": "adaptive",
+      "host_surface": "codex_app",
+      "sites_available": true,
+      "sites_compatible": true,
+      "hosting_json": true,
+      "existing_deployment": true,
+      "external_identity_provider": false,
+      "sites_external_auth_confirmed": false,
+      "structured_data": true,
+      "uploads": false
+    },
+    "expected": {"target": "codex_sites", "storage": "sites_d1", "human_gate": false}
+  },
+  "existing-vercel-project": {
+    "input": {
+      "kind": "web_app",
+      "execution_profile": "adaptive",
+      "host_surface": "codex_app",
+      "sites_available": true,
+      "sites_compatible": true,
+      "hosting_json": false,
+      "existing_deployment": true,
+      "external_identity_provider": false,
+      "sites_external_auth_confirmed": false,
+      "structured_data": true,
+      "uploads": false
+    },
+    "expected": {"target": "existing", "storage": "existing", "human_gate": false}
+  },
+  "codex-cli-without-sites-management": {
+    "input": {
+      "kind": "web_app",
+      "execution_profile": "guided",
+      "host_surface": "codex_cli",
+      "sites_available": false,
+      "sites_compatible": true,
+      "hosting_json": false,
+      "existing_deployment": false,
+      "external_identity_provider": false,
+      "sites_external_auth_confirmed": false,
+      "structured_data": true,
+      "uploads": false
+    },
+    "expected": {"target": "vercel_supabase", "storage": "supabase", "human_gate": false}
+  },
+  "claude-new-web-app": {
+    "input": {
+      "kind": "web_app",
+      "execution_profile": "guided",
+      "host_surface": "claude",
+      "sites_available": false,
+      "sites_compatible": true,
+      "hosting_json": false,
+      "existing_deployment": false,
+      "external_identity_provider": false,
+      "sites_external_auth_confirmed": false,
+      "structured_data": false,
+      "uploads": false
+    },
+    "expected": {"target": "vercel_supabase", "storage": "none", "human_gate": false}
+  },
+  "external-google-auth-unconfirmed": {
+    "input": {
+      "kind": "web_app",
+      "execution_profile": "guided",
+      "host_surface": "codex_app",
+      "sites_available": true,
+      "sites_compatible": true,
+      "hosting_json": false,
+      "existing_deployment": false,
+      "external_identity_provider": true,
+      "sites_external_auth_confirmed": false,
+      "structured_data": true,
+      "uploads": false
+    },
+    "expected": {"target": "vercel_supabase", "storage": "supabase", "human_gate": false}
+  },
+  "external-auth-confirmed-for-sites": {
+    "input": {
+      "kind": "web_app",
+      "execution_profile": "guided",
+      "host_surface": "codex_app",
+      "sites_available": true,
+      "sites_compatible": true,
+      "hosting_json": false,
+      "existing_deployment": false,
+      "external_identity_provider": true,
+      "sites_external_auth_confirmed": true,
+      "structured_data": true,
+      "uploads": false
+    },
+    "expected": {"target": "codex_sites", "storage": "sites_d1", "human_gate": false}
+  },
+  "sites-policy-conflict": {
+    "input": {
+      "kind": "web_app",
+      "execution_profile": "guided",
+      "host_surface": "codex_app",
+      "sites_available": true,
+      "sites_compatible": false,
+      "hosting_json": false,
+      "existing_deployment": false,
+      "external_identity_provider": false,
+      "sites_external_auth_confirmed": false,
+      "structured_data": true,
+      "uploads": false,
+      "requires_sensitive_data_decision": true
+    },
+    "expected": {"target": "vercel_supabase", "storage": "supabase", "human_gate": true}
+  },
+  "non-web-deliverable": {
+    "input": {
+      "kind": "ai_skill",
+      "execution_profile": "guided",
+      "host_surface": "codex_app",
+      "sites_available": true,
+      "sites_compatible": true,
+      "hosting_json": false,
+      "existing_deployment": false,
+      "external_identity_provider": false,
+      "sites_external_auth_confirmed": false,
+      "structured_data": false,
+      "uploads": false
+    },
+    "expected": {"target": "n/a", "storage": "n/a", "human_gate": false}
+  }
+}

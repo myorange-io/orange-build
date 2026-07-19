@@ -1,0 +1,68 @@
+{
+  "single-agent-implementation": {
+    "input": {
+      "host": "codex",
+      "model": "gpt-5.6",
+      "independent_read_workstreams": 1,
+      "overlapping_writes": false,
+      "external_write": false,
+      "requires_human_decision": false
+    },
+    "expected": {"profile": "GPT56", "coordination": "SINGLE_AGENT"}
+  },
+  "bounded-parallel-read-review": {
+    "input": {
+      "host": "codex",
+      "model": "gpt-5.6",
+      "independent_read_workstreams": 3,
+      "overlapping_writes": false,
+      "external_write": false,
+      "requires_human_decision": false
+    },
+    "expected": {"profile": "GPT56", "coordination": "BOUNDED_PARALLEL"}
+  },
+  "overlapping-writes-one-writer": {
+    "input": {
+      "host": "codex",
+      "model": "gpt-5.6",
+      "independent_read_workstreams": 3,
+      "overlapping_writes": true,
+      "external_write": false,
+      "requires_human_decision": false
+    },
+    "expected": {"profile": "GPT56", "coordination": "SINGLE_WRITER"}
+  },
+  "approved-deploy-one-writer": {
+    "input": {
+      "host": "codex",
+      "model": "gpt-5.6",
+      "independent_read_workstreams": 2,
+      "overlapping_writes": false,
+      "external_write": true,
+      "requires_human_decision": false
+    },
+    "expected": {"profile": "GPT56", "coordination": "SINGLE_WRITER"}
+  },
+  "unapproved-external-change-human-gate": {
+    "input": {
+      "host": "codex",
+      "model": "gpt-5.6",
+      "independent_read_workstreams": 2,
+      "overlapping_writes": false,
+      "external_write": true,
+      "requires_human_decision": true
+    },
+    "expected": {"profile": "GPT56", "coordination": "HUMAN_GATE"}
+  },
+  "claude-host-neutral": {
+    "input": {
+      "host": "claude",
+      "model": "latest-capable",
+      "independent_read_workstreams": 3,
+      "overlapping_writes": false,
+      "external_write": false,
+      "requires_human_decision": false
+    },
+    "expected": {"profile": "HOST_DEFAULT", "coordination": "SINGLE_AGENT"}
+  }
+}

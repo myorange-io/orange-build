@@ -14,11 +14,17 @@
 기획서의 결과물 유형, 사용자 흐름, 데이터, 로그인, 외부 연동, 배포 위치를 읽고 필요한 항목만
 고른다. 익숙하다는 이유로 서비스를 추가하거나, 쓸 수도 있다는 이유로 미리 설치하지 않는다.
 
+`web_app`이면 먼저 `codex-sites.md`를 읽어 현재 표면, 기존 배포, Sites 도구의 실제 가용성,
+runtime·저장·인증·정책 호환성을 판정한다. `PLAN.md`의 `web_delivery_target`과 이유를 확정한 뒤
+선택되지 않은 Vercel·Supabase 또는 Sites 준비물을 추가하지 않는다.
+
 | 기획서 신호 | 로컬 도구 | 가입·로그인 | 브라우저 세팅 |
 |---|---|---|---|
 | 모든 새 프로젝트 | Git, GitHub CLI | GitHub 계정·대상 owner | 미가입·OAuth일 때만 |
-| `web_app` 배포 | Node.js LTS, npm, Vercel CLI | Vercel 계정·user/team | 가입, GitHub App 저장소 권한 |
-| 영구 저장·앱 로그인 | 선택한 DB SDK/CLI | Supabase 등 선택한 서비스 | 프로젝트 생성, OAuth·redirect URL |
+| `web_app` + `codex_sites` | Node.js LTS, npm, 현재 Sites 도구 | 현재 ChatGPT workspace | Sites 사용 가능 여부, 배포 접근 범위 |
+| `web_app` + `vercel_supabase` | Node.js LTS, npm, Vercel CLI | Vercel 계정·user/team | 가입, GitHub App 저장소 권한 |
+| Sites 영구 저장·업로드 | D1/R2 binding과 migration 도구 | 별도 DB 가입 없음 | Sites 설정·접근 범위 |
+| 폴백 영구 저장·외부 로그인 | 선택한 DB SDK/CLI | Supabase 등 선택한 서비스 | 프로젝트 생성, OAuth·redirect URL |
 | `ai_skill` | 스크립트가 요구하는 런타임만 | 실제로 읽을 외부 도구 계정만 | OAuth가 있을 때만 |
 | `automation` | 선택한 Node.js 또는 Python 런타임 | 트리거·입출력 서비스 계정 | OAuth, webhook, 승인 범위 |
 | Google 로그인·Gmail·Drive | 필요한 SDK/CLI | 사용할 Google 계정 | 계정 선택, consent, Cloud project |
@@ -34,7 +40,7 @@
 
 - 라이브 웹앱의 DOM·console·network·performance 진단 → `browser_runtime_diagnostics`
 - 다단계·권한·모바일 흐름의 반복 회귀 검증 → `repeatable_e2e`
-- 반복적인 Vercel 배포·로그 분석 → `deployment_observability`
+- 선택한 배포의 상태·로그 분석 → Sites connector 또는 `deployment_observability`
 - Supabase schema·RLS·migration·advisor 조회 → `database_diagnostics`
 
 같은 능력이 실제로 동작하면 제품명이 달라도 `EQUIVALENT`다. 현재 호스트 하나에 부족한 능력만
@@ -49,6 +55,7 @@
 ```text
 시작 전 준비 카드
 - 이미 준비됨: [도구·버전 / 확인된 계정]
+- 선택한 웹 배포: [existing / codex_sites / vercel_supabase — 판정 이유]
 - 설치 동의가 필요함: [도구 — 설치 방법과 시스템 영향]
 - 도움 도구 후보: [필요 능력 — 도구 — 설정 범위 — 접근 데이터 — 대체 수단]
 - 직접 가입·본인확인이 필요함: [서비스 — 필요한 이유]
@@ -112,12 +119,14 @@ identity 검증까지 통과하면 `READY`로 바꾼다. 필수 항목에 `MISSI
 | 서비스 | 공식 시작점 | 사용자에게 맡길 일 | 에이전트가 이어서 할 일 |
 |---|---|---|---|
 | GitHub | `https://github.com/signup` | 계정 생성, 이메일 확인, 2FA | `gh auth login`, owner 확인, 기본 PUBLIC repo |
+| Sites | `https://chatgpt.com/sites` | workspace·플랜 제한 또는 접근 범위 확인이 필요할 때만 | project/version/deployment와 D1/R2 연결 |
 | Vercel | `https://vercel.com/signup` | 가입·로그인·본인확인 | CLI device login, team/project, GitHub App |
 | Supabase | `https://supabase.com/dashboard/sign-up` | 가입·로그인·본인확인 | organization/project, CLI link, RLS |
 | Google | `https://accounts.google.com/` | 계정 선택, 로그인, 2FA, consent | Cloud project·OAuth·redirect URL 설정 |
 | 기타 연동 | 해당 공급자의 공식 도메인 | 가입·로그인·약관·결제 | app 생성, 최소 scope, callback·webhook |
 
-Vercel은 가능하면 이 프로젝트에 쓰는 GitHub 계정과 연결해 계정 혼선을 줄인다. 이미 여러 계정이나
+Vercel은 `web_delivery_target: vercel_supabase`일 때만 준비한다. 가능하면 이 프로젝트에 쓰는
+GitHub 계정과 연결해 계정 혼선을 줄인다. 이미 여러 계정이나
 팀이 있으면 임의로 첫 항목을 고르지 않고 `browser-steps.md`의 identity 게이트를 따른다.
 
 ## 5. 브라우저 세팅 대행 계획
@@ -131,6 +140,7 @@ console·network·performance 능력이 없을 때만 동의받은 Chrome DevToo
 - 비밀이 아닌 폼 값 입력과 일반 이동
 - Vercel GitHub App의 대상 저장소 선택
 - Supabase 프로젝트·OAuth provider·redirect URL 설정
+- Sites project 접근 범위와 runtime 환경변수 이름 확인
 - Google Cloud OAuth project와 consent 설정
 - Slack·Notion 등 app 설치 화면에서 필요한 최소 scope 확인
 
@@ -150,6 +160,7 @@ console·network·performance 능력이 없을 때만 동의받은 Chrome DevToo
 - 가입·로그인·2FA처럼 사용자에게 맡길 한 동작과 공식 URL이 정리돼 있다.
 - 기존 MCP의 이름·기능·health·scope·안전 옵션을 확인했고 중복이나 `EXISTING_UNSAFE`를 숨기지 않았다.
 - project ref가 필요한 Supabase MCP는 broad URL로 먼저 등록하지 않고 `WAITING_FOR_SCOPE`다.
+- `web_app`의 `web_delivery_target`이 `pending`으로 남아 있지 않다.
 - 아직 실행하지 않은 설치·인증·브라우저 세팅을 `READY`나 완료로 표시하지 않았다.
 
 `PLAN.md`의 `사전 준비 안내`를 체크한다. `guided`면
@@ -162,6 +173,7 @@ console·network·performance 능력이 없을 때만 동의받은 Chrome DevToo
 - Node.js LTS: `https://nodejs.org/en/download`
 - GitHub CLI: `https://cli.github.com/`
 - GitHub CLI 인증: `https://cli.github.com/manual/gh_auth_login`
+- Codex Sites: `https://learn.chatgpt.com/docs/sites`
 - Vercel CLI: `https://vercel.com/docs/cli`
 - Supabase CLI: `https://supabase.com/docs/guides/local-development/cli/getting-started`
 - Chrome DevTools MCP: `https://github.com/ChromeDevTools/chrome-devtools-mcp`

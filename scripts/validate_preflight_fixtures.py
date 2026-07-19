@@ -7,6 +7,8 @@ import json
 import sys
 from pathlib import Path
 
+from validate_sites_routing import resolve_sites_route
+
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "tests" / "fixtures" / "prerequisite-expectations.json"
@@ -17,6 +19,32 @@ def fail(message: str) -> None:
     raise ValueError(message)
 
 
+def web_route(spec: dict) -> dict[str, object]:
+    return resolve_sites_route(
+        {
+            "kind": spec["kind"],
+            "execution_profile": spec.get("execution_profile", "guided"),
+            "host_surface": spec.get(
+                "host_surface",
+                "codex_app" if spec.get("current_host") == "codex" else "claude",
+            ),
+            "sites_available": spec.get("sites_available", False),
+            "sites_compatible": spec.get("sites_compatible", True),
+            "hosting_json": spec.get("hosting_json", False),
+            "existing_deployment": spec.get("existing_deployment", False),
+            "external_identity_provider": spec.get("external_identity_provider", False),
+            "sites_external_auth_confirmed": spec.get(
+                "sites_external_auth_confirmed", False
+            ),
+            "structured_data": spec.get("storage") is not None,
+            "uploads": spec.get("uploads", False),
+            "requires_sensitive_data_decision": spec.get(
+                "requires_sensitive_data_decision", False
+            ),
+        }
+    )
+
+
 def resolve(spec: dict) -> tuple[set[str], set[str], set[str]]:
     tools = {"git", "gh"}
     accounts = {"github"}
@@ -25,15 +53,17 @@ def resolve(spec: dict) -> tuple[set[str], set[str], set[str]]:
     kind = spec["kind"]
     runtime = spec.get("runtime")
     if kind == "web_app":
-        tools.update({"node", "npm", "vercel"})
-        accounts.add("vercel")
-        browser.update({"vercel_signup_or_login", "github_app_repository_access"})
+        tools.update({"node", "npm"})
+        if web_route(spec)["target"] == "vercel_supabase":
+            tools.add("vercel")
+            accounts.add("vercel")
+            browser.update({"vercel_signup_or_login", "github_app_repository_access"})
     elif runtime == "node":
         tools.update({"node", "npm"})
     elif runtime == "python":
         tools.add("python")
 
-    if spec.get("storage") == "supabase":
+    if spec.get("storage") == "supabase" and web_route(spec)["target"] != "codex_sites":
         tools.add("supabase")
         accounts.add("supabase")
         browser.add("supabase_project_setup")
@@ -87,10 +117,18 @@ def resolve_helpers(
         desired["browser_runtime_diagnostics"] = "chrome-devtools-mcp"
     if spec["kind"] == "web_app" and spec.get("repeatable_e2e"):
         desired["repeatable_e2e"] = "playwright-test"
-    if spec["kind"] == "web_app" and spec.get("deployment_diagnostics"):
+    if (
+        spec["kind"] == "web_app"
+        and spec.get("deployment_diagnostics")
+        and web_route(spec)["target"] == "vercel_supabase"
+    ):
         desired["deployment_observability"] = "vercel-mcp"
     waiting: set[str] = set()
-    if spec.get("storage") == "supabase" and spec.get("database_diagnostics"):
+    if (
+        spec.get("storage") == "supabase"
+        and web_route(spec)["target"] != "codex_sites"
+        and spec.get("database_diagnostics")
+    ):
         if "database_diagnostics" in available or spec.get("supabase_project_ref"):
             desired["database_diagnostics"] = "supabase-mcp-read-only"
         else:
@@ -120,7 +158,11 @@ def resolve_helpers(
     }
 
     features: set[str] = set()
-    if spec.get("storage") == "supabase" and spec.get("database_diagnostics"):
+    if (
+        spec.get("storage") == "supabase"
+        and web_route(spec)["target"] != "codex_sites"
+        and spec.get("database_diagnostics")
+    ):
         features = set(spec.get("supabase_features", []))
         allowed_features = {"database", "debugging", "docs"}
         if not features or not features.issubset(allowed_features):
@@ -203,10 +245,12 @@ def validate_preflight_fixtures(*, emit: bool = True) -> list[str]:
         "설치 권한을 한 번 받기",
         "READY | MISSING | USER_ACTION | NOT_NEEDED",
         "https://github.com/signup",
+        "https://chatgpt.com/sites",
         "https://vercel.com/signup",
         "https://supabase.com/dashboard/sign-up",
         "도움 도구 후보",
         "현재 호스트 하나",
+        "web_delivery_target",
         "사전 준비 계획 확정",
         "INSTALL_APPROVED",
     ):
@@ -219,6 +263,7 @@ def validate_preflight_fixtures(*, emit: bool = True) -> list[str]:
         "npm install -g supabase`는 쓰지 않는다",
         "python3 --version",
         "helpful-tools.md",
+        ".openai/hosting.json",
         "현재 세션 실제 호출",
         "필요 없는 서비스는 설치·가입·연결하지 않았다",
         "모든 `REQUIRED` 준비 항목이 `READY`",
