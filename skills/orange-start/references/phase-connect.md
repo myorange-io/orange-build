@@ -31,6 +31,8 @@ git remote -v
 
 `PLAN.md`와 기존 프로젝트가 요구하는 런타임을 먼저 정한다. `## 사전 준비`의 설치 목록과 사용자가
 동의한 범위를 대조한다. **동의받지 않은 시스템·글로벌·프로젝트 설치를 실행하지 않는다.**
+동일한 도구·package·scope가 `INSTALL_APPROVED` 또는 `READY`로 기록돼 있으면 다시 질문하지 않고
+설치·검증을 이어간다. 추가 동의는 새 항목이나 더 넓은 scope가 실제로 생긴 차이에만 받는다.
 
 - `web_app`: 기본적으로 Node.js·npm 필요
 - `ai_skill`: 스크립트가 있을 때만 그 스크립트의 Node.js 또는 Python 필요
@@ -191,7 +193,9 @@ npm install
 - `.gitignore`가 `.env*`, 로컬 DB, 빌드 산출물을 제외하는지 확인한다.
 - `npm install`은 사전 준비에서 동의받은 프로젝트 package 설치 범위 안에서만 실행한다.
 
-프로젝트 지침은 두 호스트에서 같은 계약을 읽도록 `AGENTS.md`와 `CLAUDE.md`에 짧게 둔다.
+프로젝트 지침은 두 호스트에서 같은 계약을 읽도록 `AGENTS.md`와 `CLAUDE.md`에 짧게 둔다. 각 파일은
+없을 때 최초 1회만 만든다. 기존 파일이 있으면 먼저 읽고 보존하며 Orange Build boilerplate를
+덧붙이거나 작업마다 다시 쓰지 않는다. 이미 생성한 10줄 계약도 내용이 같으면 수정하지 않는다.
 
 ```markdown
 # [결과물 이름]
@@ -207,8 +211,9 @@ Orange Build 프로젝트다. `SOURCE_PLAN.md`는 원본, `PLAN.md`는 실행 �
 
 ### `ai_skill`
 
-아직 구현 파일을 만들지 않는다. `SOURCE_PLAN.md`, `PLAN.md`, `MEMORY.md`만 루트에 두고
-`phase-build-skill.md`가 결과물 구조를 정하게 한다.
+아직 구현 파일을 만들지 않는다. `SOURCE_PLAN.md`, `PLAN.md`와 새 프로젝트 기획에서 최초 1회 만든
+`MEMORY.md`만 루트에 두고 `phase-build-skill.md`가 결과물 구조를 정하게 한다. 기존 프로젝트에
+`MEMORY.md`가 없으면 이 단계만을 위해 새로 만들지 않는다.
 
 ### `automation`
 
@@ -222,7 +227,8 @@ Git 원격이 없는 새 저장소만 기술 이름 slug를 사용한다. 3단�
 
 ```bash
 git init
-git add -- SOURCE_PLAN.md PLAN.md MEMORY.md
+git add -- SOURCE_PLAN.md PLAN.md
+# MEMORY.md·AGENTS.md·CLAUDE.md는 이번에 실제 생성·변경된 파일만 경로에 추가한다.
 # 생성한 프로젝트 파일은 git status에서 확인한 정확한 경로만 추가한다.
 git diff --cached --name-only
 git commit -m "기획서와 구현 계약"
@@ -317,10 +323,11 @@ Google OAuth 로그인이 있는 앱이면 Google 계정·OAuth 프로젝트·re
 - `EXISTING_UNSAFE` entry는 사용하지 않았고, 정확한 동의로 안전하게 재구성해 `READY`로 바꾸거나
   대체 검증과 함께 `SKIPPED`로 정리했다.
 
-`PLAN.md`의 `사전 준비 안내`와 `환경·계정 확인`을 체크하고, 확인한 **계정 이름이 아니라 확인
-절차와 선택한 scope**, 설치 동의 범위, 설치한 도구, 도움 도구의 `READY | EQUIVALENT | SKIPPED`
-상태와 실제 호출 또는 대체 검증, GitHub 저장소 visibility 검증을 `MEMORY.md`에 기록한다. 개인 이메일과 토큰은
-기록하지 않는다.
+`PLAN.md`의 `사전 준비 안내`와 `환경·계정 확인`을 체크하고 설치 동의 범위, 도구 상태, 실제 호출·
+대체 검증, GitHub visibility를 증거 표에 기록한다. 정상 설치와 `READY` 전환만 있었으면
+`MEMORY.md`를 수정하지 않는다. 계정·organization·권한 scope의 중요한 사람 결정, 배포 경로 폴백,
+반복 설치 실패의 원인과 해결처럼 재사용할 가치가 있을 때만 확인한 **계정 이름이 아니라 확인 절차와
+선택한 scope**를 한 항목으로 남긴다. 개인 이메일과 토큰은 기록하지 않는다.
 
 변경된 계획·설정·체크 상태를 한 커밋에 담아 push한다.
 

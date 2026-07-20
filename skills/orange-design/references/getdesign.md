@@ -16,7 +16,8 @@
 2. 그대로 복제하지 않고 `goal`, `hierarchy`, `type relationship`, `spacing rhythm`, `component rule`처럼
    브랜드에 종속되지 않은 원칙만 추출한다.
 3. 조직의 실제 `DESIGN.md`, 사용자 가이드, 라이선스·상표·자산 제약과 충돌하면 사용하지 않는다.
-4. 적용한 경우 `DESIGN.md` 또는 `MEMORY.md`에 URL과 "reference only"를 남긴다. 외부 코드, 로고,
-   이미지, 카피, 완성 CSS를 저장소로 복사하지 않는다.
+4. 적용한 경우 `DESIGN.md`에 URL과 "reference only"를 남긴다. `DESIGN.md`가 없고 선택이 다음
+   마일스톤의 판단 기준이 될 때만 `MEMORY.md`에 한 번 남긴다. 외부 코드, 로고, 이미지, 카피,
+   완성 CSS를 저장소로 복사하지 않는다.
 
 getdesign.md 분석은 독립 분석 참고자료이며 대상 웹사이트의 공식 브랜드 가이드라고 가정하지 않는다.

@@ -16,6 +16,7 @@ from validate_execution_profiles import validate_execution_profiles
 from validate_interview_flow import validate_interview_flow
 from validate_plan_fixtures import validate_fixture_contracts
 from validate_preflight_fixtures import validate_preflight_fixtures
+from validate_recording_cadence import validate_recording_cadence
 from validate_self_improvement import validate_self_improvement
 from validate_sites_routing import validate_sites_routing
 
@@ -419,6 +420,7 @@ def validate_workflow() -> None:
         validate_interview_flow(emit=False)
         validate_fixture_contracts(emit=False)
         validate_preflight_fixtures(emit=False)
+        validate_recording_cadence(emit=False)
         validate_self_improvement(emit=False)
         validate_sites_routing(emit=False)
     except ValueError as exc:
