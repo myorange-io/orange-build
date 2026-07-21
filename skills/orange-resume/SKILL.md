@@ -19,7 +19,7 @@ Codex에서 실행 중이면 `../orange-start/references/codex-gpt-5p6.md`를 �
 - `PLAN.md` 전체: `deliverable_kind`, `execution_profile`, `delivery_intent`, REQ·TEST 계약, 최종 판정,
   `web_delivery_target`, 결과물 수량, 가정과 결정
 - `SOURCE_PLAN.md`: PLAN 추적표에 누락 의심이 있을 때만 관련 절 확인
-- `MEMORY.md`: 파일이 있을 때만 마지막 1~2개 항목
+- `MEMORY.md`: 있으면 마지막 1~2개 항목과 최종 검증 marker 수
 - `git status --short --branch`
 - `git log --oneline -12`
 - 결과물 증거
@@ -66,6 +66,8 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 - `ai_skill` REQ 미완료 → `../orange-start/references/phase-build-skill.md`
 - `automation` REQ 미완료 → `../orange-start/references/phase-build-automation.md`
 - 모든 REQ 구현, 최종 검증 미완료 → `../orange-start/references/phase-verify.md`
+- 최종 검증 PASS, `MEMORY.md` 없음 또는 최종 검증 marker가 정확히 하나가 아님 →
+  `../orange-start/references/memory-log.md`로 생성·중복 정리 후 최종 commit·push
 
 현황만 말하고 끝내지 않는다. 사용자가 단순 상태 조회만 요청한 것이 아니라면 해당 파일을 읽고
 다음 미완료 요구사항부터 바로 이어간다. `implement_and_release`면 로컬 구현 이후에도 결과물별
@@ -82,6 +84,6 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 
 ## 4. 기록
 
-재개 자체와 평범한 blocker 해결을 기록하지 않는다. 사용자가 과정 기록을 요청했고 `memory-log.md`의
-기록 게이트도 충족할 때만 `MEMORY.md`에 덧붙인다. 그 외에는 실제 blocker handoff나 최종 판정만
-`PLAN.md`에 한 번 갱신한다.
+재개 자체와 평범한 blocker 해결은 기록하지 않는다. 과정 기록은 사용자가 요청한 경우에만 추가한다.
+하지만 구현 완료 판정에는 `memory-log.md`의 최종 검증 marker 블록이 정확히 하나 있어야 하며,
+재검증에서는 같은 블록을 갱신한다. 실제 blocker handoff나 최종 판정만 `PLAN.md`에 한 번 갱신한다.

@@ -212,8 +212,8 @@ Orange Build 프로젝트다. `SOURCE_PLAN.md`는 원본, `PLAN.md`는 실행 �
 ### `ai_skill`
 
 아직 구현 파일을 만들지 않는다. 루트에는 기본 계약 파일인 `SOURCE_PLAN.md`, `PLAN.md`만 두고
-`phase-build-skill.md`가 결과물 구조를 정하게 한다. `MEMORY.md`는 사용자가 과정 기록을 요청한
-경우에만 `memory-log.md`에 따라 만든다.
+`phase-build-skill.md`가 결과물 구조를 정하게 한다. `MEMORY.md`는 환경 준비 중 만들지 않고 최종
+완료 게이트를 통과했을 때 `memory-log.md`에 따라 한 번 생성한다.
 
 ### `automation`
 

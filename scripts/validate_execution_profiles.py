@@ -98,6 +98,7 @@ def validate_execution_profiles(*, emit: bool = True) -> list[str]:
         "시작 한 문장, 실제 사용자 동작이 필요한 blocker, 첫 작동 결과, 최종 결과만",
         "정확한 파일만 담은 commit과 원격 push",
         "배포 또는 활성화 대상의 현재 상태 재확인",
+        "`MEMORY.md`에 최종 검증 marker 블록이 정확히 하나",
     ):
         if required not in reference:
             fail(f"execution-profiles.md is missing behavior: {required}")

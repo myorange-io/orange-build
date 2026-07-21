@@ -2,8 +2,9 @@
 
 목표: 만든 파일 수가 아니라 `SOURCE_PLAN.md`의 약속이 실제로 충족됐는지 증거로 판정한다.
 
-시작할 때 `verification-loop.md`와 `self-improvement-loop.md`를 읽는다. TEST↔REQ 연결, 결과물
-인벤토리, 증거 등급과 자동 수정·사람 결정 경계를 최종 판정의 공통 기준으로 사용한다.
+시작할 때 `verification-loop.md`, `self-improvement-loop.md`, `memory-log.md`를 읽는다. TEST↔REQ 연결,
+결과물 인벤토리, 증거 등급과 자동 수정·사람 결정 경계, 완료 기록의 중복 방지를 최종 판정의 공통
+기준으로 사용한다.
 
 ## 1. 원본 추적 감사
 
@@ -185,7 +186,8 @@ production URL, AI 스킬은 commit·push와 계획된 설치 대상의 새 컨�
 live-run·트리거·결과 재조회가 있어야 한다. 사용자 권한이나 외부 장애가 남으면 한 동작을 요청하고
 해결 뒤 같은 완료 게이트로 자동 재개한다.
 
-- REQ와 TEST가 모두 PASS이고 P0/P1 없음: `PLAN.md`의 `최종 판정`을 한 번 갱신하고 완료
+- REQ와 TEST가 모두 PASS이고 P0/P1 없음: `PLAN.md`의 `최종 판정`을 한 번 갱신하고 `MEMORY.md`를
+  생성해 최종 검증 marker 블록을 정확히 하나 기록한 뒤 완료
 - 일부 `FAIL | NOT_RUN | PARTIAL | INFERRED`: 완료라 하지 말고 REQ `N/M 통과`, TEST `T/K`와 남은 ID를
   보여준 뒤 고칠 수 있는 항목은 질문 없이 계속 수정·재검증
 - 사용자 권한·외부 서비스 상태만 남음: blocker와 사용자가 해야 할 정확한 한 동작을 제시
@@ -193,9 +195,11 @@ live-run·트리거·결과 재조회가 있어야 한다. 사용자 권한이�
 최종 보고에 `아직 증명하지 못한 것` 한 줄을 두고 `TESTED`가 아닌 항목, 미해결 P2/P3, 외부 권한
 때문에 남은 live 검증을 적는다. 없으면 `없음`이라고 쓴다.
 
-최종 판정에서 `PLAN.md`의 요구사항·TEST·인벤토리·결과를 한 번에 맞추고 테스트와 같은 커밋에 담아
-push한다. `MEMORY.md`는 사용자가 과정 기록을 요청했고 별도 기록 게이트도 충족한 경우에만 포함한다.
-최종 검증에서 바꾼 정확한 경로만 `git add --`로 stage하고 cached 목록을 확인한다.
+최종 판정에서 `PLAN.md`의 요구사항·TEST·인벤토리·결과를 한 번에 맞춘다. 완료 판정이라면 사용자
+요청 여부와 관계없이 `memory-log.md` 형식으로 `MEMORY.md`를 생성하고 실제 최종 검증 결과를 기록한다.
+시작 marker와 종료 marker가 각각 정확히 하나인지 세며, 기존 블록이 있으면 append하지 않고 같은
+블록을 갱신한다. `PLAN.md`, `MEMORY.md`, 코드·테스트를 같은 최종 커밋에 담아 push한다. 최종
+검증에서 바꾼 정확한 경로만 `git add --`로 stage하고 cached 목록을 확인한다.
 
 ```bash
 git commit -m "검증: 원본 기획서 요구사항 완료"
@@ -228,6 +232,7 @@ URL을 기획서에서 추측하지 않는다. 연결된 브라우저에 해당 
 - 결과: [라이브 URL / 대표 스킬 호출 결과 / 자동화 run id]
 - 저장: [GitHub URL · PUBLIC / 승인된 PRIVATE · 배포/활성화 상태]
 - 검증: [핵심 검증 최대 3개]
+- 기록: MEMORY.md 최종 검증 1건
 - 아직 증명하지 못한 것: [없음 / TEST·REQ·P2/P3와 이유]
 ```
 

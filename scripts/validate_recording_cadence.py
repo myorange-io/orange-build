@@ -56,7 +56,8 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
             "기본 관리 파일은 최초 1회 만드는 `SOURCE_PLAN.md`와 간결한 `PLAN.md` 두",
             "실제 blocker로 중단하는 handoff, 최종 판정",
             "boilerplate를 자동 생성하거나",
-            "`MEMORY.md`와 `CASE.md`는 기본으로 만들지 않는다",
+            "구현이 최종 완료되면 `memory-log.md`에 따라 `MEMORY.md`를 생성",
+            "완료 기록만 필수",
             "내부 단계 완료를 따로 보고하지 않는다",
         ),
         "orange-start/SKILL.md",
@@ -75,13 +76,13 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
     require(
         memory,
         (
-            "기본 산출물이 아니다",
-            "## 기록 게이트",
-            "사용자 요청이 있고",
-            "`MEMORY.md`를 만들거나 수정하지",
-            "마일스톤당 최대 한 항목",
-            "`PLAN.md`, 테스트 출력, git 이력",
-            "기록 조건이 없으면 stage 목록에 `MEMORY.md`를 넣지 않는다",
+            "구현 완료 증거다",
+            "## 1. 필수 최종 기록 게이트",
+            "정확히 한 번 기록한다",
+            "<!-- orange-build:final-verification -->",
+            "marker 블록이 이미 하나 있으면 새 항목을 append하지 않고",
+            "시작 marker와 종료 marker가 각각 정확히 한 개인지 확인",
+            "구현 완료 후 `MEMORY.md`가 없거나 marker가 정확히 하나가 아니면 완료 게이트는 FAIL",
         ),
         "memory-log.md",
     )
@@ -148,12 +149,18 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
     )
     require(
         design,
-        ("채택한 모든 시각 수정마다 `MEMORY.md`를 바꾸지 않는다",),
+        (
+            "채택한 모든 시각 수정마다 `MEMORY.md`를 바꾸지 않는다",
+            "기존 최종 검증 marker 블록을 한 번 갱신",
+        ),
         "orange-design/SKILL.md",
     )
     require(
         secure,
-        ("전부 OK이거나 이전과", "같은 결과면 파일을 수정하지 않는다"),
+        (
+            "검증 marker 블록을 현재 결과로 한 번 갱신",
+            "`최종 검증` 항목을 append해 중복시키지 않는다",
+        ),
         "orange-secure/SKILL.md",
     )
     require(
@@ -165,7 +172,8 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
         verify,
         (
             "`PLAN.md`의 `최종 판정`을 한 번 갱신",
-            "`MEMORY.md`는 사용자가 과정 기록을 요청했고",
+            "생성해 최종 검증 marker 블록을 정확히 하나 기록",
+            "요청 여부와 관계없이",
             "핵심 검증 최대 3개",
             "REQ와 TEST가 모두 PASS이고 P0/P1 없음",
         ),
@@ -184,7 +192,8 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
         resume,
         (
             "`PLAN.md`가 중간 구현마다 갱신된다고 가정하지 않는다",
-            "파일이 있을 때만 마지막 1~2개 항목",
+            "최종 검증 marker 수",
+            "최종 검증 PASS, `MEMORY.md` 없음",
             "실제 blocker handoff나 최종 판정만",
         ),
         "orange-resume/SKILL.md",
@@ -192,8 +201,21 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
 
     reject(
         start,
-        ("마일스톤 저장", "기획 완료, 준비 완료"),
+        (
+            "마일스톤 저장",
+            "기획 완료, 준비 완료",
+            "`MEMORY.md`와 `CASE.md`는 기본으로 만들지 않는다",
+        ),
         "orange-start/SKILL.md",
+    )
+    reject(
+        memory,
+        (
+            "프로젝트 루트의 `MEMORY.md`는 기본 산출물이 아니다",
+            "사용자 요청이 없거나 쓸 사건이 없으면",
+            "새 프로젝트라도 자동으로 만들지 않는다",
+        ),
+        "memory-log.md",
     )
     reject(
         plan,
@@ -213,7 +235,7 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
 
     message = (
         "PASS low-noise workflow: source=immutable plan=contract-decision-handoff-final "
-        "memory=opt-in reporting=outcomes-only verification=unchanged"
+        "memory=mandatory-final-once reporting=outcomes-only verification=unchanged"
     )
     if emit:
         print(message)

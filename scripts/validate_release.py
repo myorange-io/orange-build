@@ -14,6 +14,7 @@ from validate_design_routing import validate_design_routing
 from validate_evidence_ui import validate_evidence_ui
 from validate_execution_profiles import validate_execution_profiles
 from validate_interview_flow import validate_interview_flow
+from validate_memory_finalization import validate_memory_finalization
 from validate_plan_fixtures import validate_fixture_contracts
 from validate_preflight_fixtures import validate_preflight_fixtures
 from validate_product_truth_gate import validate_product_truth_gate
@@ -172,6 +173,7 @@ def validate_workflow() -> None:
         "phase-build-skill.md",
         "phase-build-automation.md",
         "product-truth-gate.md",
+        "memory-log.md",
         "verification-loop.md",
         "self-improvement-loop.md",
         "codex-gpt-5p6.md",
@@ -420,6 +422,7 @@ def validate_workflow() -> None:
         validate_evidence_ui(emit=False)
         validate_execution_profiles(emit=False)
         validate_interview_flow(emit=False)
+        validate_memory_finalization(emit=False)
         validate_fixture_contracts(emit=False)
         validate_preflight_fixtures(emit=False)
         validate_product_truth_gate(emit=False)
