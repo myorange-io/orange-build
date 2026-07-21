@@ -16,16 +16,20 @@ Codex에서 실행 중이면 `../orange-start/references/codex-gpt-5p6.md`를 �
 
 다음만 읽어 빠르게 파악한다.
 
-- `PLAN.md` 전체: 결과물 유형, `execution_profile`, `delivery_intent`, REQ 상태, TEST-01~03 상태,
-  `web_delivery_target`, 결과물 수량, 변경 기록, 검증 증거
+- `PLAN.md` 전체: `deliverable_kind`, `execution_profile`, `delivery_intent`, REQ·TEST 계약, 최종 판정,
+  `web_delivery_target`, 결과물 수량, 가정과 결정
 - `SOURCE_PLAN.md`: PLAN 추적표에 누락 의심이 있을 때만 관련 절 확인
-- `MEMORY.md`: 마지막 1~2개 항목
+- `MEMORY.md`: 파일이 있을 때만 마지막 1~2개 항목
 - `git status --short --branch`
 - `git log --oneline -12`
 - 결과물 증거
   - `web_app`: 기록된 production URL과 최근 배포
   - `ai_skill`: SKILL.md와 최근 validator/호출 결과
   - `automation`: 최근 dry-run/live run id와 트리거 설정
+
+`PLAN.md`가 중간 구현마다 갱신된다고 가정하지 않는다. 최근 commit·코드·테스트·배포 결과가 PLAN의
+상태보다 앞서 있으면 가장 가까운 검증을 다시 실행해 실제 상태를 판정하고 계속한다. 실제 blocker로
+다시 중단하거나 최종 판정에 도달하기 전에는 이 판정을 문서에 전사하지 않는다.
 
 `PLAN.md`가 없으면 `orange-start`로 돌아간다. 복사한 기획서가 있으면 가져오고, 없으면 아이디어
 인터뷰부터 시작할 수 있다고 안내한다.
@@ -36,14 +40,12 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 
 ```text
 📋 [결과물 이름] · [web_app / ai_skill / automation]
-   요구사항: [PASS 수]/[전체 수]
-   직접 확인: [TESTED 수]/[전체 TEST 수]
-   다음: [가장 앞선 TODO/FAIL REQ와 완료 조건]
-   결과: [라이브 URL / 대표 스킬 결과 / 최근 run id / 아직 없음]
-   저장소: [PUBLIC 확인 / 승인된 PRIVATE / 확인 필요]
+   상태: REQ [PASS 수]/[전체 수] · TEST [TESTED 수]/[전체 수]
+   다음: [가장 앞선 TODO/FAIL REQ 또는 최종 검증]
+   결과: [URL / 대표 스킬 결과 / run id / 아직 없음]
 ```
 
-`MEMORY.md`의 마지막 결정이나 blocker가 있으면 한 줄 덧붙인다. 테스트가 실패했거나 증거가
+`MEMORY.md` 또는 `PLAN.md`의 마지막 중요 blocker가 있으면 필요할 때만 한 줄 덧붙인다. 테스트가 실패했거나 증거가
 `PARTIAL`/`INFERRED`인데 체크박스만 완료인 경우 PASS 수나 TESTED 수에 넣지 않는다.
 
 ## 3. 재개 위치
@@ -70,11 +72,16 @@ REQ 상태를 실제로 세어 다음 형식으로 보여준다.
 배포·활성화와 원격 push 완료 조건까지 계속한다. 실패·누락이 원본 범위 안의 안전한 수정이면
 질문하지 않고 고쳐 같은 검증을 다시 실행한다.
 
+다음 항목이 `FACT_UNVERIFIED`로 막혀 있으면 `../orange-start/references/product-truth-gate.md`를 읽고
+확인이 필요한 값, 현재 근거, 최적의 권장안, 다른 선택의 영향을 함께 보여준 뒤 답 하나를 받는다.
+확인되지 않은 값을 예시나 기존 코드 상수로 대신하지 않는다.
+
 `web_delivery_target: codex_sites`면 구현·배포 전에
 `../orange-start/references/codex-sites.md`를 함께 읽는다. `existing`이나 `vercel_supabase`를 Sites로
 바꾸거나 기존 Sites 프로젝트를 다른 공급자로 옮기지 않는다.
 
 ## 4. 기록
 
-재개 자체를 매번 기록하지 않는다. 긴 중단의 원인이나 blocker 해결처럼 나중에 가치가 있는 변화가
-있을 때만 `MEMORY.md`에 덧붙인다. 코드·PLAN 상태와 같은 커밋에 저장한다.
+재개 자체와 평범한 blocker 해결을 기록하지 않는다. 사용자가 과정 기록을 요청했고 `memory-log.md`의
+기록 게이트도 충족할 때만 `MEMORY.md`에 덧붙인다. 그 외에는 실제 blocker handoff나 최종 판정만
+`PLAN.md`에 한 번 갱신한다.

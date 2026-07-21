@@ -31,7 +31,7 @@ def section(text: str, start: str, end: str) -> str:
 
 
 def source_plan_template(reference: str) -> str:
-    source_section = section(reference, "## 6. SOURCE_PLAN.md 작성", "저장 뒤 `✅ 기획서 작성 완료")
+    source_section = section(reference, "## 6. SOURCE_PLAN.md 작성", "저장 완료를 별도로 보고하지 않고")
     match = re.search(r"```markdown\n(?P<template>.*?)\n```", source_section, flags=re.DOTALL)
     if not match:
         fail("phase-interview.md is missing the SOURCE_PLAN.md markdown template")

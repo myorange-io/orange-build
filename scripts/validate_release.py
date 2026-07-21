@@ -16,6 +16,7 @@ from validate_execution_profiles import validate_execution_profiles
 from validate_interview_flow import validate_interview_flow
 from validate_plan_fixtures import validate_fixture_contracts
 from validate_preflight_fixtures import validate_preflight_fixtures
+from validate_product_truth_gate import validate_product_truth_gate
 from validate_recording_cadence import validate_recording_cadence
 from validate_self_improvement import validate_self_improvement
 from validate_sites_routing import validate_sites_routing
@@ -170,6 +171,7 @@ def validate_workflow() -> None:
         "phase-build.md",
         "phase-build-skill.md",
         "phase-build-automation.md",
+        "product-truth-gate.md",
         "verification-loop.md",
         "self-improvement-loop.md",
         "codex-gpt-5p6.md",
@@ -288,12 +290,12 @@ def validate_workflow() -> None:
     skill_build = refs / "phase-build-skill.md"
     require_text(
         skill_build,
-        ("스킬 이름·경로·예상 답을 알려주지 않은", "`첫 작동 결과`를 체크", "TESTED", "RED", "self-improvement-loop.md"),
+        ("스킬 이름·경로·예상 답을 알려주지 않은", "첫 결과만을 기록하려고", "TESTED", "RED", "self-improvement-loop.md"),
     )
     automation_build = refs / "phase-build-automation.md"
     require_text(
         automation_build,
-        ("DRY_RUN_PASS", "`첫 작동 결과`를 체크", "TESTED", "RED", "self-improvement-loop.md"),
+        ("DRY_RUN_PASS", "첫 결과만을 기록하려고", "TESTED", "RED", "self-improvement-loop.md"),
     )
     design_skill = ROOT / "skills" / "orange-design" / "SKILL.md"
     require_text(
@@ -352,7 +354,7 @@ def validate_workflow() -> None:
             "명시적 동의",
             "orange-build-app",
             "사용할 자료·개인정보와 공개·비공개 경계",
-            "AI가 발견해 자동으로 고친 것",
+            "핵심 검증 최대 3개",
             "codex_sites",
             "deployment `succeeded`",
         ),
@@ -420,6 +422,7 @@ def validate_workflow() -> None:
         validate_interview_flow(emit=False)
         validate_fixture_contracts(emit=False)
         validate_preflight_fixtures(emit=False)
+        validate_product_truth_gate(emit=False)
         validate_recording_cadence(emit=False)
         validate_self_improvement(emit=False)
         validate_sites_routing(emit=False)

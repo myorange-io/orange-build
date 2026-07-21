@@ -193,9 +193,9 @@ npm install
 - `.gitignore`가 `.env*`, 로컬 DB, 빌드 산출물을 제외하는지 확인한다.
 - `npm install`은 사전 준비에서 동의받은 프로젝트 package 설치 범위 안에서만 실행한다.
 
-프로젝트 지침은 두 호스트에서 같은 계약을 읽도록 `AGENTS.md`와 `CLAUDE.md`에 짧게 둔다. 각 파일은
-없을 때 최초 1회만 만든다. 기존 파일이 있으면 먼저 읽고 보존하며 Orange Build boilerplate를
-덧붙이거나 작업마다 다시 쓰지 않는다. 이미 생성한 10줄 계약도 내용이 같으면 수정하지 않는다.
+기존 `AGENTS.md`와 `CLAUDE.md`가 있으면 먼저 읽고 보존한다. Orange Build 계약은 이미
+`SOURCE_PLAN.md`와 `PLAN.md`에 있으므로 두 호스트용 boilerplate를 자동 생성하거나 덧붙이지 않는다.
+사용자가 프로젝트 고유 영구 규칙의 인계를 요청한 경우에만 현재 실행 호스트용 파일 하나를 만든다.
 
 ```markdown
 # [결과물 이름]
@@ -211,9 +211,9 @@ Orange Build 프로젝트다. `SOURCE_PLAN.md`는 원본, `PLAN.md`는 실행 �
 
 ### `ai_skill`
 
-아직 구현 파일을 만들지 않는다. `SOURCE_PLAN.md`, `PLAN.md`와 새 프로젝트 기획에서 최초 1회 만든
-`MEMORY.md`만 루트에 두고 `phase-build-skill.md`가 결과물 구조를 정하게 한다. 기존 프로젝트에
-`MEMORY.md`가 없으면 이 단계만을 위해 새로 만들지 않는다.
+아직 구현 파일을 만들지 않는다. 루트에는 기본 계약 파일인 `SOURCE_PLAN.md`, `PLAN.md`만 두고
+`phase-build-skill.md`가 결과물 구조를 정하게 한다. `MEMORY.md`는 사용자가 과정 기록을 요청한
+경우에만 `memory-log.md`에 따라 만든다.
 
 ### `automation`
 
@@ -228,7 +228,6 @@ Git 원격이 없는 새 저장소만 기술 이름 slug를 사용한다. 3단�
 ```bash
 git init
 git add -- SOURCE_PLAN.md PLAN.md
-# MEMORY.md·AGENTS.md·CLAUDE.md는 이번에 실제 생성·변경된 파일만 경로에 추가한다.
 # 생성한 프로젝트 파일은 git status에서 확인한 정확한 경로만 추가한다.
 git diff --cached --name-only
 git commit -m "기획서와 구현 계약"
@@ -240,8 +239,9 @@ gh repo view --json visibility,url --jq '"\(.visibility) \(.url)"'
 있으면 생성 전에 사용자에게 확인받고 `--private`로 만든다. 새로 만든 저장소가 아니라면
 `gh repo view`로 기존 visibility를 확인하며, visibility 변경은 항상 사용자 확인 후에만 한다.
 
-`PLAN.md`의 `GitHub 저장소`를 체크하고 GitHub URL을 `검증 증거`에 남긴다. visibility
-확인과 체크 변경을 같은 커밋으로 push한다.
+GitHub URL과 visibility는 CLI 출력과 원격 설정으로 확인한다. 중간 확인 결과를 남기기 위해
+`PLAN.md`를 다시 수정하거나 별도 커밋을 만들지 않는다. 최종 판정 또는 실제 handoff에서만 결과
+한 줄을 기록한다.
 
 기존 원격이 있으면 `gh repo create`를 실행하지 않는다. 현재 원격 URL·visibility·push 권한을
 확인하고 그대로 사용한다.
@@ -295,7 +295,8 @@ vercel git connect --yes
 - `vercel_supabase`: Supabase를 선택했다면 아래를 따른다.
 
   1. Vercel/Supabase 조직과 프로젝트 이름을 먼저 확인한다.
-  2. 새 프로젝트 생성 또는 기존 프로젝트 사용을 `PLAN.md` 가정에 기록한다.
+  2. 새 프로젝트 생성 또는 기존 프로젝트 사용은 실제 연결 설정으로 확인한다. 여러 후보 중 사람의
+     선택이 필요했거나 기본 경로에서 폴백한 경우에만 `PLAN.md`의 `가정과 결정`에 한 줄 남긴다.
   3. 프로젝트 URL과 publishable/anon 키만 클라이언트 환경변수로 둔다.
   4. 비공개 폼 처리나 관리자 작업에 service-role이 필요하면 **서버 전용**
      `SUPABASE_SERVICE_ROLE_KEY`를 로컬·Vercel 비밀 환경변수에 저장한다. `NEXT_PUBLIC_`을 붙이지 않는다.
@@ -323,22 +324,10 @@ Google OAuth 로그인이 있는 앱이면 Google 계정·OAuth 프로젝트·re
 - `EXISTING_UNSAFE` entry는 사용하지 않았고, 정확한 동의로 안전하게 재구성해 `READY`로 바꾸거나
   대체 검증과 함께 `SKIPPED`로 정리했다.
 
-`PLAN.md`의 `사전 준비 안내`와 `환경·계정 확인`을 체크하고 설치 동의 범위, 도구 상태, 실제 호출·
-대체 검증, GitHub visibility를 증거 표에 기록한다. 정상 설치와 `READY` 전환만 있었으면
-`MEMORY.md`를 수정하지 않는다. 계정·organization·권한 scope의 중요한 사람 결정, 배포 경로 폴백,
-반복 설치 실패의 원인과 해결처럼 재사용할 가치가 있을 때만 확인한 **계정 이름이 아니라 확인 절차와
-선택한 scope**를 한 항목으로 남긴다. 개인 이메일과 토큰은 기록하지 않는다.
+정상 설치·READY 전환·identity 확인은 `PLAN.md`나 `MEMORY.md`에 복제하지 않는다. 사람 결정으로
+범위·비용·권한·공개 범위가 달라졌거나 실제 blocker로 중단해야 할 때만 `PLAN.md`의 `가정과 결정`과
+`사전 준비`에 한 줄을 남긴다. 개인 이메일과 토큰은 기록하지 않는다.
 
-변경된 계획·설정·체크 상태를 한 커밋에 담아 push한다.
-
-`git status --short`에서 이번 단계가 바꾼 계획·설정 파일만 정확한 경로로 stage하고,
-`git diff --cached --name-only`로 확인한 뒤 commit한다.
-
-```bash
-git commit -m "환경과 GitHub 저장소 준비"
-git push
-```
-
-`guided`면 `✅ 준비 완료 — GitHub 저장소와 실행 환경을 확인했습니다.`라고 알린다. `adaptive`면
-사용자 동작이나 변경분이 없을 때 내부 보고를 생략한다. 두 프로필 모두 결과물 유형에 맞는 구현
-파일로 바로 이어간다.
+환경 준비만을 위한 별도 상태 커밋과 완료 보고를 만들지 않는다. package·설정 변경은 첫 기능 코드·
+테스트와 함께 정확한 경로만 stage해 저장한다. 두 프로필 모두 결과물 유형에 맞는 구현으로 바로
+이어간다.

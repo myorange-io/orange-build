@@ -38,6 +38,11 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
     build = (REFS / "phase-build.md").read_text(encoding="utf-8")
     sites = (REFS / "codex-sites.md").read_text(encoding="utf-8")
     case_card = (REFS / "case-card.md").read_text(encoding="utf-8")
+    verify = (REFS / "phase-verify.md").read_text(encoding="utf-8")
+    improvement = (REFS / "self-improvement-loop.md").read_text(encoding="utf-8")
+    resume = (ROOT / "skills" / "orange-resume" / "SKILL.md").read_text(
+        encoding="utf-8"
+    )
     design = (ROOT / "skills" / "orange-design" / "SKILL.md").read_text(
         encoding="utf-8"
     )
@@ -48,28 +53,32 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
     require(
         start,
         (
-            "마일스톤 저장",
-            "`MEMORY.md`는 중요한 결정",
-            "두 파일은 없을 때 최초 1회만",
-            "기록은 예외만",
+            "기본 관리 파일은 최초 1회 만드는 `SOURCE_PLAN.md`와 간결한 `PLAN.md` 두",
+            "실제 blocker로 중단하는 handoff, 최종 판정",
+            "boilerplate를 자동 생성하거나",
+            "`MEMORY.md`와 `CASE.md`는 기본으로 만들지 않는다",
+            "내부 단계 완료를 따로 보고하지 않는다",
         ),
         "orange-start/SKILL.md",
     )
     require(
         verification,
         (
-            "`PLAN.md`는 마일스톤에서 한 번 갱신",
-            "`PLAN.md`를 매번 고치지 않는다",
+            "`PLAN.md`는 네 시점에만 갱신",
+            "첫 작동 결과나 평범한 commit 때문에 상태 문서를 수정하지 않는다",
             "원본 근거와 완료 조건 문장",
-            "해당 코드·테스트와 같은 커밋",
+            "최종 검증에서 PASS·FAIL·미검증 상태를 확정",
+            "문서를 갱신한 경우에만 해당 코드·테스트와 같은 커밋",
         ),
         "verification-loop.md",
     )
     require(
         memory,
         (
+            "기본 산출물이 아니다",
             "## 기록 게이트",
-            "`MEMORY.md`를 수정하지 않는다",
+            "사용자 요청이 있고",
+            "`MEMORY.md`를 만들거나 수정하지",
             "마일스톤당 최대 한 항목",
             "`PLAN.md`, 테스트 출력, git 이력",
             "기록 조건이 없으면 stage 목록에 `MEMORY.md`를 넣지 않는다",
@@ -90,7 +99,9 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
         (
             "`SOURCE_PLAN.md`에 그대로 저장한다",
             "덮어쓰지 말고 같은 원본인지 비교한다",
-            "새 프로젝트에 `MEMORY.md`가 없으면",
+            "간결한 상태판",
+            "별도 절에 중복하지 않고",
+            "`SOURCE_PLAN.md`와 `PLAN.md`만 만든다",
             "단순 재실행·REQ 매핑·정상 호환 판정",
         ),
         "phase-plan.md",
@@ -101,6 +112,8 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
             "이미 `INSTALL_APPROVED` 또는",
             "기존 동의를 재사용하고 다시 묻지 않는다",
             "scope가 넓어진 차이만",
+            "준비가 끝났으면 카드와 상태 문서 갱신을 생략",
+            "**변경분 준비 카드**",
         ),
         "phase-preflight.md",
     )
@@ -108,18 +121,20 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
         connect,
         (
             "추가 동의는 새 항목이나 더 넓은 scope",
-            "없을 때 최초 1회만 만든다",
-            "Orange Build boilerplate",
-            "정상 설치와 `READY` 전환만 있었으면",
+            "boilerplate를 자동 생성하거나 덧붙이지 않는다",
+            "`SOURCE_PLAN.md`, `PLAN.md`만",
+            "별도 상태 커밋과 완료 보고를 만들지 않는다",
+            "정상 설치·READY 전환·identity 확인은 `PLAN.md`나 `MEMORY.md`에 복제하지 않는다",
         ),
         "phase-connect.md",
     )
     require(
         build,
         (
-            "작은 수정·재검증 중에는 `PLAN.md`를 건드리지 않는다",
-            "원본 근거와 완료 조건은 사람의 범위 변경 결정 없이는 다시 쓰지 않는다",
-            "평범한 구현 완료만으로는 파일을 수정하지 않는다",
+            "수정·재검증과 슬라이스 배포 중에는 `PLAN.md`를 건드리지 않는다",
+            "첫 결과만을 기록하기 위해 `PLAN.md`를 고치거나",
+            "원본 근거와 완료 조건은",
+            "중간 체크 상태 문서를 덧붙이지 않는다",
         ),
         "phase-build.md",
     )
@@ -146,10 +161,59 @@ def validate_recording_cadence(*, emit: bool = True) -> str:
         ("개발 중 매 작업마다 교육용 설명을 추가하는 대신",),
         "case-card.md",
     )
+    require(
+        verify,
+        (
+            "`PLAN.md`의 `최종 판정`을 한 번 갱신",
+            "`MEMORY.md`는 사용자가 과정 기록을 요청했고",
+            "핵심 검증 최대 3개",
+            "REQ와 TEST가 모두 PASS이고 P0/P1 없음",
+        ),
+        "phase-verify.md",
+    )
+    require(
+        improvement,
+        (
+            "최종 판정 또는 실제 handoff 때만 한 번 갱신",
+            "P0/P1을 고쳤거나 사용자가 요청한",
+            "실제로 실행해 통과한 REQ·TEST와 대표 증거",
+        ),
+        "self-improvement-loop.md",
+    )
+    require(
+        resume,
+        (
+            "`PLAN.md`가 중간 구현마다 갱신된다고 가정하지 않는다",
+            "파일이 있을 때만 마지막 1~2개 항목",
+            "실제 blocker handoff나 최종 판정만",
+        ),
+        "orange-resume/SKILL.md",
+    )
+
+    reject(
+        start,
+        ("마일스톤 저장", "기획 완료, 준비 완료"),
+        "orange-start/SKILL.md",
+    )
+    reject(
+        plan,
+        ("새 프로젝트에 `MEMORY.md`가 없으면", "## 진행 상황"),
+        "phase-plan.md",
+    )
+    reject(
+        preflight,
+        ("`guided`는 아래 전체 준비 카드를 보여준다", "✅ 사전 준비 계획 확정"),
+        "phase-preflight.md",
+    )
+    reject(
+        connect,
+        ("GitHub 저장소와 실행 환경을 확인했습니다", "git commit -m \"환경과 GitHub 저장소 준비\""),
+        "phase-connect.md",
+    )
 
     message = (
-        "PASS recording cadence: source=immutable plan=milestones "
-        "memory=significant-only setup=one-time consent=reused"
+        "PASS low-noise workflow: source=immutable plan=contract-decision-handoff-final "
+        "memory=opt-in reporting=outcomes-only verification=unchanged"
     )
     if emit:
         print(message)

@@ -127,6 +127,12 @@ TEST 항목이 없는 기존 v2는 `verification-loop.md`에 따라 추가 질�
 있는 내용은 합리적 기본값을 `가정`으로 표시한다. 구현 방향을 크게 바꾸는 결정만 최대 3개 묻는다.
 `beginner-guardrails.md`를 읽고 요구사항을 작은 검증 단위와 관찰 가능한 증거로 쓴다.
 
+단, 사용자에게 사실로 보이거나 계산·자격·정책·개인정보·외부 실행을 결정하는 값은 합리적 기본값의
+대상이 아니다. `예:`, `약`, `00`, `임시`, 단일 TEST의 입출력처럼 일반 규칙이 확인되지 않은 신호가
+있으면 `product-truth-gate.md`를 읽는다. 출처나 이전 사용자 답으로 확정되지 않으면 관련 REQ를
+`BLOCKED · FACT_UNVERIFIED`로 두고, 가장 좋은 권장안과 대안의 영향을 함께 제시해 사실 하나를
+확인한다. 답과 무관한 구현은 계속한다.
+
 `source: orange-start-interview`이고 `interview_completion: skip_all`이면 이 단계에서도 기획 확인
 질문을 다시 열지 않는다. 현재 아이디어·답·가정으로 계약을 만들고, 가입·계정 선택·외부 쓰기처럼
 실행 시점에 본인 확인이 필요한 동작만 이후 `USER_ACTION`으로 요청한다.
@@ -166,7 +172,9 @@ TEST 항목이 없는 기존 v2는 `verification-loop.md`에 따라 추가 질�
 
 ## 5. PLAN.md 형식
 
-아래 구조로 쓴다. 실제 내용에 맞게 유형별 절만 남기되 공통 절은 모두 유지한다.
+`PLAN.md`는 설명 문서가 아니라 **한 화면에서 누락과 완료 증거를 찾는 간결한 상태판**이다. 원본을
+다시 요약하지 않고 `SOURCE_PLAN.md`의 절 이름이나 짧은 문구를 근거로 연결한다. 요구사항과 검증
+증거를 별도 절에 중복하지 않고 아래 표에서 함께 관리한다.
 
 ```markdown
 # [결과물 이름]
@@ -174,107 +182,59 @@ TEST 항목이 없는 기존 v2는 `verification-loop.md`에 따라 추가 질�
 > [한 줄 소개]
 
 ## 메타데이터
-- source: [orange-build-app / orange-start-interview]
-- source_contract_version: [legacy / 2 / n/a]
-- interview_completion: [completed / skip_all / n/a]
-- contract_version: 2
-- deliverable_kind: `web_app | ai_skill | automation`
-- 결과물 유형: `web_app | ai_skill | automation`
-- execution_profile: `guided | adaptive`
-- delivery_intent: `implement_and_release | plan_only | verify_only`
-- web_delivery_target: `pending | existing | codex_sites | vercel_supabase | n/a`
-- web_delivery_reason: [사전 준비에서 확정할 한 줄 근거 / 웹앱 아님]
-- 기술 이름(slug): `[ascii-kebab-case]`
-
-## 원본 목표
-- 대상과 문제: ...
-- 가장 막히는 순간: ...
-- 해결 방식: ...
-- AI 역할: ...
-- 사람 확인: ...
-
-## 범위
-### 포함
-- [원본 포함 범위]
-### 제외 — 다음 버전
-- [원본 제외 범위]
+- source: [orange-build-app / orange-start-interview] · source_contract: [legacy / 2 / n/a]
+- contract_version: 2 · deliverable_kind: `web_app | ai_skill | automation`
+- execution_profile: `guided | adaptive` · delivery_intent: `implement_and_release | plan_only | verify_only`
+- web_delivery_target: `pending | existing | codex_sites | vercel_supabase | n/a` — [필요할 때만 이유]
+- slug: `[ascii-kebab-case]`
 
 ## 요구사항 계약
-### REQ-01 — [이름]
-- 원본 근거: [핵심 기능/사용 흐름/성공 기준의 문구]
-- 완료 조건: [관찰 가능한 결과]
-- 구현 위치: 미정
-- 검증: [입력·행동·기대 결과]
-- 상태: TODO
+| REQ | 원본 근거 | 관찰 가능한 완료 조건 | 검증 | 구현 위치 | 상태·증거 |
+|---|---|---|---|---|---|
+| REQ-01 | [SOURCE_PLAN 절·짧은 문구] | [사용자가 보는 결과] | [TEST ID/보조 검사] | - | TODO · NOT_RUN / BLOCKED · FACT_UNVERIFIED |
 
 ## 결과물 인벤토리
-| 종류 | 원본 근거·예상 목록 | 예상 수량 | 구현 후 실제 목록·수량 | 상태 |
-|---|---|---:|---|---|
-| [웹 경로·완결 흐름·연동 / 스킬 파일·출력·fixture / 자동화 트리거·파일·runbook] | [...] | N | 미정 | TODO |
+| 종류 | 예상 목록·수량 | 실제 목록·수량 | 상태 |
+|---|---|---|---|
+| [경로·흐름 / 스킬 파일·출력 / 트리거·runbook] | [목록] · N | - | TODO |
 
 ## 검증 시나리오 계약
-### TEST-01 — [원본 또는 파생 제목]
-- source: [orange-build-app / orange-start-interview / derived_compat]
-- 준비: [원본 문구 또는 파생 근거가 드러나는 조건]
-- 행동: [사용자가 실제로 할 행동]
-- 기대 결과: [관찰 가능한 결과]
-- 통과 증거: [화면·실제 출력·재조회·run id 등]
-- 연결 요구사항: [REQ-01, ...]
-- 계획 테스트 수준: [unit / integration / browser / fresh-context / dry-run / live-run]
-- 상태: NOT_RUN
-- 증거 등급: NOT_RUN
-- 실제 증거: -
+| TEST | source | 준비·행동 | 기대 결과·통과 증거 | 연결 REQ | 상태·실제 증거 |
+|---|---|---|---|---|---|
+| TEST-01 | [원본/derived_compat] | [준비] → [행동] | [기대 결과] · [증거] | REQ-01 | NOT_RUN |
 
 ## 유형별 설계
-[웹앱 화면·데이터·상태 / 스킬 트리거·입출력·리소스 / 자동화 트리거·연결·재시도·로그]
+[구현에 필요한 화면·데이터 / 트리거·입출력 / 연결·재시도만 짧게]
 
 ## 사전 준비
-| 기능·항목 | 필수성 | 필요한 이유 | 분류·영향 | 확인 방법 | 상태 |
-|---|---|---|---|---|---|
-| [Node.js / GitHub / Vercel / 외부 계정 등] | REQUIRED | [원본 근거] | 자동 설치 / 사용자 가입 / 브라우저 설정 / 비용 승인 / 필요 없음 | [버전·identity·화면] | MISSING |
-| [browser_runtime_diagnostics / 도움 도구 이름] | HELPFUL | [구현·검증 신호 또는 제외 근거] | [프로젝트 package / Claude local / Codex 사용자 설정] | [health와 실제 호출 / 대체 검증] | CONSENT_REQUIRED |
-
-`REQUIRED`는 `READY | MISSING | USER_ACTION | NOT_NEEDED`, `HELPFUL`은
-`READY | EQUIVALENT | EXISTING_UNSAFE | CONSENT_REQUIRED | INSTALL_APPROVED | WAITING_FOR_SCOPE |
-SKIPPED | FAILED`로 관리한다.
-`HELPFUL`을 건너뛰어도 대체 검증이 있으면 구현을 계속한다.
-
-## 원본 추적표
-| 원본 항목 | 요구사항 ID |
-|---|---|
-| [핵심 기능/포함 범위/사용 흐름/성공 기준/사용할 자료·개인정보/AI·사람 역할] | REQ-01 |
+| 미해결 항목 | 영향·scope | 상태 |
+|---|---|---|
+| [없음 / 설치·가입·계정·권한 한 줄] | [필요한 이유와 변경 범위] | MISSING / USER_ACTION / INSTALL_APPROVED |
 
 ## 가정과 결정
-- [가정과 이유]
+- [기본값이 아닌 가정, 사람 결정, blocker만 기록. 없으면 `없음`]
 
-## 변경 기록
-- 없음
-
-## 검증 증거
-| 요구사항 | 연결 TEST | 구현 위치 | 검증 방법 | 결과 | 증거 등급 | 증거 |
-|---|---|---|---|---|---|---|
-| REQ-01 | TEST-01 | 미정 | ... | NOT_RUN | NOT_RUN | - |
-
-## 진행 상황
-- [x] 원본 기획서 보존
-- [ ] 구현 계약 검증
-- [ ] 사전 준비 안내
-- [ ] 환경·계정 확인
-- [ ] GitHub 저장소
-- [ ] 첫 작동 결과
-- [ ] 전체 요구사항 구현
-- [ ] 최종 검증
+## 최종 판정
+- REQ: 0/N PASS · TEST: 0/K TESTED · P0/P1: 미검토
+- 결과: [URL / 호출 결과 / run id / 미정]
+- 아직 증명하지 못한 것: [ID와 이유 / 최종 전에는 `검증 전`]
 ```
+
+준비 상태 전체 목록, 명령 출력, commit 목록, 평범한 진행 체크박스는 넣지 않는다. 상세 출력은 테스트·
+CI·배포 로그에 두고, 표에는 명령/URL/run id와 관찰 결과를 한 줄로 연결한다. `TESTED | PARTIAL |
+INFERRED | NOT_RUN | FAIL | BLOCKED` 의미와 완료 판정은 그대로 유지한다.
 
 ## 6. 계약 게이트
 
-다음을 모두 확인한 뒤에만 `구현 계약 검증`을 체크한다.
+다음을 모두 확인한 뒤에만 구현으로 이어간다. 별도 진행 체크박스나 완료 보고는 만들지 않는다.
 
 - 원본의 핵심 기능, 포함 범위, 사용 흐름, 성공 기준, 사용할 자료·개인정보와 공개·비공개 경계,
-  AI 역할과 사람 확인 지점이 추적표에 전부 있다.
+  AI 역할과 사람 확인 지점이 요구사항 표의 원본 근거에 전부 연결돼 있다.
 - 지원하는 source contract의 canonical `deliverable_kind`, legacy 표시 문자열 판정 또는 로컬
-  인터뷰에서 확정한 canonical 값이 `결과물 유형`에 그대로 기록됐다.
+  인터뷰에서 확정한 canonical 값이 `deliverable_kind`에 그대로 기록됐다.
 - 모든 `REQ-*`에 완료 조건과 검증 방법이 있다.
+- 사용자 대상 금액·비율·효과·자격·정책·개인정보·외부 실행 사실이 출처나 이전 사용자 답으로
+  `FACT_CONFIRMED`인지 확인됐고, 불확실한 예시를 일반 규칙으로 추론하지 않았다.
 - 최신 contract v2 원본에 TEST가 있으면 정확히 세 개이고, 각 TEST의 제목·준비·행동·기대 결과·
   통과 증거가 보존돼 있다.
 - TEST 항목이 없는 기존 v2 또는 v1/legacy이면 추가 질문 없이 `derived_compat` TEST 3개를 만들고
@@ -284,13 +244,11 @@ SKIPPED | FAILED`로 관리한다.
 - 결과물 유형이 하나로 확정됐다.
 - `execution_profile`과 `delivery_intent`가 `execution-profiles.md` 규칙으로 확정됐다.
 - 유형별 필수 설계가 채워졌다.
-- 제외 범위를 넓혔다면 사용자의 명시적 결정과 이유가 `변경 기록`에 있다.
+- 제외 범위를 넓혔다면 사용자의 명시적 결정과 이유가 `가정과 결정`에 있다.
 
-새 프로젝트에 `MEMORY.md`가 없으면 `memory-log.md`의 짧은 헤더와 최초 기획 항목을 한 번 만든다.
-기존 파일이 있으면 결과물 유형을 예상 밖으로 바꿨거나 중요한 가정·사람 결정이 생긴 경우에만
-`기획서 가져오기` 항목을 하나 덧붙인다. 단순 재실행·REQ 매핑·정상 호환 판정은 `PLAN.md`에 이미
-남으므로 `MEMORY.md`를 수정하지 않는다. 아직 저장소가 없다면 필요한 최초 기록은 다음 단계 커밋에
-함께 담는다.
+`MEMORY.md`, `AGENTS.md`, `CLAUDE.md`, `CASE.md`는 기본 산출물이 아니다. 새 프로젝트도
+`SOURCE_PLAN.md`와 `PLAN.md`만 만든다. 사용자가 과정 기록을 요청했을 때만 `memory-log.md`를 적용하고,
+프로젝트 고유 영구 지침 인계를 요청했을 때만 현재 호스트용 지침 파일 하나를 만든다.
+단순 재실행·REQ 매핑·정상 호환 판정은 추가 기록 파일이나 상태 행을 만들 이유가 아니다.
 
-`guided`면 `✅ 기획서 가져오기 완료 — 원본 N개 항목을 요구사항 M개에 연결했습니다.`라고 알린다.
-`adaptive`면 내부 보고를 생략한다. 두 프로필 모두 멈추지 말고 `phase-preflight.md`로 이어간다.
+계약 생성 완료를 별도로 보고하지 않는다. 두 프로필 모두 멈추지 말고 `phase-preflight.md`로 이어간다.

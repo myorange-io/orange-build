@@ -1,0 +1,128 @@
+{
+  "matching-example-only": {
+    "input": {
+      "fact_type": "matching_ratio",
+      "signal": "example_only",
+      "source_confirmed": false,
+      "user_confirmed": false
+    },
+    "expected": {
+      "action": "ASK_WITH_RECOMMENDATION",
+      "state": "FACT_UNVERIFIED",
+      "ask_user": true,
+      "allow_public_claim": false,
+      "allow_production": false,
+      "allow_dry_run": true,
+      "continuation": "UNRELATED_WORK_ONLY",
+      "recommendation": "CONFIRM_ACTUAL_FORMULA"
+    }
+  },
+  "matching-source-explicit": {
+    "input": {
+      "fact_type": "matching_ratio",
+      "signal": "explicit_rule",
+      "source_confirmed": true,
+      "user_confirmed": false
+    },
+    "expected": {
+      "action": "IMPLEMENT",
+      "state": "FACT_CONFIRMED: source",
+      "ask_user": false,
+      "allow_public_claim": true,
+      "allow_production": true,
+      "allow_dry_run": true,
+      "continuation": "ALL_WORK",
+      "recommendation": null
+    }
+  },
+  "impact-placeholder-00": {
+    "input": {
+      "fact_type": "quantitative_impact",
+      "signal": "placeholder",
+      "source_confirmed": false,
+      "user_confirmed": false
+    },
+    "expected": {
+      "action": "ASK_WITH_RECOMMENDATION",
+      "state": "FACT_UNVERIFIED",
+      "ask_user": true,
+      "allow_public_claim": false,
+      "allow_production": false,
+      "allow_dry_run": true,
+      "continuation": "UNRELATED_WORK_ONLY",
+      "recommendation": "REMOVE_NUMBER_UNTIL_CONFIRMED"
+    }
+  },
+  "automation-target-unknown": {
+    "input": {
+      "fact_type": "automation_target",
+      "signal": "missing_target",
+      "source_confirmed": false,
+      "user_confirmed": false
+    },
+    "expected": {
+      "action": "ASK_WITH_RECOMMENDATION",
+      "state": "FACT_UNVERIFIED",
+      "ask_user": true,
+      "allow_public_claim": false,
+      "allow_production": false,
+      "allow_dry_run": true,
+      "continuation": "UNRELATED_WORK_ONLY",
+      "recommendation": "DRY_RUN_THEN_CONFIRM_TARGET"
+    }
+  },
+  "privacy-retention-unknown": {
+    "input": {
+      "fact_type": "privacy_rule",
+      "signal": "missing_policy",
+      "source_confirmed": false,
+      "user_confirmed": false
+    },
+    "expected": {
+      "action": "ASK_WITH_RECOMMENDATION",
+      "state": "FACT_UNVERIFIED",
+      "ask_user": true,
+      "allow_public_claim": false,
+      "allow_production": false,
+      "allow_dry_run": true,
+      "continuation": "UNRELATED_WORK_ONLY",
+      "recommendation": "MINIMIZE_DATA_AND_CONFIRM_POLICY"
+    }
+  },
+  "visual-radius-default": {
+    "input": {
+      "fact_type": "visual_radius",
+      "signal": "unspecified",
+      "source_confirmed": false,
+      "user_confirmed": false
+    },
+    "expected": {
+      "action": "AUTO_DEFAULT",
+      "state": "IMPLEMENTATION_CHOICE",
+      "ask_user": false,
+      "allow_public_claim": true,
+      "allow_production": true,
+      "allow_dry_run": true,
+      "continuation": "ALL_WORK",
+      "recommendation": null
+    }
+  },
+  "user-confirmed-fee": {
+    "input": {
+      "fact_type": "fee_rule",
+      "signal": "previously_ambiguous",
+      "source_confirmed": false,
+      "user_confirmed": true
+    },
+    "expected": {
+      "action": "IMPLEMENT",
+      "state": "FACT_CONFIRMED: user",
+      "ask_user": false,
+      "allow_public_claim": true,
+      "allow_production": true,
+      "allow_dry_run": true,
+      "continuation": "ALL_WORK",
+      "recommendation": null
+    }
+  }
+}

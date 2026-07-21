@@ -241,17 +241,17 @@ def validate_preflight_fixtures(*, emit: bool = True) -> list[str]:
     browser_steps = (REFS / "browser-steps.md").read_text(encoding="utf-8")
     helpful_tools = (REFS / "helpful-tools.md").read_text(encoding="utf-8")
     for required in (
-        "시작 전 준비 카드",
+        "변경분 준비 카드",
         "설치 권한을 한 번 받기",
         "READY | MISSING | USER_ACTION | NOT_NEEDED",
         "https://github.com/signup",
         "https://chatgpt.com/sites",
         "https://vercel.com/signup",
         "https://supabase.com/dashboard/sign-up",
-        "도움 도구 후보",
+        "도움 도구 능력 판정",
         "현재 호스트 하나",
         "web_delivery_target",
-        "사전 준비 계획 확정",
+        "준비 판정만으로 `PLAN.md` 체크박스를 바꾸거나 완료 메시지를 보내지 않는다",
         "INSTALL_APPROVED",
     ):
         if required not in preflight:

@@ -32,13 +32,7 @@ def resolve(spec: dict) -> dict:
     implementing = intent == "implement_and_release"
     deploy = implementing and not spec["explicit_no_deploy"]
     commit_push = implementing and not spec["explicit_no_commit"]
-    preflight = (
-        "full"
-        if profile == "guided"
-        else "delta_only"
-        if spec["missing_prerequisites"]
-        else "silent_ready"
-    )
+    preflight = "delta_only" if spec["missing_prerequisites"] else "silent_ready"
 
     if intent == "verify_only":
         evidence = "verification_report"
@@ -57,7 +51,7 @@ def resolve(spec: dict) -> dict:
         "profile": profile,
         "intent": intent,
         "preflight": preflight,
-        "reporting": "adaptive_compact" if profile == "adaptive" else "guided_milestones",
+        "reporting": "outcome_only",
         "use_existing_commands": profile == "adaptive",
         "create_repository": implementing and not spec["has_remote"],
         "commit_push": commit_push,
@@ -100,6 +94,8 @@ def validate_execution_profiles(*, emit: bool = True) -> list[str]:
         "프로필 선택 질문은 하지 않는다",
         "`구현해줘`는 로컬 파일을 수정하거나 build만 통과한 상태를 뜻하지 않는다",
         "기존 test·browser·CI가 요구사항을 검증할 수 있으면 새 MCP나 package를 제안하지 않는다",
+        "모두 준비됐으면 준비 카드와 `PLAN.md` 갱신을 모두 생략한다",
+        "시작 한 문장, 실제 사용자 동작이 필요한 blocker, 첫 작동 결과, 최종 결과만",
         "정확한 파일만 담은 commit과 원격 push",
         "배포 또는 활성화 대상의 현재 상태 재확인",
     ):
