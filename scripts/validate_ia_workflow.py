@@ -219,6 +219,9 @@ def validate_ia_workflow(*, emit: bool = True) -> list[str]:
         fail("all three manifests must be version 2.6.0")
     if codex_manifest.get("skills") != "./skills/":
         fail("Codex manifest must point at the shared skills directory")
+    default_prompt = codex_manifest.get("interface", {}).get("defaultPrompt")
+    if not isinstance(default_prompt, str) or len(default_prompt) > 128:
+        fail("Codex IA default prompt must be present and at most 128 characters")
     if marketplace["plugins"][0].get("source") != "./":
         fail("Claude marketplace must point at the plugin root with the shared skills directory")
 

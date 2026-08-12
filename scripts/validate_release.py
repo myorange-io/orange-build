@@ -121,6 +121,17 @@ def validate_skills_and_manifests() -> None:
     marketplace = load_json(ROOT / ".claude-plugin" / "marketplace.json")
     if codex.get("skills") != "./skills/":
         fail("Codex manifest must point to the shared skills source")
+    default_prompt = codex.get("interface", {}).get("defaultPrompt")
+    if not isinstance(default_prompt, str) or not default_prompt.strip():
+        fail("Codex manifest must provide interface.defaultPrompt")
+    if len(default_prompt) > 128:
+        fail(
+            "Codex interface.defaultPrompt exceeds the 128-character loader limit: "
+            f"{len(default_prompt)}"
+        )
+    for term in ("IA", "승인", "STEP", "완료 수준"):
+        if term not in default_prompt:
+            fail(f"Codex interface.defaultPrompt is missing the IA contract term: {term}")
     if marketplace.get("plugins", [{}])[0].get("source") != "./":
         fail("Claude marketplace must point to the same plugin root")
     for name, text in (
