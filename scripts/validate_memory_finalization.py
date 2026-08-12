@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate mandatory, idempotent MEMORY.md final-verification recording."""
+"""Validate completion-level-aware, idempotent MEMORY.md finalization."""
 
 from __future__ import annotations
 
@@ -19,25 +19,24 @@ def fail(message: str) -> None:
 
 
 def resolve(spec: dict) -> dict[str, object]:
-    intent = spec["intent"]
-    final_gate_passed = spec["final_gate_passed"]
-    starts = spec["start_marker_count"]
-    ends = spec["end_marker_count"]
-
-    if intent != "implement_and_release":
+    if spec["completion_level"] not in {"local", "shared", "real_work"}:
+        fail("invalid completion level")
+    if spec["intent"] != "implement":
         return {
             "action": "NO_FINAL_RECORD",
             "memory_required": False,
             "completion_allowed": True,
             "expected_final_blocks": 0,
         }
-    if not final_gate_passed:
+    if not spec["selected_level_gate_passed"]:
         return {
             "action": "NO_FINAL_RECORD",
             "memory_required": False,
             "completion_allowed": False,
             "expected_final_blocks": 0,
         }
+    starts = spec["start_marker_count"]
+    ends = spec["end_marker_count"]
     if not spec["memory_exists"]:
         action = "CREATE_MEMORY_WITH_FINAL_RECORD"
     elif starts == 0 and ends == 0:
@@ -57,27 +56,21 @@ def resolve(spec: dict) -> dict[str, object]:
 def require(text: str, snippets: tuple[str, ...], document: str) -> None:
     for snippet in snippets:
         if snippet not in text:
-            fail(f"{document} is missing memory-finalization behavior: {snippet}")
-
-
-def reject(text: str, snippets: tuple[str, ...], document: str) -> None:
-    for snippet in snippets:
-        if snippet in text:
-            fail(f"{document} keeps conflicting memory behavior: {snippet}")
+            fail(f"{document} is missing memory behavior: {snippet}")
 
 
 def validate_memory_finalization(*, emit: bool = True) -> list[str]:
     fixtures = json.loads(FIXTURE.read_text(encoding="utf-8"))
     expected_names = {
-        "implement-incomplete-no-memory",
-        "plan-only-complete-no-memory",
-        "implement-complete-no-memory",
-        "implement-complete-existing-memory-no-marker",
-        "implement-complete-existing-final-record",
+        "implement-local-incomplete-no-memory",
+        "plan-only-no-memory",
+        "implement-local-complete-no-memory",
+        "implement-shared-existing-memory-no-marker",
+        "implement-real-existing-final-record",
         "implement-complete-duplicate-final-records",
     }
     if set(fixtures) != expected_names:
-        fail("memory-finalization fixture set changed unexpectedly")
+        fail("memory finalization fixture set changed unexpectedly")
 
     lines: list[str] = []
     for name, fixture in fixtures.items():
@@ -85,65 +78,38 @@ def validate_memory_finalization(*, emit: bool = True) -> list[str]:
         if actual != fixture["expected"]:
             fail(f"{name}: {actual} != {fixture['expected']}")
         lines.append(
-            f"PASS {name}: action={actual['action']} blocks={actual['expected_final_blocks']}"
+            f"PASS {name}: level={fixture['input']['completion_level']} "
+            f"action={actual['action']} blocks={actual['expected_final_blocks']}"
         )
 
-    memory = (
-        ROOT / "skills" / "orange-start" / "references" / "memory-log.md"
-    ).read_text(encoding="utf-8")
+    memory = (ROOT / "skills" / "orange-start" / "references" / "memory-log.md").read_text(encoding="utf-8")
     require(
         memory,
         (
-            "구현 완료 증거다",
-            "결과를 정확히 한 번 기록한다",
+            "선택한 완료 수준의 구현 완료 증거다",
+            "모든 IA STEP이 `APPROVED`",
+            "`local`: 로컬 핵심 흐름",
+            "`shared`: 공유 URL",
+            "`real_work`: 실제 자료·계정·업무 결과",
             START_MARKER,
             END_MARKER,
             "marker 블록이 이미 하나 있으면 새 항목을 append하지 않고",
-            "시작 marker와 종료 marker가 각각 정확히 한 개인지 확인",
+            "시작 marker와 종료 marker가 각각 정확히 하나",
+            "완료 수준: [local / shared / real_work]",
             "완료 게이트는 FAIL",
         ),
         "memory-log.md",
     )
 
-    required_routes = {
+    routes = {
         "orange-start/SKILL.md": ROOT / "skills" / "orange-start" / "SKILL.md",
-        "verification-loop.md": ROOT
-        / "skills"
-        / "orange-start"
-        / "references"
-        / "verification-loop.md",
-        "phase-verify.md": ROOT
-        / "skills"
-        / "orange-start"
-        / "references"
-        / "phase-verify.md",
+        "verification-loop.md": ROOT / "skills" / "orange-start" / "references" / "verification-loop.md",
+        "phase-verify.md": ROOT / "skills" / "orange-start" / "references" / "phase-verify.md",
         "orange-resume/SKILL.md": ROOT / "skills" / "orange-resume" / "SKILL.md",
         "README.md": ROOT / "README.md",
     }
-    for name, path in required_routes.items():
-        require(path.read_text(encoding="utf-8"), ("MEMORY.md", "최종 검증"), name)
-
-    verify = required_routes["phase-verify.md"].read_text(encoding="utf-8")
-    require(
-        verify,
-        (
-            "요청 여부와 관계없이",
-            "시작 marker와 종료 marker가 각각 정확히 하나",
-            "기존 블록이 있으면 append하지 않고",
-            "`PLAN.md`, `MEMORY.md`, 코드·테스트를 같은 최종 커밋",
-        ),
-        "phase-verify.md",
-    )
-
-    for name, path in required_routes.items():
-        reject(
-            path.read_text(encoding="utf-8"),
-            (
-                "`MEMORY.md`는 사용자가 과정 기록을 요청했고 별도 기록 게이트도 충족한 경우에만",
-                "`MEMORY.md`와 `CASE.md`는 기본으로 만들지 않는다",
-            ),
-            name,
-        )
+    for name, path in routes.items():
+        require(path.read_text(encoding="utf-8"), ("MEMORY.md", "완료 수준"), name)
 
     if emit:
         print("\n".join(lines))
@@ -153,6 +119,6 @@ def validate_memory_finalization(*, emit: bool = True) -> list[str]:
 if __name__ == "__main__":
     try:
         validate_memory_finalization()
-    except (OSError, ValueError, json.JSONDecodeError, KeyError) as exc:
+    except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
         print(f"FAIL: {exc}")
         sys.exit(1)

@@ -1,4 +1,4 @@
 interface:
   display_name: "Orange Start"
-  short_description: "기획부터 구현·검증·배포까지 결과물을 완성합니다."
-  default_prompt: "Use $orange-start to turn my plan or idea into a tested, deployed result while keeping important decisions with me."
+  short_description: "IA 방식으로 기획하고 한 단계씩 승인받아 구현합니다."
+  default_prompt: "Use $orange-start to create or import an IA plan, then implement one approved step at a time to my chosen completion level."

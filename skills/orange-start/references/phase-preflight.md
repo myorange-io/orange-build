@@ -5,14 +5,19 @@
 서비스를 장황하게 설명하지 않는다. 실제 설치·인증·identity 검증은 바로 이어지는
 `phase-connect.md`에서 자동으로 수행한다.
 
-먼저 `execution-profiles.md`의 프로필을 적용한다. `guided`와 `adaptive` 모두 읽기 전용 확인에서
+먼저 `ia-collaboration.md`와 `execution-profiles.md`의 `completion_level`을 적용한다. 현재 STEP이
+승인된 뒤에만 변경 준비를 시작한다. `guided`와 `adaptive` 모두 읽기 전용 확인에서
 준비가 끝났으면 카드와 상태 문서 갱신을 생략한다. 실제 누락·권한·안전하지 않은 설정만
 **변경분 준비 카드**로 보여준 뒤 첫 REQ로 바로 이어간다.
 
 ## 1. 준비물 추론
 
-기획서의 결과물 유형, 사용자 흐름, 데이터, 로그인, 외부 연동, 배포 위치를 읽고 필요한 항목만
+기획서의 결과물 유형, 사용자 흐름, 데이터, 로그인, 외부 연동, 완료 수준을 읽고 필요한 항목만
 고른다. 익숙하다는 이유로 서비스를 추가하거나, 쓸 수도 있다는 이유로 미리 설치하지 않는다.
+
+`completion_level: local`이면 GitHub·배포·production DB·실제 외부 계정 준비를 기본 목록에서
+제외한다. 현재 STEP의 로컬 실행과 검증에 필요한 runtime만 고른다. `shared | real_work`일 때만
+공유·실업무에 필요한 원격·배포·외부 연결을 준비한다.
 
 `web_app`이면 먼저 `codex-sites.md`를 읽어 현재 표면, 기존 배포, Sites 도구의 실제 가용성,
 runtime·저장·인증·정책 호환성을 판정한다. `PLAN.md`의 `web_delivery_target`과 이유를 확정한 뒤
@@ -20,7 +25,8 @@ runtime·저장·인증·정책 호환성을 판정한다. `PLAN.md`의 `web_del
 
 | 기획서 신호 | 로컬 도구 | 가입·로그인 | 브라우저 세팅 |
 |---|---|---|---|
-| 모든 새 프로젝트 | Git, GitHub CLI | GitHub 계정·대상 owner | 미가입·OAuth일 때만 |
+| `shared | real_work`의 새 프로젝트 | Git, GitHub CLI | GitHub 계정·대상 owner | 미가입·OAuth일 때만 |
+| `local` 프로젝트 | 현재 STEP에 필요한 Git·runtime만 | 없음 | 없음 |
 | `web_app` + `codex_sites` | Node.js LTS, npm, 현재 Sites 도구 | 현재 ChatGPT workspace | Sites 사용 가능 여부, 배포 접근 범위 |
 | `web_app` + `vercel_supabase` | Node.js LTS, npm, Vercel CLI | Vercel 계정·user/team | 가입, GitHub App 저장소 권한 |
 | Sites 영구 저장·업로드 | D1/R2 binding과 migration 도구 | 별도 DB 가입 없음 | Sites 설정·접근 범위 |
@@ -162,7 +168,7 @@ console·network·performance 능력이 없을 때만 동의받은 Chrome DevToo
 - 가입·로그인·2FA처럼 사용자에게 맡길 한 동작과 공식 URL이 정리돼 있다.
 - 기존 MCP의 이름·기능·health·scope·안전 옵션을 확인했고 중복이나 `EXISTING_UNSAFE`를 숨기지 않았다.
 - project ref가 필요한 Supabase MCP는 broad URL로 먼저 등록하지 않고 `WAITING_FOR_SCOPE`다.
-- `web_app`의 `web_delivery_target`이 `pending`으로 남아 있지 않다.
+- `web_app`의 `web_delivery_target`이 `local` 또는 실제 배포 대상으로 확정돼 `pending`이 아니다.
 - 아직 실행하지 않은 설치·인증·브라우저 세팅을 `READY`나 완료로 표시하지 않았다.
 
 준비 판정만으로 `PLAN.md` 체크박스를 바꾸거나 완료 메시지를 보내지 않는다. 사용자의 동의나 행동이

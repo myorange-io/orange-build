@@ -1,7 +1,7 @@
 # 환경·계정·GitHub 저장소 준비
 
-목표: `phase-preflight.md`의 준비 카드와 설치 동의 범위 안에서 필요한 도구만 준비하고, 사용할
-계정을 확인한 뒤 기본 공개 GitHub 저장소를 만든다. `helpful-tools.md`에서 고른 도움 도구도 현재
+목표: `phase-preflight.md`의 준비 카드와 설치 동의 범위 안에서 필요한 도구만 준비하고, 선택한
+완료 수준에 실제로 필요한 경우에만 계정과 GitHub 저장소를 연결한다. `helpful-tools.md`에서 고른 도움 도구도 현재
 호스트 하나에만 준비한다. 웹앱이라고 해서 Supabase를, 스킬이라고 해서 Node.js나 MCP를 무조건
 설치하지 않는다.
 
@@ -26,6 +26,8 @@ git remote -v
 - 커밋할 때 전체 파일 일괄 stage를 하지 않는다. `git status --short`로 이번 단계가 만든 파일을 가려내고,
   `git add --` 뒤에 **정확한 경로만** 나열한다. `git diff --cached --name-only`로 기존 사용자
   변경이 섞이지 않았는지 확인한다.
+- `completion_level: local`이면 기존 원격을 읽기 전용으로 확인할 수는 있지만 새 GitHub 저장소,
+  배포 프로젝트, production DB를 만들지 않는다. 현재 STEP에 불필요한 로그인도 요구하지 않는다.
 
 ## 2. 필요한 런타임만 점검·설치
 
@@ -222,6 +224,7 @@ Orange Build 프로젝트다. `SOURCE_PLAN.md`는 원본, `PLAN.md`는 실행 �
 
 ## 5. GitHub 저장소
 
+`shared | real_work`이고 원격 저장이 계약에 필요할 때만 실행한다. `local`이면 이 절을 건너뛴다.
 Git 원격이 없는 새 저장소만 기술 이름 slug를 사용한다. 3단계에서 고른 GitHub 사용자 또는 조직을
 `<github-owner>`로 명시한다. owner를 생략해 CLI 기본 계정에 만들지 않는다.
 
@@ -248,8 +251,9 @@ GitHub URL과 visibility는 CLI 출력과 원격 설정으로 확인한다. 중�
 
 ## 6. 웹앱 배포 연결
 
-`web_app`만 실행한다. 첫 화면을 localhost에 띄우지 않고, 첫 완결 흐름을 만든 뒤 즉시
-프로덕션 배포할 수 있도록 연결만 준비한다.
+`web_app`만 실행한다. `completion_level: local`이면 `web_delivery_target: local`로 두고 이 절의
+외부 연결을 건너뛴다. `shared | real_work`이면 첫 완결 흐름을 만든 뒤 배포할 수 있도록 연결만
+준비하되 실제 배포는 실행 직전 별도 확인을 받는다.
 
 `PLAN.md`의 `web_delivery_target`을 따른다.
 

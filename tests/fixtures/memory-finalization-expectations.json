@@ -1,8 +1,9 @@
 {
-  "implement-incomplete-no-memory": {
+  "implement-local-incomplete-no-memory": {
     "input": {
-      "intent": "implement_and_release",
-      "final_gate_passed": false,
+      "intent": "implement",
+      "completion_level": "local",
+      "selected_level_gate_passed": false,
       "memory_exists": false,
       "start_marker_count": 0,
       "end_marker_count": 0
@@ -14,10 +15,11 @@
       "expected_final_blocks": 0
     }
   },
-  "plan-only-complete-no-memory": {
+  "plan-only-no-memory": {
     "input": {
       "intent": "plan_only",
-      "final_gate_passed": true,
+      "completion_level": "local",
+      "selected_level_gate_passed": true,
       "memory_exists": false,
       "start_marker_count": 0,
       "end_marker_count": 0
@@ -29,10 +31,11 @@
       "expected_final_blocks": 0
     }
   },
-  "implement-complete-no-memory": {
+  "implement-local-complete-no-memory": {
     "input": {
-      "intent": "implement_and_release",
-      "final_gate_passed": true,
+      "intent": "implement",
+      "completion_level": "local",
+      "selected_level_gate_passed": true,
       "memory_exists": false,
       "start_marker_count": 0,
       "end_marker_count": 0
@@ -44,10 +47,11 @@
       "expected_final_blocks": 1
     }
   },
-  "implement-complete-existing-memory-no-marker": {
+  "implement-shared-existing-memory-no-marker": {
     "input": {
-      "intent": "implement_and_release",
-      "final_gate_passed": true,
+      "intent": "implement",
+      "completion_level": "shared",
+      "selected_level_gate_passed": true,
       "memory_exists": true,
       "start_marker_count": 0,
       "end_marker_count": 0
@@ -59,10 +63,11 @@
       "expected_final_blocks": 1
     }
   },
-  "implement-complete-existing-final-record": {
+  "implement-real-existing-final-record": {
     "input": {
-      "intent": "implement_and_release",
-      "final_gate_passed": true,
+      "intent": "implement",
+      "completion_level": "real_work",
+      "selected_level_gate_passed": true,
       "memory_exists": true,
       "start_marker_count": 1,
       "end_marker_count": 1
@@ -76,8 +81,9 @@
   },
   "implement-complete-duplicate-final-records": {
     "input": {
-      "intent": "implement_and_release",
-      "final_gate_passed": true,
+      "intent": "implement",
+      "completion_level": "shared",
+      "selected_level_gate_passed": true,
       "memory_exists": true,
       "start_marker_count": 2,
       "end_marker_count": 2

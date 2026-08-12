@@ -1,6 +1,6 @@
 ---
 name: orange-design
-description: 구현과 최종 검증을 마친 웹앱의 디자인이 기대와 다를 때, 기능·페이지·데이터·요구사항을 보존하면서 디자인 시스템과 화면의 위계·간격·타이포그래피·색상·반응형 품질을 개선한다. 프로젝트 성격에 맞는 getdesign.md 사례를 링크와 함께 추천하고, "디자인을 다듬어줘", "화면이 마음에 안 들어", "어울리는 디자인을 추천해줘", "Stitch로 시안 보정", "조직 홈페이지 디자인을 반영해" 같은 요청에 사용한다.
+description: 선택한 local·shared·real_work 완료 수준에서 구현과 최종 검증을 마친 웹앱의 디자인이 기대와 다를 때, 기능·페이지·데이터·요구사항을 보존하면서 디자인 시스템과 화면의 위계·간격·타이포그래피·색상·반응형 품질을 개선한다. 프로젝트 성격에 맞는 getdesign.md 사례를 링크와 함께 추천하고, "디자인을 다듬어줘", "화면이 마음에 안 들어", "어울리는 디자인을 추천해줘", "Stitch로 시안 보정", "조직 홈페이지 디자인을 반영해" 같은 요청에 사용한다.
 ---
 
 # Orange Design
@@ -11,7 +11,8 @@ description: 구현과 최종 검증을 마친 웹앱의 디자인이 기대와 
 
 ## 시작 조건과 경계
 
-- `PLAN.md`의 모든 필수 REQ와 TEST가 `PASS`이고 `phase-verify.md`의 최종 검증이 끝난 `web_app`에만
+- `PLAN.md`의 모든 IA STEP이 `APPROVED`이고 모든 필수 REQ와 TEST가 선택한 `completion_level`에서
+  `PASS`이며 `phase-verify.md`의 최종 검증이 끝난 `web_app`에만
   적용한다. 구현·검증이 덜 끝났다면 먼저 `orange-start` 또는 `orange-resume`으로 돌려보낸다.
 - 사용자에게 무엇이 마음에 들지 않는지 한 문장으로 받고, 라이브 URL·대표 화면·target viewport를
   확인한다. 이미 명확한 불만이 있으면 취향 질문을 반복하지 않는다.
@@ -37,8 +38,9 @@ description: 구현과 최종 검증을 마친 웹앱의 디자인이 기대와 
    accessibility 행동으로 번역하고 visual acceptance check를 관찰 문장으로 만든다.
 6. 사용자가 Stitch를 명시적으로 원하거나 시안을 이미 가져온 경우에만
    `references/stitch-design.md`를 읽는다. 이 스킬 밖의 기본 구현 흐름에서는 Stitch를 열지 않는다.
-7. 기존 컴포넌트와 디자인 토큰으로 후보를 구현한다. production build·관련 테스트·라이브 URL의
-   functional/visual QA를 모두 통과한 후보만 채택해 재배포한다.
+7. 기존 컴포넌트와 디자인 토큰으로 후보를 구현한다. production build·관련 테스트·선택한 완료
+   수준의 로컬 화면 또는 라이브 URL에서 functional/visual QA를 통과한 후보만 채택한다. 배포는
+   `shared | real_work`이고 사용자가 실행 직전에 확인한 경우에만 수행한다.
 
 ## 디자인 시스템 우선순위
 
@@ -68,7 +70,7 @@ description: 구현과 최종 검증을 마친 웹앱의 디자인이 기대와 
 
 - 하드코딩한 시안 HTML 전체를 붙여넣지 않는다. 기존 layout·semantic HTML·컴포넌트 구조를 유지하며
   CSS variables, theme tokens, typography scale, spacing, responsive rules로 반영한다.
-- 같은 production URL, viewport, 데이터, 로그인 상태에서 before/after를 비교한다. desktop·mobile,
+- 같은 검증 대상(로컬 또는 production URL), viewport, 데이터, 로그인 상태에서 before/after를 비교한다. desktop·mobile,
   loading·empty·error·success, dialog·focus 상태와 긴 텍스트를 함께 본다.
 - 입력→처리→결과, keyboard·focus·dismissal, console·network 오류, 기존 테스트를 다시 확인한다.
   기능 회귀·접근성 후퇴·`PARTIAL` 증거면 변경을 되돌린다.

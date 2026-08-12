@@ -1,6 +1,6 @@
 ---
 name: orange-secure
-description: 오렌지 빌드로 만든 Next.js + Supabase 앱의 흔한 보안 구멍을 점검하고 고친다. 배포·공유 전이나 Supabase 보안 경고 메일을 받았을 때 사용. "보안 점검", "오렌지 보안", "Supabase 경고", "RLS 확인" 같은 요청에 사용.
+description: 오렌지 빌드로 만든 Next.js + Supabase 앱의 흔한 보안 구멍을 선택한 local·shared·real_work 완료 수준에 맞춰 점검하고 고친다. 배포·공유 전이나 Supabase 보안 경고 메일을 받았을 때 사용. "보안 점검", "오렌지 보안", "Supabase 경고", "RLS 확인" 같은 요청에 사용.
 ---
 
 # Orange Build — Secure
@@ -158,7 +158,7 @@ grep -rniE 'resident|주민|card|카드|account|계좌|password|비밀번호' ap
 6가지 검사를 다 끝낸 뒤 한 줄 요약을 출력한다:
 
 - 전부 OK: `✅ 6개 휴리스틱에서 문제를 찾지 못했습니다 — 실제 권한·데이터 설정도 최종 확인하세요.`
-- 수정함: `✅ 보안 문제 N건을 수정했습니다. 라이브 URL을 다시 한 번 확인해 보세요.`
+- 수정함: `✅ 보안 문제 N건을 수정했습니다. 선택한 완료 수준의 로컬 결과 또는 라이브 URL을 다시 확인해 보세요.`
 - 사용자가 수정을 거부함: `⚠️  CRITICAL N건이 남아 있습니다. 공유 전에 꼭 고치세요.`
 
 보안 수정을 구현하고 최종 검증까지 마쳤다면 `../orange-start/references/memory-log.md`의 기존 최종

@@ -1,0 +1,60 @@
+{
+  "archive_files": [
+    "PLAN.md",
+    "IMPLEMENTATION_REQUEST.md",
+    "MATERIALS.md",
+    "materials/application-form.xlsx",
+    "materials/approved-output.pdf"
+  ],
+  "plan_contract": {
+    "deliverable_kind": "automation",
+    "has_tests": true,
+    "has_collaborative_steps": true
+  },
+  "implementation_request_markers": [
+    "## 협력 구현 원칙",
+    "이 단계부터 만들까요?",
+    "이대로 다음 개선",
+    "명시적으로 동의하기 전에는 코드를 작성하지 마세요"
+  ],
+  "materials": [
+    {
+      "file": "application-form.xlsx",
+      "purpose": "required",
+      "summary": "신청 입력 열과 상태 코드가 있는 원본 양식",
+      "required_rules": [
+        "열 이름과 상태 코드 유지"
+      ],
+      "exact_elements": [
+        "신청번호",
+        "처리상태"
+      ],
+      "apply_to": [
+        "입력 파서",
+        "결과 파일"
+      ],
+      "open_questions": [
+        "빈 처리상태의 기본값"
+      ]
+    },
+    {
+      "file": "approved-output.pdf",
+      "purpose": "verification",
+      "summary": "승인된 결과 형식 예시",
+      "required_rules": [],
+      "exact_elements": [
+        "표 제목과 열 순서"
+      ],
+      "apply_to": [
+        "최종 출력 검증"
+      ],
+      "open_questions": []
+    }
+  ],
+  "expected_behavior": {
+    "inspect_originals": true,
+    "confirm_analysis_before_implementation": true,
+    "request_missing_required_file": true,
+    "never_invent_unreadable_content": true
+  }
+}

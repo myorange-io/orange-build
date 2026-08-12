@@ -1,20 +1,20 @@
 {
   "name": "orange-build",
-  "version": "2.5.0",
-  "description": "기획서를 가져오거나 여기서 작성하고 Codex의 GPT-5.6이 웹앱, AI 작업 스킬, 자동화를 자가 테스트·자동 개선해 배포까지 완성하도록 돕는 바이브코딩 워크플로.",
+  "version": "2.6.0",
+  "description": "최신 IA 기획서를 가져오거나 같은 구조로 만들고, Codex의 GPT-5.6이 웹앱·AI 작업 스킬·자동화를 한 단계씩 승인받아 선택한 완료 수준까지 구현·검증하도록 돕는 스킬 팩.",
   "author": {
     "name": "pengdo"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Orange Build",
-    "shortDescription": "자가 테스트와 자동 개선으로 결과를 완성합니다.",
-    "longDescription": "기획서를 가져오거나 작성한 뒤 새 프로젝트는 guided, 기존 프로젝트는 adaptive로 진행하고 Codex의 GPT-5.6이 웹앱, AI 작업 스킬, 자동화를 자가 테스트·자동 개선해 구현·배포·검증합니다.",
+    "shortDescription": "IA 기획을 한 단계씩 함께 구현합니다.",
+    "longDescription": "최신 Orange Build 기획서·구현 자료·아이디어를 공용 IA 계약으로 바꾸고, Codex의 GPT-5.6이 웹앱·AI 작업 스킬·자동화를 승인받은 한 단계씩 구현해 local·shared·real_work 중 선택한 수준에서 검증합니다.",
     "developerName": "pengdo",
     "category": "Development",
     "capabilities": [
       "skills"
     ],
-    "defaultPrompt": "기획서가 있으면 작업 폴더에 맞춰 준비된 환경을 재사용하고, 없으면 아이디어부터 기획한 뒤 필요한 설치와 계정 세팅을 도와주세요. GPT-5.6의 계획·도구 사용·검증 능력으로 실행 방법은 자율적으로 정하고, 테스트·실제 결과 확인·자동 수정을 반복해 배포까지 완성하되 범위·비용·권한·삭제·외부 발송 같은 중요한 결정은 사람에게 맡겨 주세요."
+    "defaultPrompt": "최신 Orange Build 기획서나 구현 자료를 가져오고, 없으면 같은 7단계 IA 인터뷰로 기획서를 만들어 주세요. 첫 번째 작은 완성의 변화·완료 확인·제외 범위를 보여주고 제 승인을 기다린 뒤 한 단계만 구현하세요. 결과를 직접 확인할 수 있게 보여주고 다음 개선·현재 결과 수정·방향 다시 정하기 중 제 선택을 받으세요. 배포·외부 발송·실데이터 변경은 별도로 확인하고, local·shared·real_work 중 제가 정한 수준까지만 검증하세요."
   }
 }

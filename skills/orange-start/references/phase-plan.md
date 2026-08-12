@@ -1,180 +1,117 @@
-# 기획서 가져오기 — 원본을 구현 계약으로 바꾸기
+# 최신 기획서를 IA 실행 계약으로 바꾸기
 
-목표: Orange Build App의 `orange-start용 복사` 본문 또는 `phase-interview.md`가 만든 기획서를
-보존하고, 웹앱·AI 작업 스킬·자동화 중 하나로 확실하게 분기할 수 있는 `PLAN.md`를 만든다. 이
-단계는 새 아이디어 인터뷰가 아니라 **이미 완성된 기획서의 실행 준비**다.
+목표: 최신 App 복사문, 구현 자료 묶음, 또는 로컬 IA 인터뷰 결과를 원본으로 보존하고
+`workflow: ia_collaborative`인 `PLAN.md` 계약으로 바꾼다. 구현 요청이면 첫 STEP 승인 전에는
+프로젝트 파일을 수정하지 않는다.
 
-이 단계에서는 `verification-loop.md`도 읽는다. 최신 기획서의 TEST 계약과 기존 v2 호환 TEST를
-REQ·구현·증거에 연결하되 `SOURCE_PLAN.md` 원문은 바꾸지 않는다.
+## 목차
 
-## 1. 원본 찾기와 보존
+1. 인정하는 입력
+2. 최신 구조 판정과 구형 전환
+3. 자료 묶음 확인
+4. REQ·TEST·STEP 연결
+5. PLAN.md 형식
+6. 첫 승인 전 게이트
 
-다음 순서로 원본을 찾는다.
+## 1. 인정하는 입력
 
-1. 현재 사용자 메시지와 최근 대화에서 아래 새 복사 형식을 먼저 찾는다.
+다음 순서로 찾는다.
 
-   ```markdown
-   Orange Build 플러그인의 orange-start를 사용해 아래 기획서를 구현하세요.
+1. 현재 메시지나 파일의 최신 App 복사문 또는 `IMPLEMENTATION_REQUEST.md`
+   - `아래 기획서를 바탕으로 실제로 동작하는 결과물을 참가자와 함께 단계적으로 구현하세요.`
+   - `## 협력 구현 원칙`
+   - `## 기획서 메타데이터`
+   - `## 원본 기획서`
+2. 구현 자료 묶음
+   - `PLAN.md`
+   - `IMPLEMENTATION_REQUEST.md`
+   - `MATERIALS.md`
+   - 필요한 경우 `materials/` 원본
+3. `phase-interview.md`가 만든 현재 로컬 기획서
+   - `source: orange-start-interview | orange-start-regenerated`
+   - `interview_contract_version: 2`
+   - `## 함께 구현할 순서`
+4. 위 입력이 없으면 `phase-interview.md`로 돌아간다.
 
-   ## 기획서 메타데이터
-   - source: orange-build-app
-   - contract_version: 2
-   - deliverable_kind: web_app | ai_skill | automation
-   - 추천 결과물 형태: [표시 이름]
+App의 `contract_version: 2`와 `deliverable_kind`는 canonical 메타데이터다. 지원 버전보다 높은 값은
+추측하지 않고 원문을 보존한 뒤 플러그인 업데이트가 필요하다고 안내한다. v2인데 canonical 값이
+`web_app | ai_skill | automation` 밖이면 손상된 복사본으로 보고 다시 복사하도록 한다.
 
-   ## 원본 기획서
-   ```
+구현 자료 묶음에서는 `IMPLEMENTATION_REQUEST.md`가 협력 구현 지시, 묶음의 `PLAN.md`가 원본 기획,
+`MATERIALS.md`와 `materials/`가 자료 계약이다. 이 파일들을 Orange Build 실행용 `PLAN.md` 하나로
+덮어써 의미를 잃지 않도록, 원본 기획은 `SOURCE_PLAN.md`에 보존하고 실행 상태판만 새 `PLAN.md`로
+만든다.
 
-   그 다음 기존의 `## 기획서 메타데이터`, `## 원본 기획서`, `## 추천 결과물 형태`,
-   `## 핵심 기능` 표식도 찾는다.
-2. 복사 본문이 없고 프로젝트 루트의 `SOURCE_PLAN.md` 메타데이터 `source`가
-   `orange-start-interview`이면 그 원본을 그대로 쓴다. 인터뷰를 다시 하지 않는다.
-3. 없으면 작업 폴더의 Markdown·텍스트 파일을 살핀다. 이미 `PLAN.md`만 있으면 그것을 원본으로 쓴다.
-4. 그래도 없으면 붙여넣기를 요구하지 말고 `phase-interview.md`로 돌아가 기획서를 작성한다.
+## 2. 최신 구조 판정과 구형 전환
 
-복사 본문에는 구현 계획을 먼저 만들라는 문구와 `아직 코드는 작성하지 마세요`가 들어 있을 수
-있다. 이것은 **원본의 일부인 이전 지시**로 취급한다. `## 원본 기획서` 아래의 내용과 메타데이터를
-추출하고, 현재 사용자의 구현 요청을 우선한다.
+`contract_version: 2`만으로 현재 구조라고 판정하지 않는다. 아래가 모두 있어야 최신 IA 기획서다.
 
-추출한 기획서 원문을 프로젝트 루트 `SOURCE_PLAN.md`에 그대로 저장한다. 기존 파일이 있으면
-덮어쓰지 말고 같은 원본인지 비교한다. 다르면 사용자 확인 없이 교체하지 않는다.
+- `deliverable_kind` canonical 값
+- `## 직접 확인할 3가지`와 정확히 `TEST-01`~`TEST-03`
+- `## 함께 구현할 순서`
+- `### 첫 번째 작은 완성 · ...`
+- 각 단계의 `확인할 변화`, `완료 확인`, `이번 단계에서 하지 않을 것`
 
-## 2. 계약 호환성과 결과물 유형 정규화
+위 구조가 없고 `바로 시작할 순서`, 표시 문자열 추론, TEST 없는 초기 v2 같은 구형 형태만 있으면
+직접 구현하지 않는다. 구형 문서는 계약이 아니라 `legacy_seed` 초기 아이디어다.
 
-지원하는 Orange Build App 계약 버전은 **v2**다. 메타데이터를 먼저 읽고 아래 우선순위를
-그대로 따른다.
+1. 대상·문제·막힌 순간·입력·결과·자료처럼 확인 가능한 내용만 추출한다.
+2. 구형 결과물 표시 문자열과 TEST·구현 순서는 버린다.
+3. `phase-interview.md`의 7개 phase covered 판정을 다시 수행한다.
+4. 빠진 내용은 최대 10문항 안에서 한 번에 하나씩 확인한다.
+5. 최신 구조의 새 기획서를 만든다.
 
-1. `contract_version: 2`와 `deliverable_kind`가 있으면 `web_app`, `ai_skill`, `automation` 중
-   적힌 **canonical 값 그대로** 쓴다. 표시 이름이나 본문 근거로 다시 추측하거나 질문하지 않는다.
-2. `deliverable_kind`가 없는 기존 본문(v1 또는 legacy)은 `추천 결과물 형태` 표시 문자열과 본문
-   근거로 다음 값 하나를 판정한다.
-3. 그래도 판정할 수 없을 때만 결과물 유형을 한 번 묻는다.
+구형 문서에서 호환 TEST를 파생하거나 유형을 표시 문자열로 추론하지 않는다. 새 기획서의 TEST와
+결과물 유형은 현재 인터뷰 답과 명시된 가정에서 생성한다.
 
-`contract_version`이 숫자 2보다 높으면 원문을 `SOURCE_PLAN.md`에 보존한 뒤 **여기서 멈춘다**.
-다음처럼 명확히 안내한다.
+## 3. 자료 묶음 확인
 
-> 이 기획서는 Orange Build App 계약 v[버전]을 사용하지만, 현재 orange-start는 v2까지만
-> 지원합니다. 임의로 해석하지 않았어요. 플러그인을 업데이트한 뒤 다시 **orange-start용 복사**해
-> 주세요.
+`MATERIALS.md`가 있으면 원본 `materials/` 파일을 먼저 열고 파일별로 다음을 대조한다.
 
-이 경우 `PLAN.md`를 만들거나 REQ·구현 경로를 정하거나 대체 질문을 하지 않는다. v2의
-`deliverable_kind`가 세 canonical 값 밖이면 손상된 복사본으로 보고 다시 복사하도록 안내한다.
+- 용도
+- 자료 설명
+- 반드시 반영할 내용
+- 그대로 유지할 항목
+- 적용 위치
+- 확인할 점
 
-기존 v1/legacy 본문은 계속 지원한다. 표시 문자열과 근거로 아래 값 하나를 정규화한다.
+자료가 누락되거나 분석할 수 없거나 원본과 `MATERIALS.md`가 충돌하면 임의 대체하지 않는다. 가장
+중요한 열린 질문 하나를 선택지 2~3개로 먼저 묻는다. 사용자가 분석을 확인하거나 바로잡은 뒤에만
+REQ와 STEP에 반영한다. `반드시 반영할 자료`에 적힌 파일을 찾을 수 없으면 요청하고, 필수 자료가
+아닌 참고 자료는 영향과 가정을 표시한 뒤 진행할 수 있다.
 
-`source: orange-start-interview`인 로컬 기획서는 인터뷰에서 확정한 canonical
-`deliverable_kind`를 그대로 쓴다. Orange Build App의 복사 계약 버전으로 가장하거나 v2 호환성
-판정을 다시 하지 않는다.
+## 4. REQ·TEST·STEP 연결
 
-| 값 | 판단 기준 |
-|---|---|
-| `web_app` | 사용자가 브라우저 화면에서 입력·조회·공유하는 경험이 핵심 |
-| `ai_skill` | Codex·Claude Code에서 반복 호출하는 지침·스크립트·참조 묶음이 핵심 |
-| `automation` | 일정·이벤트·수동 실행이 외부 도구 사이의 일을 반복 처리하는 것이 핵심 |
+원본의 다음 항목을 빠짐없이 읽는다.
 
-챗봇은 사용자용 웹 화면이 핵심이면 `web_app`, 에이전트 내부 반복 작업이면 `ai_skill`로 둔다.
-문서 템플릿은 사람이 매번 에이전트에 요청해 생성하면 `ai_skill`, 정해진 트리거로 자동 생성·전달하면
-`automation`으로 둔다. legacy 표시 문자열이 모호할 때만 이 근거를 사용한다.
+- 대상·문제와 가장 막히는 순간
+- 해결 방식과 결과물 유형
+- 사용 흐름과 핵심 기능
+- 첫 구현 포함·제외 범위
+- 사용할 자료와 반드시 반영할 자료
+- AI 역할과 사람 확인 지점
+- 성공 기준·실패 신호·완료 수준
+- `TEST-01`~`TEST-03`
+- `함께 구현할 순서`와 가정
 
-## 3. 원본 항목을 요구사항 ID로 옮기기
+각 포함 범위와 핵심 행동에 `REQ-01`부터 ID를 붙인다. 완료 조건은 사용자가 관찰할 수 있게 쓰고,
+각 REQ를 하나 이상의 TEST 또는 보조 검증에 연결한다. TEST의 제목·준비·행동·기대 결과·통과 증거는
+뜻을 줄이거나 HTTP 상태 같은 약한 증거로 바꾸지 않는다.
 
-다음 원본 항목을 빠짐없이 읽는다.
+각 구현 단계를 `STEP-01`부터 옮긴다. STEP 표에는 원본 단계 이름, 확인할 변화, 완료 확인, 제외,
+연결 REQ·TEST, 상태를 둔다. 처음에는 모든 단계가 `AWAITING_APPROVAL`이고 `current_step`은
+`STEP-01`이다. 미래 STEP도 표에는 보이지만 `current_step`과 일치하지 않으면 실행할 수 없다.
 
-- 사용 흐름
-- 핵심 기능
-- 첫 구현의 **포함** 범위
-- 성공 기준
-- 직접 확인할 `TEST-01`~`TEST-03`의 제목·준비·행동·기대 결과·통과 증거
-- AI가 할 일과 사람이 확인할 일
-- 사용할 자료·개인정보
-- 실패 신호
-- 첫 구현 단계와 명시된 가정
+결과물 유형별 설계는 필요한 내용만 보강한다.
 
-각 포함 범위와 핵심 행동에 `REQ-01`부터 ID를 붙인다. 비슷한 문장을 합칠 수는 있지만, 아래
-추적표에서 원본 항목이 어디로 옮겨졌는지 보여야 한다. 구현하기 어렵다는 이유로 삭제하지 않는다.
+- `web_app`: 경로·입력·출력·데이터 변화·역할·로딩·빈 상태·오류·성공·모바일
+- `ai_skill`: 긍정 트리거 3개·비트리거 2개·입출력·빈 입력·도구 부재·공용 파일·호스트별 등록
+- `automation`: 트리거·계정·입출력 매핑·dry-run·중복 키·재시도·로그·중지·복구·외부 승인
 
-각 요구사항은 관찰 가능한 완료 조건으로 바꾼다.
-
-- 나쁜 예: `신청 기능 구현`
-- 좋은 예: `필수값을 넣고 제출하면 저장되고 성공 안내가 보이며, 목록을 다시 열어 같은 항목을 확인한다.`
-- 나쁜 예: `메일 정리 스킬 완성`
-- 좋은 예: `메일 스레드 입력 시 답변할 항목과 한국어 답장 초안을 반환하고, 빈 입력은 실행하지 않고 이유를 알린다.`
-- 나쁜 예: `매일 자동 실행`
-- 좋은 예: `정해진 시각에 새 항목만 처리하고, 같은 입력을 다시 받아도 중복 결과를 만들지 않으며 실행 건수를 기록한다.`
-
-검증 방법은 명령어 이름만 적지 말고 **무엇을 관찰하면 PASS인지** 적는다.
-
-### TEST를 REQ에 연결하기
-
-최신 contract v2 원본에 TEST가 있으면 정확히 세 개인지 확인하고, 각 TEST의 제목과 `준비`,
-`행동`, `기대 결과`, `통과 증거`를 글자 뜻을 바꾸지 않고 `PLAN.md`에 옮긴다. 각 TEST에는 관련
-`REQ-*`를 하나 이상 연결한다. TEST를 더 쉬운 동작으로 축소하거나 HTTP 200 같은 대체 증거로
-바꾸지 않는다.
-
-TEST 항목이 없는 기존 v2는 `verification-loop.md`에 따라 추가 질문 없이 대표 성공, 빈 값·
-잘못된 값, 유형별 예외 시나리오를 정확히 3개 파생한다. `source: derived_compat`와 파생 근거를
-표시한다. v1/legacy도 같은 방식으로 호환 TEST 3개를 파생한다. 원본의 성공 기준·실패 신호·사용
-흐름을 근거로 쓰고, 없는 TEST가 원문에 있었던 것처럼 기록하지 않는다.
-
-모든 REQ는 원본 TEST 또는 더 작은 보조 검증에 포함돼야 한다. 하나의 TEST가 여러 REQ를 잇는
-완결 흐름이어도 되지만, TEST와 REQ 어느 쪽에서도 연결되지 않은 요구는 계약 게이트를 통과하지
-못한다.
-
-## 4. 유형별 빠진 설계 보강
-
-원본 기획서는 의도적으로 한 페이지라 구현 세부가 부족할 수 있다. Orange Build App이 이미 확인한
-대상·문제·흐름·핵심 기능·포함/제외 범위·성공 기준·결과물 유형을 다시 묻지 않는다. 이미 답이
-있는 내용은 합리적 기본값을 `가정`으로 표시한다. 구현 방향을 크게 바꾸는 결정만 최대 3개 묻는다.
-`beginner-guardrails.md`를 읽고 요구사항을 작은 검증 단위와 관찰 가능한 증거로 쓴다.
-
-단, 사용자에게 사실로 보이거나 계산·자격·정책·개인정보·외부 실행을 결정하는 값은 합리적 기본값의
-대상이 아니다. `예:`, `약`, `00`, `임시`, 단일 TEST의 입출력처럼 일반 규칙이 확인되지 않은 신호가
-있으면 `product-truth-gate.md`를 읽는다. 출처나 이전 사용자 답으로 확정되지 않으면 관련 REQ를
-`BLOCKED · FACT_UNVERIFIED`로 두고, 가장 좋은 권장안과 대안의 영향을 함께 제시해 사실 하나를
-확인한다. 답과 무관한 구현은 계속한다.
-
-`source: orange-start-interview`이고 `interview_completion: skip_all`이면 이 단계에서도 기획 확인
-질문을 다시 열지 않는다. 현재 아이디어·답·가정으로 계약을 만들고, 가입·계정 선택·외부 쓰기처럼
-실행 시점에 본인 확인이 필요한 동작만 이후 `USER_ACTION`으로 요청한다.
-
-### `web_app`
-
-각 사용자 흐름을 경로와 기능 상태로 바꾼다.
-
-- 경로와 화면 목적
-- 필수 요소와 동작
-- 입력·출력·데이터 변화
-- 로딩·빈 상태·오류·성공 피드백
-- 로그인 역할과 접근 권한
-- 외부 API·저장소가 정말 필요한지
-- 핵심 흐름을 검증할 시나리오
-
-화면 이름만 체크하지 말고, 화면을 잇는 **완결 흐름**에 요구사항을 배치한다.
-
-### `ai_skill`
-
-- 사용자가 말할 법한 긍정 트리거 3개와 비트리거 2개
-- 입력 형식, 필수·선택 값, 빈 입력 처리
-- 출력 형식과 바로 쓸 수 있는 예시
-- 실행 단계와 필요한 `scripts/`·`references/`·`assets/`
-- 외부 도구가 없거나 인증이 안 됐을 때의 폴백
-- 검증 fixture와 실제 호출 시나리오
-
-### `automation`
-
-- 트리거: 수동·일정·webhook·외부 이벤트 중 하나
-- 연결 도구와 **어느 계정/조직**을 쓸지
-- 입력→변환→출력 데이터 매핑
-- 사람이 승인해야 하는 지점
-- dry-run, 중복 방지 키, 재시도 조건과 최대 횟수
-- 실행 로그, 실패 알림, 중지·복구 방법
-- 샘플 1건으로 확인할 시나리오
+제품 사실이 확인되지 않았으면 `product-truth-gate.md`에 따라 관련 REQ를
+`BLOCKED · FACT_UNVERIFIED`로 둔다. 단일 예시값을 일반 규칙으로 만들지 않는다.
 
 ## 5. PLAN.md 형식
-
-`PLAN.md`는 설명 문서가 아니라 **한 화면에서 누락과 완료 증거를 찾는 간결한 상태판**이다. 원본을
-다시 요약하지 않고 `SOURCE_PLAN.md`의 절 이름이나 짧은 문구를 근거로 연결한다. 요구사항과 검증
-증거를 별도 절에 중복하지 않고 아래 표에서 함께 관리한다.
 
 ```markdown
 # [결과물 이름]
@@ -182,16 +119,29 @@ TEST 항목이 없는 기존 v2는 `verification-loop.md`에 따라 추가 질�
 > [한 줄 소개]
 
 ## 메타데이터
-- source: [orange-build-app / orange-start-interview] · source_contract: [legacy / 2 / n/a]
-- contract_version: 2 · deliverable_kind: `web_app | ai_skill | automation`
-- execution_profile: `guided | adaptive` · delivery_intent: `implement_and_release | plan_only | verify_only`
-- web_delivery_target: `pending | existing | codex_sites | vercel_supabase | n/a` — [필요할 때만 이유]
-- slug: `[ascii-kebab-case]`
+- source: orange-build-app | orange-start-interview | orange-start-regenerated
+- source_contract: 2 | local-ia
+- contract_version: 2
+- deliverable_kind: web_app | ai_skill | automation
+- workflow: ia_collaborative
+- completion_level: local | shared | real_work
+- current_step: STEP-NN | complete
+- execution_profile: guided | adaptive
+- delivery_intent: implement | plan_only | verify_only
+- web_delivery_target: local | pending | existing | codex_sites | vercel_supabase | n/a
+- host: codex | claude_code
+- slug: ascii-kebab-case
+
+## IA 단계
+| STEP | 단계 | 확인할 변화 | 완료 확인 | 이번 단계에서 하지 않을 것 | 연결 REQ·TEST | 상태·증거 |
+|---|---|---|---|---|---|---|
+| STEP-01 | [첫 번째 작은 완성] | [...] | [...] | [...] | REQ-01 · TEST-01 | AWAITING_APPROVAL · NOT_RUN |
+| STEP-02 | [다음 개선] | [...] | [...] | [...] | REQ-02 · TEST-03 | AWAITING_APPROVAL · NOT_RUN |
 
 ## 요구사항 계약
 | REQ | 원본 근거 | 관찰 가능한 완료 조건 | 검증 | 구현 위치 | 상태·증거 |
 |---|---|---|---|---|---|
-| REQ-01 | [SOURCE_PLAN 절·짧은 문구] | [사용자가 보는 결과] | [TEST ID/보조 검사] | - | TODO · NOT_RUN / BLOCKED · FACT_UNVERIFIED |
+| REQ-01 | [SOURCE_PLAN 절·짧은 문구] | [사용자가 보는 결과] | TEST-01 | - | TODO · NOT_RUN |
 
 ## 결과물 인벤토리
 | 종류 | 예상 목록·수량 | 실제 목록·수량 | 상태 |
@@ -199,57 +149,57 @@ TEST 항목이 없는 기존 v2는 `verification-loop.md`에 따라 추가 질�
 | [경로·흐름 / 스킬 파일·출력 / 트리거·runbook] | [목록] · N | - | TODO |
 
 ## 검증 시나리오 계약
-| TEST | source | 준비·행동 | 기대 결과·통과 증거 | 연결 REQ | 상태·실제 증거 |
-|---|---|---|---|---|---|
-| TEST-01 | [원본/derived_compat] | [준비] → [행동] | [기대 결과] · [증거] | REQ-01 | NOT_RUN |
+| TEST | 준비·행동 | 기대 결과·통과 증거 | 연결 REQ·STEP | 상태·실제 증거 |
+|---|---|---|---|---|
+| TEST-01 | [준비] → [행동] | [기대 결과] · [증거] | REQ-01 · STEP-01 | NOT_RUN |
 
 ## 유형별 설계
-[구현에 필요한 화면·데이터 / 트리거·입출력 / 연결·재시도만 짧게]
+[화면·데이터 / 스킬 입출력·등록 / 자동화 연결·재시도]
+
+## 자료 계약
+| 파일 | 용도 | 필수 규칙·그대로 유지 | 적용 위치 | 열린 질문·상태 |
+|---|---|---|---|---|
+| [없음 또는 파일] | [...] | [...] | [...] | CONFIRMED / WAITING_USER |
 
 ## 사전 준비
 | 미해결 항목 | 영향·scope | 상태 |
 |---|---|---|
-| [없음 / 설치·가입·계정·권한 한 줄] | [필요한 이유와 변경 범위] | MISSING / USER_ACTION / INSTALL_APPROVED |
+| [없음 / 설치·가입·계정·권한] | [...] | MISSING / USER_ACTION / INSTALL_APPROVED |
 
 ## 가정과 결정
-- [기본값이 아닌 가정, 사람 결정, blocker만 기록. 없으면 `없음`]
+- [완료 수준, 중요한 가정·사람 결정·blocker. 없으면 없음]
 
 ## 최종 판정
-- REQ: 0/N PASS · TEST: 0/K TESTED · P0/P1: 미검토
-- 결과: [URL / 호출 결과 / run id / 미정]
-- 아직 증명하지 못한 것: [ID와 이유 / 최종 전에는 `검증 전`]
+- IA 단계: [APPROVED 수]/[전체] · 현재 [STEP-NN · 상태]
+- REQ: 0/N PASS · TEST: 0/3 TESTED · P0/P1: 미검토
+- 완료 수준: [local/shared/real_work] · 결과: [미정]
+- 아직 증명하지 못한 것: 검증 전
 ```
 
-준비 상태 전체 목록, 명령 출력, commit 목록, 평범한 진행 체크박스는 넣지 않는다. 상세 출력은 테스트·
-CI·배포 로그에 두고, 표에는 명령/URL/run id와 관찰 결과를 한 줄로 연결한다. `TESTED | PARTIAL |
-INFERRED | NOT_RUN | FAIL | BLOCKED` 의미와 완료 판정은 그대로 유지한다.
+`TESTED | PARTIAL | INFERRED | NOT_RUN | FAIL | BLOCKED`를 구분한다. 단계 상태는
+`AWAITING_APPROVAL | IN_PROGRESS | AWAITING_REVIEW | APPROVED`만 쓴다.
 
-## 6. 계약 게이트
+## 6. 첫 승인 전 게이트
 
-다음을 모두 확인한 뒤에만 구현으로 이어간다. 별도 진행 체크박스나 완료 보고는 만들지 않는다.
+구현 요청에서는 위 `SOURCE_PLAN.md`와 `PLAN.md` 내용을 먼저 작업 메모에서 완성하고, STEP-01을
+대화에 보여준다. 사용자가 `이 단계부터 만들까요?`에 동의하기 전에는 다음을 하지 않는다.
 
-- 원본의 핵심 기능, 포함 범위, 사용 흐름, 성공 기준, 사용할 자료·개인정보와 공개·비공개 경계,
-  AI 역할과 사람 확인 지점이 요구사항 표의 원본 근거에 전부 연결돼 있다.
-- 지원하는 source contract의 canonical `deliverable_kind`, legacy 표시 문자열 판정 또는 로컬
-  인터뷰에서 확정한 canonical 값이 `deliverable_kind`에 그대로 기록됐다.
-- 모든 `REQ-*`에 완료 조건과 검증 방법이 있다.
-- 사용자 대상 금액·비율·효과·자격·정책·개인정보·외부 실행 사실이 출처나 이전 사용자 답으로
-  `FACT_CONFIRMED`인지 확인됐고, 불확실한 예시를 일반 규칙으로 추론하지 않았다.
-- 최신 contract v2 원본에 TEST가 있으면 정확히 세 개이고, 각 TEST의 제목·준비·행동·기대 결과·
-  통과 증거가 보존돼 있다.
-- TEST 항목이 없는 기존 v2 또는 v1/legacy이면 추가 질문 없이 `derived_compat` TEST 3개를 만들고
-  파생 근거를 기록했다.
-- 모든 TEST가 하나 이상의 REQ에, 모든 REQ가 TEST 또는 보조 검증에 연결됐다.
-- 결과물 인벤토리에 원본이 약속한 경로·파일·출력·트리거의 예상 목록과 수량이 있다.
-- 결과물 유형이 하나로 확정됐다.
-- `execution_profile`과 `delivery_intent`가 `execution-profiles.md` 규칙으로 확정됐다.
-- 유형별 필수 설계가 채워졌다.
-- 제외 범위를 넓혔다면 사용자의 명시적 결정과 이유가 `가정과 결정`에 있다.
+- `SOURCE_PLAN.md`, `PLAN.md`, 코드, 설정, 테스트 등 프로젝트 파일 생성·수정
+- package 설치, 저장소 생성, commit·push, 배포·외부 연결
+- STEP 상태를 `IN_PROGRESS`로 변경
 
-계획·구현 중에는 `SOURCE_PLAN.md`와 `PLAN.md`만 만든다. `MEMORY.md`는 구현이 모든 완료 게이트를
-통과한 최종 검증 시점에 `memory-log.md`를 적용해 생성하고, 최종 검증 결과를 정확히 한 번 기록한다.
-`AGENTS.md`, `CLAUDE.md`, `CASE.md`는 기본 산출물이 아니며 프로젝트 고유 영구 지침이나 교육 사례를
-사용자가 요청했을 때만 만든다. 단순 재실행·REQ 매핑·정상 호환 판정은 추가 기록 파일이나 상태 행을
-만들 이유가 아니다.
+읽기 전용 폴더 조사와 기획 요약만 허용한다. 동의하면 `SOURCE_PLAN.md`와 `PLAN.md`를 처음 저장하고
+STEP-01을 `IN_PROGRESS`로 바꾼 뒤 사전 준비와 구현을 시작한다. `plan_only` 요청은 기획 파일 생성 자체를 사용자가 요청한 것이므로
+파일을 저장하고 `STEP-01 · AWAITING_APPROVAL` 상태에서 끝낸다.
 
-계약 생성 완료를 별도로 보고하지 않는다. 두 프로필 모두 멈추지 말고 `phase-preflight.md`로 이어간다.
+계약 게이트는 다음을 확인한다.
+
+- 최신 구조 또는 로컬 IA 구조이며 구형 호환 추론이 아니다.
+- 모든 원본 범위가 REQ에, 모든 REQ가 TEST 또는 보조 검증에 연결됐다.
+- 정확히 세 TEST와 한 개 이상의 STEP이 있다.
+- `workflow`, `completion_level`, `current_step`, 단계 상태가 있다.
+- 자료 분석이 사용자 확인과 일치하거나 열린 질문이 명시됐다.
+- 첫 STEP이 기술 작업이 아니라 관찰 가능한 작은 완성이다.
+- 구현 요청이면 승인 전에 프로젝트 파일이 바뀌지 않았다.
+
+승인 후에는 `ia-collaboration.md`와 결과물별 구현 reference로 간다.

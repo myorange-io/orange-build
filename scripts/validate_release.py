@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Orange Build manifests and workflow invariants without dependencies."""
+"""Validate Orange Build manifests and shared IA workflow invariants."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from validate_codex_gpt56 import validate_codex_gpt56
 from validate_design_routing import validate_design_routing
 from validate_evidence_ui import validate_evidence_ui
 from validate_execution_profiles import validate_execution_profiles
+from validate_ia_workflow import validate_ia_workflow
 from validate_interview_flow import validate_interview_flow
 from validate_memory_finalization import validate_memory_finalization
 from validate_plan_fixtures import validate_fixture_contracts
@@ -38,17 +39,24 @@ def fail(message: str) -> None:
 
 def load_json(path: Path) -> dict:
     if not path.is_file():
-        fail(f"missing manifest: {path.relative_to(ROOT)}")
+        fail(f"missing JSON file: {path.relative_to(ROOT)}")
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+    except json.JSONDecodeError as exc:
         fail(f"invalid JSON in {path.relative_to(ROOT)}: {exc}")
+
+
+def require_text(path: Path, snippets: tuple[str, ...]) -> None:
+    text = path.read_text(encoding="utf-8")
+    for snippet in snippets:
+        if snippet not in text:
+            fail(f"{path.relative_to(ROOT)} is missing required text: {snippet}")
 
 
 def validate_versions() -> str:
     loaded = [(path, load_json(path)) for path in MANIFESTS]
     versions = {data.get("version") for _, data in loaded}
-    if None in versions or len(versions) != 1:
+    if len(versions) != 1 or None in versions:
         detail = ", ".join(
             f"{path.relative_to(ROOT)}={data.get('version')!r}" for path, data in loaded
         )
@@ -56,13 +64,12 @@ def validate_versions() -> str:
     version = versions.pop()
     if not re.fullmatch(r"\d+\.\d+\.\d+", version):
         fail(f"version is not stable semver: {version}")
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    if f"v{version}" not in readme:
-        fail(f"README.md does not mention v{version}")
+    if version != "2.6.0":
+        fail(f"this release must be 2.6.0, got {version}")
+    require_text(ROOT / "README.md", (f"v{version}", "Orange Build 2.6.0"))
     for policy_name in ("AGENTS.md", "CLAUDE.md"):
-        policy = ROOT / policy_name
         require_text(
-            policy,
+            ROOT / policy_name,
             (
                 ".claude-plugin/plugin.json",
                 ".claude-plugin/marketplace.json",
@@ -84,129 +91,146 @@ def parse_frontmatter(path: Path) -> dict[str, str]:
             fail(f"invalid frontmatter line in {path.relative_to(ROOT)}: {line}")
         key, value = line.split(":", 1)
         values[key.strip()] = value.strip()
+    if set(values) != {"name", "description"}:
+        fail(f"{path.relative_to(ROOT)} frontmatter must contain only name and description")
     return values
 
 
-def validate_skills() -> None:
-    skills_root = ROOT / "skills"
-    skill_dirs = sorted(path for path in skills_root.iterdir() if path.is_dir())
-    if not skill_dirs:
-        fail("no skills found")
+def validate_skills_and_manifests() -> None:
+    skill_dirs = sorted(path for path in (ROOT / "skills").iterdir() if path.is_dir())
+    if {path.name for path in skill_dirs} != {
+        "orange-start",
+        "orange-resume",
+        "orange-design",
+        "orange-secure",
+    }:
+        fail("shared skills directory must expose exactly the four Orange Build skills")
     for skill_dir in skill_dirs:
         skill_file = skill_dir / "SKILL.md"
-        if not skill_file.is_file():
-            fail(f"missing SKILL.md: {skill_dir.relative_to(ROOT)}")
         meta = parse_frontmatter(skill_file)
-        if meta.get("name") != skill_dir.name:
-            fail(
-                f"skill name mismatch: {skill_dir.name} != {meta.get('name')!r}"
-            )
-        if not meta.get("description"):
-            fail(f"missing skill description: {skill_file.relative_to(ROOT)}")
-        openai_meta = skill_dir / "agents" / "openai.yaml"
-        if not openai_meta.is_file():
-            fail(f"missing Codex skill metadata: {openai_meta.relative_to(ROOT)}")
+        if meta["name"] != skill_dir.name or not meta["description"]:
+            fail(f"invalid skill metadata: {skill_dir.name}")
+        openai = skill_dir / "agents" / "openai.yaml"
         require_text(
-            openai_meta,
+            openai,
             ("display_name:", "short_description:", "default_prompt:", f"${skill_dir.name}"),
         )
 
+    codex = load_json(ROOT / ".codex-plugin" / "plugin.json")
+    claude = load_json(ROOT / ".claude-plugin" / "plugin.json")
+    marketplace = load_json(ROOT / ".claude-plugin" / "marketplace.json")
+    if codex.get("skills") != "./skills/":
+        fail("Codex manifest must point to the shared skills source")
+    if marketplace.get("plugins", [{}])[0].get("source") != "./":
+        fail("Claude marketplace must point to the same plugin root")
+    for name, text in (
+        ("Codex manifest", json.dumps(codex, ensure_ascii=False)),
+        ("Claude manifest", json.dumps(claude, ensure_ascii=False)),
+        ("Claude marketplace", json.dumps(marketplace, ensure_ascii=False)),
+    ):
+        if "IA" not in text or "단계" not in text:
+            fail(f"{name} does not describe the IA step workflow")
+    if "GPT-5.6" not in json.dumps(codex, ensure_ascii=False):
+        fail("Codex metadata must declare the GPT-5.6 execution baseline")
 
-def require_text(path: Path, snippets: tuple[str, ...]) -> None:
-    text = path.read_text(encoding="utf-8")
-    for snippet in snippets:
-        if snippet not in text:
-            fail(f"{path.relative_to(ROOT)} is missing required text: {snippet}")
 
-
-def validate_workflow() -> None:
+def validate_workflow_documents() -> None:
     start = ROOT / "skills" / "orange-start" / "SKILL.md"
+    resume = ROOT / "skills" / "orange-resume" / "SKILL.md"
+    refs = ROOT / "skills" / "orange-start" / "references"
+    readme = ROOT / "README.md"
+
     require_text(
         start,
         (
-            "SOURCE_PLAN.md",
+            "ia-collaboration.md",
             "phase-interview.md",
+            "phase-plan.md",
             "phase-preflight.md",
-            "helpful-tools.md",
-            "beginner-guardrails.md",
+            "phase-build.md",
             "phase-build-skill.md",
             "phase-build-automation.md",
-            "verification-loop.md",
-            "self-improvement-loop.md",
-            "codex-gpt-5p6.md",
-            "codex-sites.md",
-            "orange-design",
+            "phase-verify.md",
+            "memory-log.md",
+            "구형 v1·초기 v2 문서는 실행 계약이 아니다",
+            "이 단계부터 만들까요?",
+            "이대로 다음 개선 / 현재 결과 수정 /",
+            "completion_level",
+        ),
+    )
+    require_text(
+        resume,
+        (
+            "current_step",
+            "completion_level",
+            "AWAITING_APPROVAL",
+            "IN_PROGRESS",
+            "AWAITING_REVIEW",
+            "APPROVED",
             "phase-verify.md",
         ),
     )
-    readme = ROOT / "README.md"
     require_text(
         readme,
         (
+            "Codex와 Claude Code 설치는 서로 독립적",
+            "$orange-start",
+            "/orange-start",
+            "codex plugin marketplace upgrade orange-build",
+            "claude plugin marketplace update orange-build",
+            "$CODEX_HOME/skills",
+            "~/.claude/skills",
             "Codex의 모델 선택기에서 **GPT-5.6**",
             "Customization overview",
             "GPT-5.6 model guidance",
             "같은 파일의 동시 수정",
         ),
     )
-    codex_manifest = load_json(ROOT / ".codex-plugin" / "plugin.json")
-    codex_copy = " ".join(
-        (
-            codex_manifest.get("description", ""),
-            codex_manifest.get("interface", {}).get("longDescription", ""),
-            codex_manifest.get("interface", {}).get("defaultPrompt", ""),
-        )
-    )
-    if "GPT-5.6" not in codex_copy:
-        fail("Codex plugin metadata does not declare the GPT-5.6 execution baseline")
 
-    refs = ROOT / "skills" / "orange-start" / "references"
-    required_refs = (
+    required_refs = {
         "beginner-guardrails.md",
+        "browser-steps.md",
+        "codex-gpt-5p6.md",
+        "codex-sites.md",
         "execution-profiles.md",
+        "helpful-tools.md",
+        "ia-collaboration.md",
+        "memory-log.md",
+        "phase-build-automation.md",
+        "phase-build-skill.md",
+        "phase-build.md",
+        "phase-connect.md",
         "phase-interview.md",
         "phase-plan.md",
         "phase-preflight.md",
-        "helpful-tools.md",
-        "phase-connect.md",
-        "phase-build.md",
-        "phase-build-skill.md",
-        "phase-build-automation.md",
-        "product-truth-gate.md",
-        "memory-log.md",
-        "verification-loop.md",
-        "self-improvement-loop.md",
-        "codex-gpt-5p6.md",
-        "codex-sites.md",
         "phase-verify.md",
-        "browser-steps.md",
+        "product-truth-gate.md",
+        "self-improvement-loop.md",
+        "sensitive-data.md",
         "troubleshooting.md",
-    )
-    for filename in required_refs:
-        if not (refs / filename).is_file():
-            fail(f"missing workflow reference: {filename}")
+        "verification-loop.md",
+    }
+    missing = sorted(name for name in required_refs if not (refs / name).is_file())
+    if missing:
+        fail(f"missing workflow references: {missing}")
 
-    connect = refs / "phase-connect.md"
     require_text(
-        connect,
+        refs / "phase-connect.md",
         (
             "<github-owner>/<slug>",
             "--public",
-            "visibility",
             "사용자에게 확인받고 `--private`",
-            "node --version",
-            "process.release.lts",
-            "--team",
-            "rsync -a --ignore-existing",
+            "completion_level: local",
             "동의받지 않은 시스템·글로벌·프로젝트 설치를 실행하지 않는다",
+            "git add --",
         ),
     )
-    if not re.search(r"gh repo create[^\n]*--public", connect.read_text(encoding="utf-8")):
-        fail("phase-connect.md does not create a public GitHub repository by default")
+    connect_text = (refs / "phase-connect.md").read_text(encoding="utf-8")
+    if not re.search(r"gh repo create[^\n]*--public", connect_text):
+        fail("phase-connect.md does not preserve the approved public-repository default")
 
-    verification = refs / "verification-loop.md"
     require_text(
-        verification,
+        refs / "verification-loop.md",
         (
             "TEST-01",
             "결과물 인벤토리",
@@ -216,246 +240,105 @@ def validate_workflow() -> None:
             "TESTED",
             "PARTIAL",
             "INFERRED",
-            "P0/P1",
-            "아직 증명하지 못한 것",
+            "`PLAN.md`는 IA 경계에서만 갱신",
         ),
     )
-    self_improvement = refs / "self-improvement-loop.md"
     require_text(
-        self_improvement,
+        refs / "self-improvement-loop.md",
         (
             "GPT-5.6",
             "AI가 묻지 않고 고칠 것",
             "사람이 결정할 것",
-            "DIAGNOSE",
             "web_app",
             "ai_skill",
             "automation",
             "후보 변경 채택 게이트",
-            "trajectory digest",
-        ),
-    )
-    codex_profile = refs / "codex-gpt-5p6.md"
-    require_text(
-        codex_profile,
-        (
-            "목표 산출물",
-            "보호 계약",
-            "사람 게이트",
-            "programmatic tool calling",
-            "서브에이전트 사용 경계",
-            "같은 파일이나",
-        ),
-    )
-    sites_profile = refs / "codex-sites.md"
-    require_text(
-        sites_profile,
-        (
-            "web_delivery_target",
-            "codex_sites",
-            "vercel_supabase",
-            "디자인 picker 없이",
-            "D1",
-            "R2",
-            "deployment status `succeeded`",
-            "Sites source repository가",
-        ),
-    )
-    phase_plan = refs / "phase-plan.md"
-    require_text(
-        phase_plan,
-        (
-            "검증 시나리오 계약",
-            "결과물 인벤토리",
-            "TEST 항목이 없는 기존 v2",
-            "v1/legacy",
-            "공개·비공개 경계",
-            "execution_profile",
-            "delivery_intent",
-        ),
-    )
-    web = refs / "phase-build.md"
-    require_text(
-        web,
-        (
-            "vercel --prod",
-            "web_delivery_target",
-            "codex-sites.md",
-            "REQ-*",
-            "TESTED",
-            "결과물 인벤토리",
-            "RED",
-            "self-improvement-loop.md",
-            "orange-design",
-        ),
-    )
-    skill_build = refs / "phase-build-skill.md"
-    require_text(
-        skill_build,
-        ("스킬 이름·경로·예상 답을 알려주지 않은", "첫 결과만을 기록하려고", "TESTED", "RED", "self-improvement-loop.md"),
-    )
-    automation_build = refs / "phase-build-automation.md"
-    require_text(
-        automation_build,
-        ("DRY_RUN_PASS", "첫 결과만을 기록하려고", "TESTED", "RED", "self-improvement-loop.md"),
-    )
-    design_skill = ROOT / "skills" / "orange-design" / "SKILL.md"
-    require_text(
-        design_skill,
-        (
-            "최종 검증",
-            "DESIGN.md",
-            "getdesign.md",
-            "Stitch",
-            "기능·페이지·데이터",
-            "functional/visual QA",
-        ),
-    )
-    design_refs = ROOT / "skills" / "orange-design" / "references"
-    for filename in (
-        "design-system-extraction.md",
-        "getdesign.md",
-        "design-recommendations.md",
-        "stitch-design.md",
-        "ui-language-and-references.md",
-    ):
-        if not (design_refs / filename).is_file():
-            fail(f"missing orange-design reference: {filename}")
-    require_text(
-        design_refs / "design-system-extraction.md",
-        ("사용자가 제공", "DESIGN.md 초안", "로그인·paywall·robots", "user review required"),
-    )
-    require_text(
-        design_refs / "getdesign.md",
-        ("getdesign.md", "독립 분석", "reference only", "외부 코드"),
-    )
-    require_text(
-        design_refs / "design-recommendations.md",
-        (
-            "최대 두 개",
-            "분석 화면 링크",
-            "원본 서비스 화면",
-            "URL-encoded query",
-            "A/B/현재 디자인 유지",
-            "추천이 곧 적용 승인은",
         ),
     )
     require_text(
-        design_refs / "stitch-design.md",
-        ("10분", "Do not add or remove screens", "Google 계정", "1~2개 변수"),
-    )
-    verify = refs / "phase-verify.md"
-    require_text(
-        verify,
+        refs / "phase-plan.md",
         (
-            "SOURCE_PLAN.md",
-            "N/M 통과",
-            "기본 visibility는 `PUBLIC`",
-            "독립 완료 리뷰",
+            "IMPLEMENTATION_REQUEST.md",
+            "MATERIALS.md",
+            "구형 문서에서 호환 TEST를 파생하거나 유형을 표시 문자열로 추론하지 않는다",
+            "workflow: ia_collaborative",
+            "completion_level: local | shared | real_work",
+            "current_step: STEP-NN | complete",
+            "승인 전에는",
+        ),
+    )
+    require_text(
+        refs / "phase-build-skill.md",
+        ("$CODEX_HOME/skills", "~/.claude/skills", "새 작업", "TESTED", "RED"),
+    )
+    require_text(
+        refs / "phase-build-automation.md",
+        ("DRY_RUN_PASS", "공유 테스트 환경", "실제 계정", "AWAITING_REVIEW", "RED"),
+    )
+    require_text(
+        refs / "phase-verify.md",
+        (
+            "모든 IA STEP이 `APPROVED`",
+            "`local`: 로컬 핵심",
+            "`shared`: 선택한 배포",
+            "`real_work`: 실제 자료",
             "아직 증명하지 못한 것",
-            "명시적 동의",
-            "orange-build-app",
-            "사용할 자료·개인정보와 공개·비공개 경계",
-            "핵심 검증 최대 3개",
-            "codex_sites",
-            "deployment `succeeded`",
         ),
     )
-    preflight = refs / "phase-preflight.md"
     require_text(
-        preflight,
-        ("지금 할 한 동작", "완료 신호", "제가 이어서 할 일", "남은 단계", "변경분 준비 카드", "web_delivery_target"),
+        ROOT / "skills" / "orange-design" / "SKILL.md",
+        ("completion_level", "기능·페이지·데이터", "getdesign.md", "Stitch", "functional/visual QA"),
     )
-    browser_steps = refs / "browser-steps.md"
     require_text(
-        browser_steps,
-        ("Orange Build App으로 결과 되돌리기", "256KB", "명시적 프라이버시 동의"),
+        ROOT / "skills" / "orange-secure" / "SKILL.md",
+        ("find supabase -type f -name '*.sql'", "6개 휴리스틱에서 문제를 찾지 못했습니다"),
     )
-    memory_log = refs / "memory-log.md"
-    require_text(memory_log, ("Orange Build App으로 가져갈 때", "256KB", "자신의 말"))
-    guardrails = refs / "beginner-guardrails.md"
-    require_text(
-        guardrails,
-        (
-            "Stack Overflow 2025",
-            "같은 오류가 두 번",
-            "USENIX Security 2025",
-            "초보자용 오류 보고",
-        ),
-    )
-    helpful_tools = refs / "helpful-tools.md"
-    require_text(
-        helpful_tools,
-        (
-            "현재 **이 세션을 실행 중인 호스트 하나만**",
-            "browser_runtime_diagnostics",
-            "npm view chrome-devtools-mcp",
-            "--isolated --no-usage-statistics --no-performance-crux",
-            "claude mcp add --scope local chrome-devtools",
-            "https://mcp.vercel.com/<team-slug>/<project-slug>",
-            "project_ref=<project-ref>&read_only=true&features=<feature-list>",
-            "EXISTING_UNSAFE",
-            "이번 실행에서 새로 만든 entry만",
-        ),
-    )
-    resume = ROOT / "skills" / "orange-resume" / "SKILL.md"
-    require_text(
-        resume,
-        (
-            "phase-preflight.md",
-            "helpful-tools.md",
-            "phase-connect.md",
-            "verification-loop.md",
-            "self-improvement-loop.md",
-            "codex-gpt-5p6.md",
-            "orange-design",
-            "TESTED",
-        ),
-    )
-    secure = ROOT / "skills" / "orange-secure" / "SKILL.md"
-    require_text(secure, ("find supabase -type f -name '*.sql'", "6개 휴리스틱에서 문제를 찾지 못했습니다"))
-
-    try:
-        validate_app_return(emit=False)
-        validate_codex_gpt56(emit=False)
-        validate_design_routing(emit=False)
-        validate_evidence_ui(emit=False)
-        validate_execution_profiles(emit=False)
-        validate_interview_flow(emit=False)
-        validate_memory_finalization(emit=False)
-        validate_fixture_contracts(emit=False)
-        validate_preflight_fixtures(emit=False)
-        validate_product_truth_gate(emit=False)
-        validate_recording_cadence(emit=False)
-        validate_self_improvement(emit=False)
-        validate_sites_routing(emit=False)
-    except ValueError as exc:
-        fail(f"workflow fixtures failed: {exc}")
 
     active_paths = [ROOT / "README.md", *MANIFESTS]
     active_paths.extend(sorted((ROOT / "skills").rglob("*.md")))
     active_text = "\n".join(path.read_text(encoding="utf-8") for path in active_paths)
     for pattern, label in (
         (r"gh repo create[^\n]*--private", "private GitHub repository default"),
-        (r"(?mi)^\s*(?:[-*]\s*)?`?/model\b", "host-specific model command"),
         (r"AskUserQuestion", "Claude-only question tool"),
-        (r"Claude in Chrome", "Claude-only browser dependency"),
-        (r"npm run dev \(백그라운드", "mandatory local dev server"),
         (r"(?m)^\s*git add -A(?:\s|$)", "unsafe blanket staging"),
         (r"\bnpx\s+add-mcp\b", "multi-host MCP installer"),
+        (r"derived_compat", "legacy compatibility TEST generation"),
+        (r"기존 v1 기획서와 TEST가 없는 초기 v2 기획서도 지원", "legacy plan execution"),
     ):
         if re.search(pattern, active_text):
             fail(f"workflow regressed to {label}")
 
-    if "phase-design.md" in start.read_text(encoding="utf-8"):
-        fail("orange-start must not route its default flow to phase-design.md")
+
+def validate_fixtures_and_specialized_contracts() -> None:
+    validators = (
+        validate_app_return,
+        validate_codex_gpt56,
+        validate_design_routing,
+        validate_evidence_ui,
+        validate_execution_profiles,
+        validate_ia_workflow,
+        validate_interview_flow,
+        validate_memory_finalization,
+        validate_fixture_contracts,
+        validate_preflight_fixtures,
+        validate_product_truth_gate,
+        validate_recording_cadence,
+        validate_self_improvement,
+        validate_sites_routing,
+    )
+    for validator in validators:
+        try:
+            validator(emit=False)
+        except ValueError as exc:
+            fail(f"{validator.__name__} failed: {exc}")
 
 
 def main() -> None:
     version = validate_versions()
-    validate_skills()
-    validate_workflow()
-    print(f"OK: orange-build v{version} release invariants pass")
+    validate_skills_and_manifests()
+    validate_workflow_documents()
+    validate_fixtures_and_specialized_contracts()
+    print(f"OK: orange-build v{version} shared IA release invariants pass")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 목표: 만든 파일 수가 아니라 `SOURCE_PLAN.md`의 약속이 실제로 충족됐는지 증거로 판정한다.
 
-시작할 때 `verification-loop.md`, `self-improvement-loop.md`, `memory-log.md`를 읽는다. TEST↔REQ 연결,
+시작할 때 `ia-collaboration.md`, `verification-loop.md`, `self-improvement-loop.md`, `memory-log.md`를 읽는다. TEST↔REQ 연결,
 결과물 인벤토리, 증거 등급과 자동 수정·사람 결정 경계, 완료 기록의 중복 방지를 최종 판정의 공통
 기준으로 사용한다.
 
@@ -17,6 +17,8 @@
 - 직접 확인할 TEST의 준비·행동·기대 결과·통과 증거
 - 사용할 자료·개인정보와 공개·비공개 경계
 - AI 역할과 사람 확인 지점
+- 함께 구현할 순서와 각 STEP의 승인 상태
+- 선택한 `completion_level`
 
 각 항목이 하나 이상의 `REQ-*`에 연결되어야 한다. 빠진 항목을 발견하면 새 REQ로 복구하고
 구현 단계로 돌아간다. 디자인 참고자료 누락, 시간 부족, 기술 난이도는 원본 삭제 근거가 아니다.
@@ -30,8 +32,8 @@
 - 각 TEST의 제목과 `준비`, `행동`, `기대 결과`, `통과 증거`가 원문과 일치하는지 확인한다.
 - TEST마다 관련 REQ가 하나 이상 연결됐고, 모든 REQ가 TEST 또는 더 작은 보조 검증에 포함됐는지
   양방향으로 대조한다.
-- TEST 항목이 없는 기존 v2 또는 v1/legacy는 원문을 바꾸거나 추가 질문하지 않고 대표 성공,
-  빈 값·잘못된 값, 유형별 예외의 `derived_compat` TEST 세 개와 파생 근거가 있는지 확인한다.
+- 구형 v1·초기 v2에서 호환 TEST를 파생하지 않았는지 확인한다. 구형 문서가 입력이었다면
+  `phase-interview.md`로 재생성한 최신 TEST 세 개와 `source: orange-start-regenerated` 근거가 있어야 한다.
 
 누락되거나 더 쉬운 시나리오로 바뀐 TEST는 원본 계약 누락이다. 관련 REQ와 TEST를 TODO로 되돌리고
 구현 단계에서 복구한다.
@@ -55,8 +57,10 @@
 - `PARTIAL`: 일부 계층·분기 또는 대체 검증만 실행함
 - `INFERRED`: 코드·설정·HTTP 상태만 보고 동작을 추론함
 
-필수 REQ와 TEST는 `TESTED`일 때만 PASS다. `PARTIAL`, `INFERRED`, `NOT_RUN`, `BLOCKED`는 PASS 수에
-포함하지 않는다. 자동화의 dry-run만 확인했다면 `DRY_RUN_PASS / PARTIAL`로 둔다.
+필수 REQ와 TEST는 선택한 완료 수준에서 `TESTED`일 때만 PASS다. `PARTIAL`, `INFERRED`, `NOT_RUN`,
+`BLOCKED`는 PASS 수에 포함하지 않는다. `local` 자동화에서 계획한 dry-run·중복·재시도·로그를
+모두 확인했다면 dry-run 자체가 완전한 증거가 될 수 있다. `shared | real_work`인데 live 증거가
+없으면 `DRY_RUN_PASS / PARTIAL`이다.
 
 ### 제품 사실 감사
 
@@ -89,7 +93,7 @@ handler/script, 고정 성공값, no-op 점검은 **REQ와 연결된 예상 결�
 - 설치한 도구는 사용자 동의 범위와 버전·import/build 증거가 있다.
 - 필요한 계정·team·organization을 CLI와 브라우저에서 대조했다.
 - 기획서에 필요 없는 Vercel·Supabase·Node.js·외부 계정을 습관적으로 설치·연결하지 않았다.
-- `web_app`의 `web_delivery_target`이 `existing | codex_sites | vercel_supabase` 중 하나이고 판정
+- `web_app`의 `web_delivery_target`이 `local | existing | codex_sites | vercel_supabase` 중 하나이고 판정
   이유가 있으며, 선택되지 않은 배포·DB 서비스는 설치하지 않았다.
 - 비밀번호·토큰·개인 이메일을 계획·로그·커밋에 남기지 않았다.
 - `HELPFUL` 도구는 기획서 신호와 부족했던 능력이 기록돼 있다. `SKIPPED`·`FAILED`면 대체 검증이
@@ -106,14 +110,19 @@ handler/script, 고정 성공값, no-op 점검은 **REQ와 연결된 예상 결�
 
 ## 3. 유형별 완료 게이트
 
+먼저 모든 IA STEP이 `APPROVED`이고 `current_step: complete`인지 확인한다. 현재 STEP이
+`AWAITING_APPROVAL`, `IN_PROGRESS`, `AWAITING_REVIEW`이면 최종 완료로 가지 않고 해당 상태로 돌아간다.
+
 ### `web_app`
 
 - production build·lint·테스트 통과
-- 선택한 배포의 terminal success와 공유할 production URL
+- `local`: 로컬 핵심 사용자 흐름, 저장 재조회와 관련 오류·빈 상태·권한·모바일 조건
+- `shared`: 선택한 배포의 terminal success, 실제 공유 URL과 대상 접근
+- `real_work`: 실제 자료·계정의 업무 결과, 운영 오류와 복구·되돌리기
 - `codex_sites`는 유효한 `.openai/hosting.json`, saved version, deployment `succeeded`, 검증 commit과
   GitHub·Sites source 일치, 계획한 Sites 접근 범위 확인
 - `vercel_supabase`는 Vercel production `READY`; Supabase를 쓰면 RLS·정책·서버 전용 키 확인
-- 핵심 사용자 흐름을 라이브 URL에서 처음부터 끝까지 실행
+- 핵심 사용자 흐름을 선택한 완료 수준의 환경에서 처음부터 끝까지 실행
 - 저장 후 재조회 또는 외부 연동 결과 재확인. Sites D1/R2를 쓰면 각 binding의 실제 왕복 증거 확인
 - 로그인 없음·로그인·권한 없음 등 계획된 역할 검증
 - 로딩·빈 상태·오류·성공 피드백과 모바일 핵심 흐름 확인
@@ -130,7 +139,11 @@ handler/script, 고정 성공값, no-op 점검은 **REQ와 연결된 예상 결�
 - 긍정 트리거 3개에서 기대한 스킬 사용과 출력 확인
 - 비트리거 2개에서 부적절한 개입 없음
 - 정상·빈/깨진 입력 fixture 통과
-- 새 컨텍스트의 대표 실제 호출 결과 확인
+- `local`: 현재 호스트 개인 경로 등록과 새 작업의 대표 실제 호출 결과
+- `shared`: 격리 또는 대상 환경 설치와 다른 작업의 같은 호출 결과
+- `real_work`: 실제 업무 자료·도구 결과와 오류·도구 부재 복구
+- Codex `$CODEX_HOME/skills`(기본 `~/.codex/skills`)와 Claude Code `~/.claude/skills` 등록 안내,
+  `$스킬이름`·`/스킬이름`·자연어 호출 지원 확인
 - 추가 스크립트의 성공·실패 exit와 출력 검증
 
 ### `automation`
@@ -140,10 +153,12 @@ handler/script, 고정 성공값, no-op 점검은 **REQ와 연결된 예상 결�
 - 일시 오류의 제한 재시도와 영구 오류의 즉시 실패 확인
 - run id와 읽음·성공·건너뜀·실패 건수 로그 확인
 - 트리거, 최소 권한, 중지·복구·수동 재실행 문서 확인
-- 외부 쓰기가 있으면 사용자 승인 후 샘플 1건 live 결과 재조회
+- `local`: 외부 변경 없는 dry-run, 중복·재시도·구조화 로그
+- `shared`: 공유 테스트 환경에서 승인된 샘플 결과 재조회
+- `real_work`: 실제 계정·업무 대상 결과와 중지·복구 절차
 
-외부 쓰기 승인이 없어 dry-run만 통과했다면 `DRY_RUN_PASS`로 두고 최종 live 검증을 남은 일로
-명시한다.
+`shared | real_work`에서 외부 쓰기 승인이 없어 dry-run만 통과했다면 `DRY_RUN_PASS`로 두고 최종
+live 검증을 남은 일로 명시한다. 단계 승인과 live-run 승인은 별개다.
 
 ## 4. 독립 완료 리뷰
 
@@ -165,6 +180,9 @@ handler/script, 고정 성공값, no-op 점검은 **REQ와 연결된 예상 결�
 
 ## 5. 저장소와 릴리스 확인
 
+`shared | real_work`에서 저장·배포가 계약에 포함된 경우에만 이 절의 원격 확인을 필수로 한다.
+`local`이면 기존 저장소를 바꾸거나 원격 push를 완료 조건으로 강요하지 않는다.
+
 ```bash
 gh repo view --json visibility,url --jq '"\(.visibility) \(.url)"'
 git status --short
@@ -179,12 +197,12 @@ git log -5 --oneline
 
 ## 6. 정직한 완료 판정
 
-필수 REQ 수와 PASS 수, 원본·파생 TEST 수와 `TESTED` 수를 각각 센다.
+필수 REQ 수와 PASS 수, 최신 TEST 수와 `TESTED` 수를 각각 센다.
 
-`delivery_intent`가 `implement_and_release`면 로컬 구현·build만으로 완료하지 않는다. 웹앱은 실제
-production URL, AI 스킬은 commit·push와 계획된 설치 대상의 새 컨텍스트 호출, 자동화는 승인된
-live-run·트리거·결과 재조회가 있어야 한다. 사용자 권한이나 외부 장애가 남으면 한 동작을 요청하고
-해결 뒤 같은 완료 게이트로 자동 재개한다.
+`delivery_intent: implement`는 선택한 `completion_level`의 게이트를 통과해야 한다. `local`은 로컬
+핵심 흐름·현재 호스트 새 작업 호출·dry-run으로 완료할 수 있다. `shared`는 공유 URL·격리 설치·공유
+테스트 결과, `real_work`는 실제 자료·계정·업무 결과와 복구 절차가 있어야 한다. 사용자 권한이나
+외부 장애가 남으면 한 동작을 요청하고 해결 뒤 같은 완료 게이트로 자동 재개한다.
 
 - REQ와 TEST가 모두 PASS이고 P0/P1 없음: `PLAN.md`의 `최종 판정`을 한 번 갱신하고 `MEMORY.md`를
   생성해 최종 검증 marker 블록을 정확히 하나 기록한 뒤 완료
@@ -198,8 +216,9 @@ live-run·트리거·결과 재조회가 있어야 한다. 사용자 권한이�
 최종 판정에서 `PLAN.md`의 요구사항·TEST·인벤토리·결과를 한 번에 맞춘다. 완료 판정이라면 사용자
 요청 여부와 관계없이 `memory-log.md` 형식으로 `MEMORY.md`를 생성하고 실제 최종 검증 결과를 기록한다.
 시작 marker와 종료 marker가 각각 정확히 하나인지 세며, 기존 블록이 있으면 append하지 않고 같은
-블록을 갱신한다. `PLAN.md`, `MEMORY.md`, 코드·테스트를 같은 최종 커밋에 담아 push한다. 최종
-검증에서 바꾼 정확한 경로만 `git add --`로 stage하고 cached 목록을 확인한다.
+블록을 갱신한다. commit·push가 선택한 수준과 프로젝트 계약에 포함된 경우에만 `PLAN.md`,
+`MEMORY.md`, 코드·테스트를 같은 최종 커밋에 담아 push한다. 최종 검증에서 바꾼 정확한 경로만
+`git add --`로 stage하고 cached 목록을 확인한다.
 
 ```bash
 git commit -m "검증: 원본 기획서 요구사항 완료"
@@ -228,9 +247,9 @@ URL을 기획서에서 추측하지 않는다. 연결된 브라우저에 해당 
 ## 8. 최종 전달 형식
 
 ```text
-✅ Orange Build 완료 — M/M 요구사항 PASS · T/K TEST TESTED
-- 결과: [라이브 URL / 대표 스킬 호출 결과 / 자동화 run id]
-- 저장: [GitHub URL · PUBLIC / 승인된 PRIVATE · 배포/활성화 상태]
+✅ Orange Build 완료 — [local/shared/real_work] · M/M 요구사항 PASS · T/K TEST TESTED
+- 결과: [로컬 결과 / 공유 URL / 대표 스킬 호출 / 자동화 run id]
+- 저장: [해당 시 GitHub URL·visibility·배포/활성화 상태 / local이면 로컬]
 - 검증: [핵심 검증 최대 3개]
 - 기록: MEMORY.md 최종 검증 1건
 - 아직 증명하지 못한 것: [없음 / TEST·REQ·P2/P3와 이유]

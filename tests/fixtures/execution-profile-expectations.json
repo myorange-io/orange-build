@@ -1,9 +1,10 @@
 {
-  "guided-new-web-implement": {
+  "guided-local-web": {
     "input": {
       "existing_project": false,
       "request_kind": "implement",
       "deliverable_kind": "web_app",
+      "completion_level": "local",
       "has_remote": false,
       "has_deploy_path": false,
       "missing_prerequisites": true,
@@ -12,22 +13,24 @@
     },
     "expected": {
       "profile": "guided",
-      "intent": "implement_and_release",
+      "intent": "implement",
+      "completion_level": "local",
       "preflight": "delta_only",
-      "reporting": "outcome_only",
       "use_existing_commands": false,
-      "create_repository": true,
-      "commit_push": true,
-      "deploy_or_activate": true,
-      "create_deploy_project": true,
-      "release_evidence": "production_url"
+      "create_repository": false,
+      "commit_push": false,
+      "deploy_or_activate": false,
+      "create_deploy_project": false,
+      "release_evidence": "local_core_flow",
+      "separate_external_confirmation": false
     }
   },
-  "adaptive-existing-web-ready": {
+  "adaptive-shared-web": {
     "input": {
       "existing_project": true,
       "request_kind": "implement",
       "deliverable_kind": "web_app",
+      "completion_level": "shared",
       "has_remote": true,
       "has_deploy_path": true,
       "missing_prerequisites": false,
@@ -36,22 +39,24 @@
     },
     "expected": {
       "profile": "adaptive",
-      "intent": "implement_and_release",
+      "intent": "implement",
+      "completion_level": "shared",
       "preflight": "silent_ready",
-      "reporting": "outcome_only",
       "use_existing_commands": true,
       "create_repository": false,
       "commit_push": true,
       "deploy_or_activate": true,
       "create_deploy_project": false,
-      "release_evidence": "production_url"
+      "release_evidence": "shared_production_url",
+      "separate_external_confirmation": true
     }
   },
-  "adaptive-existing-missing-tool": {
+  "adaptive-real-automation": {
     "input": {
       "existing_project": true,
       "request_kind": "implement",
-      "deliverable_kind": "web_app",
+      "deliverable_kind": "automation",
+      "completion_level": "real_work",
       "has_remote": true,
       "has_deploy_path": true,
       "missing_prerequisites": true,
@@ -60,15 +65,42 @@
     },
     "expected": {
       "profile": "adaptive",
-      "intent": "implement_and_release",
+      "intent": "implement",
+      "completion_level": "real_work",
       "preflight": "delta_only",
-      "reporting": "outcome_only",
       "use_existing_commands": true,
       "create_repository": false,
       "commit_push": true,
       "deploy_or_activate": true,
       "create_deploy_project": false,
-      "release_evidence": "production_url"
+      "release_evidence": "actual_run_and_recovery",
+      "separate_external_confirmation": true
+    }
+  },
+  "guided-local-skill": {
+    "input": {
+      "existing_project": false,
+      "request_kind": "implement",
+      "deliverable_kind": "ai_skill",
+      "completion_level": "local",
+      "has_remote": false,
+      "has_deploy_path": false,
+      "missing_prerequisites": false,
+      "explicit_no_deploy": false,
+      "explicit_no_commit": false
+    },
+    "expected": {
+      "profile": "guided",
+      "intent": "implement",
+      "completion_level": "local",
+      "preflight": "silent_ready",
+      "use_existing_commands": false,
+      "create_repository": false,
+      "commit_push": false,
+      "deploy_or_activate": false,
+      "create_deploy_project": false,
+      "release_evidence": "current_host_registration_and_fresh_task",
+      "separate_external_confirmation": false
     }
   },
   "adaptive-plan-only": {
@@ -76,6 +108,7 @@
       "existing_project": true,
       "request_kind": "plan",
       "deliverable_kind": "automation",
+      "completion_level": "local",
       "has_remote": true,
       "has_deploy_path": true,
       "missing_prerequisites": false,
@@ -85,45 +118,23 @@
     "expected": {
       "profile": "adaptive",
       "intent": "plan_only",
+      "completion_level": "local",
       "preflight": "silent_ready",
-      "reporting": "outcome_only",
       "use_existing_commands": true,
       "create_repository": false,
       "commit_push": false,
       "deploy_or_activate": false,
       "create_deploy_project": false,
-      "release_evidence": "none"
+      "release_evidence": "none",
+      "separate_external_confirmation": false
     }
   },
-  "adaptive-verify-only": {
-    "input": {
-      "existing_project": true,
-      "request_kind": "verify",
-      "deliverable_kind": "ai_skill",
-      "has_remote": true,
-      "has_deploy_path": false,
-      "missing_prerequisites": false,
-      "explicit_no_deploy": false,
-      "explicit_no_commit": false
-    },
-    "expected": {
-      "profile": "adaptive",
-      "intent": "verify_only",
-      "preflight": "silent_ready",
-      "reporting": "outcome_only",
-      "use_existing_commands": true,
-      "create_repository": false,
-      "commit_push": false,
-      "deploy_or_activate": false,
-      "create_deploy_project": false,
-      "release_evidence": "verification_report"
-    }
-  },
-  "guided-implement-explicit-no-deploy": {
+  "guided-shared-no-deploy": {
     "input": {
       "existing_project": false,
       "request_kind": "implement",
       "deliverable_kind": "web_app",
+      "completion_level": "shared",
       "has_remote": false,
       "has_deploy_path": false,
       "missing_prerequisites": false,
@@ -132,15 +143,16 @@
     },
     "expected": {
       "profile": "guided",
-      "intent": "implement_and_release",
+      "intent": "implement",
+      "completion_level": "shared",
       "preflight": "silent_ready",
-      "reporting": "outcome_only",
       "use_existing_commands": false,
       "create_repository": true,
       "commit_push": true,
       "deploy_or_activate": false,
       "create_deploy_project": false,
-      "release_evidence": "blocked_by_explicit_constraint"
+      "release_evidence": "blocked_by_explicit_constraint",
+      "separate_external_confirmation": false
     }
   }
 }

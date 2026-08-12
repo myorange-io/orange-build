@@ -1,0 +1,76 @@
+{
+  "app_reference_commit": "7378c12104d777b74cb1bc2411bb7b8d3fdfab2f",
+  "max_guided_questions": 10,
+  "phase_order": [
+    "target_problem",
+    "blocked_moment",
+    "solution_flow",
+    "data_privacy",
+    "mvp_scope",
+    "ai_human_review",
+    "success_failure"
+  ],
+  "input_modes": {
+    "latest_app_copy": "READY_CURRENT_IA",
+    "implementation_package": "READY_AFTER_MATERIAL_CONFIRMATION",
+    "idea_without_plan": "GENERATE_CURRENT_IA",
+    "legacy_v1_or_early_v2": "REGENERATE_FROM_INITIAL_IDEA",
+    "future_contract": "UPDATE_REQUIRED"
+  },
+  "state_transitions": [
+    "AWAITING_APPROVAL",
+    "IN_PROGRESS",
+    "AWAITING_REVIEW",
+    "APPROVED"
+  ],
+  "review_choices": [
+    "이대로 다음 개선",
+    "현재 결과 수정",
+    "구현 방향 다시 정하기"
+  ],
+  "separate_execution_confirmation": [
+    "deployment",
+    "external_send",
+    "real_data_change",
+    "automation_activation"
+  ],
+  "completion_gates": {
+    "web_app": {
+      "local": "local_core_flow",
+      "shared": "shared_production_url",
+      "real_work": "actual_work_result_and_recovery"
+    },
+    "ai_skill": {
+      "local": "current_host_registration_and_fresh_task",
+      "shared": "isolated_install_and_fresh_task",
+      "real_work": "actual_work_output_and_fallback"
+    },
+    "automation": {
+      "local": "dry_run_dedupe_retry_log",
+      "shared": "shared_test_run_and_requery",
+      "real_work": "actual_run_and_recovery"
+    }
+  },
+  "hosts": {
+    "codex": {
+      "invocation": "$orange-start",
+      "natural_language": "오렌지 빌드 시작",
+      "project_rules": "AGENTS.md",
+      "manifest": ".codex-plugin/plugin.json",
+      "skill_registration": "$CODEX_HOME/skills",
+      "fallback_registration": "~/.codex/skills"
+    },
+    "claude_code": {
+      "invocation": "/orange-start",
+      "natural_language": "오렌지 빌드 시작",
+      "project_rules": "CLAUDE.md",
+      "manifest": ".claude-plugin/plugin.json",
+      "skill_registration": "~/.claude/skills"
+    }
+  },
+  "forbidden_legacy_behaviors": [
+    "display_string_routing",
+    "derived_compat_tests",
+    "implement_before_step_approval"
+  ]
+}

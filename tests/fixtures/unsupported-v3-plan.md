@@ -1,4 +1,4 @@
-Orange Build 플러그인의 orange-start를 사용해 아래 기획서를 구현하세요.
+아래 기획서를 바탕으로 실제로 동작하는 결과물을 참가자와 함께 단계적으로 구현하세요.
 
 ## 기획서 메타데이터
 - source: orange-build-app
