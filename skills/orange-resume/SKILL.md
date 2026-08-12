@@ -17,7 +17,8 @@ Codex에서 실행 중이면 `../orange-start/references/codex-gpt-5p6.md`를 �
 다음만 먼저 확인한다.
 
 - `PLAN.md`: `workflow`, `deliverable_kind`, `execution_profile`, `delivery_intent`,
-  `completion_level`, `current_step`, 단계 상태, REQ·TEST, 최종 판정
+  `completion_level`, `current_step`, 단계 상태, REQ·TEST, 최종 판정. `ai_skill`이면 `skill_scope`,
+  `atomicity`, 한 문장 책임과 내장 평가 상태도 확인
 - `SOURCE_PLAN.md`: 현재 STEP이나 원본 추적 누락이 의심될 때 관련 절만 확인
 - `MEMORY.md`: 있으면 최종 검증 marker 수와 기록된 완료 수준
 - `git status --short --branch`, `git log --oneline -12`
@@ -49,7 +50,8 @@ Codex에서 실행 중이면 `../orange-start/references/codex-gpt-5p6.md`를 �
 ## 3. 상태별 재개
 
 - `AWAITING_APPROVAL`: 현재 단계의 확인할 변화·완료 확인·제외 범위를 보여주고
-  `이 단계부터 만들까요?`라고 묻는다. 답을 기다리며 프로젝트 파일을 수정하지 않는다.
+  `이 단계부터 만들까요?`라고 묻는다. 단 `ai_skill`의 `atomicity: WAITING_USER`면 서로 독립적인
+  인지 과업 2~3개와 추천안을 먼저 하나만 확인한다. 답을 기다리며 프로젝트 파일을 수정하지 않는다.
 - `IN_PROGRESS`: 승인된 범위를 실제 파일·테스트와 대조하고 구현을 이어간다.
 - `AWAITING_REVIEW`: 관찰 가능한 결과와 검증을 다시 보여주고 `이대로 다음 개선 / 현재 결과 수정 /
   구현 방향 다시 정하기` 중 하나를 받는다.
@@ -66,6 +68,10 @@ Codex에서 실행 중이면 `../orange-start/references/codex-gpt-5p6.md`를 �
 - `automation` → `phase-build-automation.md`
 - 모든 단계 승인 → `verification-loop.md`, `phase-verify.md`
 - 선택한 완료 수준 PASS, marker 없음 → `memory-log.md`
+
+`ai_skill`인데 `skill_scope: atomic` 또는 `atomicity: CONFIRMED`가 없으면 과거 승인만으로 구현을
+재개하지 않는다. `phase-plan.md`에서 원본을 보존한 채 인지 과업 지도와 단일 과업 계약을 보강하고
+현재 STEP 승인으로 돌아간다.
 
 다음 항목이 `FACT_UNVERIFIED`이면 `../orange-start/references/product-truth-gate.md`로 현재 근거,
 권장안과 대안의 영향을 보여주고 값 하나를 확인한다. 확인 전에는 관련 공개 문구·계산·외부 실행을

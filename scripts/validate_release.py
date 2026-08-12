@@ -19,6 +19,7 @@ from validate_memory_finalization import validate_memory_finalization
 from validate_plan_fixtures import validate_fixture_contracts
 from validate_preflight_fixtures import validate_preflight_fixtures
 from validate_product_truth_gate import validate_product_truth_gate
+from validate_quality_contract import validate_quality_contract
 from validate_recording_cadence import validate_recording_cadence
 from validate_self_improvement import validate_self_improvement
 from validate_sites_routing import validate_sites_routing
@@ -64,9 +65,9 @@ def validate_versions() -> str:
     version = versions.pop()
     if not re.fullmatch(r"\d+\.\d+\.\d+", version):
         fail(f"version is not stable semver: {version}")
-    if version != "2.6.0":
-        fail(f"this release must be 2.6.0, got {version}")
-    require_text(ROOT / "README.md", (f"v{version}", "Orange Build 2.6.0"))
+    if version != "2.7.0":
+        fail(f"this release must be 2.7.0, got {version}")
+    require_text(ROOT / "README.md", (f"v{version}", "Orange Build 2.7.0"))
     for policy_name in ("AGENTS.md", "CLAUDE.md"):
         require_text(
             ROOT / policy_name,
@@ -121,16 +122,20 @@ def validate_skills_and_manifests() -> None:
     marketplace = load_json(ROOT / ".claude-plugin" / "marketplace.json")
     if codex.get("skills") != "./skills/":
         fail("Codex manifest must point to the shared skills source")
-    default_prompt = codex.get("interface", {}).get("defaultPrompt")
-    if not isinstance(default_prompt, str) or not default_prompt.strip():
-        fail("Codex manifest must provide interface.defaultPrompt")
-    if len(default_prompt) > 128:
-        fail(
-            "Codex interface.defaultPrompt exceeds the 128-character loader limit: "
-            f"{len(default_prompt)}"
-        )
+    default_prompts = codex.get("interface", {}).get("defaultPrompt")
+    if not isinstance(default_prompts, list) or not 1 <= len(default_prompts) <= 3:
+        fail("Codex interface.defaultPrompt must contain one to three starter prompts")
+    for index, prompt in enumerate(default_prompts, start=1):
+        if not isinstance(prompt, str) or not prompt.strip():
+            fail(f"Codex defaultPrompt {index} must be a non-empty string")
+        if len(prompt) > 128:
+            fail(
+                f"Codex defaultPrompt {index} exceeds the 128-character loader limit: "
+                f"{len(prompt)}"
+            )
+    prompt_text = " ".join(default_prompts)
     for term in ("IA", "승인", "STEP", "완료 수준"):
-        if term not in default_prompt:
+        if term not in prompt_text:
             fail(f"Codex interface.defaultPrompt is missing the IA contract term: {term}")
     if marketplace.get("plugins", [{}])[0].get("source") != "./":
         fail("Claude marketplace must point to the same plugin root")
@@ -167,6 +172,7 @@ def validate_workflow_documents() -> None:
             "이 단계부터 만들까요?",
             "이대로 다음 개선 / 현재 결과 수정 /",
             "completion_level",
+            "quality-contract.md",
         ),
     )
     require_text(
@@ -179,6 +185,8 @@ def validate_workflow_documents() -> None:
             "AWAITING_REVIEW",
             "APPROVED",
             "phase-verify.md",
+            "atomicity: WAITING_USER",
+            "skill_scope: atomic",
         ),
     )
     require_text(
@@ -216,6 +224,7 @@ def validate_workflow_documents() -> None:
         "phase-preflight.md",
         "phase-verify.md",
         "product-truth-gate.md",
+        "quality-contract.md",
         "self-improvement-loop.md",
         "sensitive-data.md",
         "troubleshooting.md",
@@ -280,7 +289,16 @@ def validate_workflow_documents() -> None:
     )
     require_text(
         refs / "phase-build-skill.md",
-        ("$CODEX_HOME/skills", "~/.claude/skills", "새 작업", "TESTED", "RED"),
+        (
+            "$CODEX_HOME/skills",
+            "~/.claude/skills",
+            "새 작업",
+            "TESTED",
+            "RED",
+            "skill_scope: atomic",
+            "PASS | FAIL | EVIDENCE_MISSING",
+            "별도 심판 스킬이나 숫자 점수를 기본으로 추가하지 않는다",
+        ),
     )
     require_text(
         refs / "phase-build-automation.md",
@@ -294,6 +312,8 @@ def validate_workflow_documents() -> None:
             "`shared`: 선택한 배포",
             "`real_work`: 실제 자료",
             "아직 증명하지 못한 것",
+            "위험 기반 독립 완료 리뷰",
+            "independent_review: NOT_NEEDED",
         ),
     )
     require_text(
@@ -333,6 +353,7 @@ def validate_fixtures_and_specialized_contracts() -> None:
         validate_fixture_contracts,
         validate_preflight_fixtures,
         validate_product_truth_gate,
+        validate_quality_contract,
         validate_recording_cadence,
         validate_self_improvement,
         validate_sites_routing,

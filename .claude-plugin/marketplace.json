@@ -1,8 +1,8 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "orange-build",
-  "version": "2.6.0",
-  "description": "Codex와 Claude Code가 같은 skills 원본으로 최신 IA 기획·단계 승인·완료 수준 검증을 수행하는 교육용 스킬 팩.",
+  "version": "2.7.0",
+  "description": "Codex와 Claude Code가 같은 skills 원본으로 최신 IA 기획·단일 인지 과업 스킬·단계 승인·완료 수준 검증을 수행하는 교육용 스킬 팩.",
   "owner": {
     "name": "pengdo",
     "email": "pengdo@myorange.io"
@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "orange-build",
-      "description": "최신 기획서·구현 자료·아이디어를 IA 계약으로 바꾸고 웹앱·AI 작업 스킬·자동화를 한 단계씩 협력 구현하는 워크플로.",
+      "description": "최신 기획서·구현 자료·아이디어를 IA 계약으로 바꾸고 AI 작업 스킬은 한 가지 인지 과업으로 나눠 단계별로 협력 구현하는 워크플로.",
       "source": "./",
       "category": "development"
     }

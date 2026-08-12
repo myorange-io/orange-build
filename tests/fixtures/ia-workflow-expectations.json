@@ -51,6 +51,40 @@
       "real_work": "actual_run_and_recovery"
     }
   },
+  "quality_contract": {
+    "default_evaluator": "built_in_contract",
+    "verdicts": [
+      "PASS",
+      "FAIL",
+      "EVIDENCE_MISSING"
+    ],
+    "always_on_judge": false,
+    "numeric_score": false,
+    "public_skill_count": 4
+  },
+  "ai_skill_atomic_contract": {
+    "scope": "atomic",
+    "cognitive_task_count_min": 3,
+    "cognitive_task_count_max": 7,
+    "source_sections": [
+      "## 인지 과업 지도",
+      "## 단일 과업 계약"
+    ],
+    "plan_sections": [
+      "## AI 스킬 단일 과업 계약",
+      "## AI 스킬 내장 평가 계약"
+    ],
+    "built_in_scenarios": [
+      "구조·참조",
+      "대표 호출",
+      "긍정 트리거 3개",
+      "비트리거 2개",
+      "빈/깨진 입력",
+      "도구 부재",
+      "새 작업 호출",
+      "사람 검토"
+    ]
+  },
   "hosts": {
     "codex": {
       "invocation": "$orange-start",

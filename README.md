@@ -4,7 +4,7 @@
 같은 구조로 새 기획서를 만든 뒤 웹앱·AI 작업 스킬·자동화를 함께 구현하는 Codex·Claude Code 공용
 플러그인입니다.
 
-Orange Build 2.6.0은 IA(Intelligence Augmentation, 지능 증강) 방식으로 작동합니다. AI가 전체를 한
+Orange Build 2.7.0은 IA(Intelligence Augmentation, 지능 증강) 방식으로 작동합니다. AI가 전체를 한
 번에 대신 만들지 않습니다. 사람이 작은 결과를 확인하고 다음 방향을 선택하며 자신의 판단과 실행
 능력을 확장하도록 한 단계씩 진행합니다.
 
@@ -37,6 +37,24 @@ Orange Build 2.6.0은 IA(Intelligence Augmentation, 지능 증강) 방식으로 
 | `$orange-resume` | `/orange-resume` | `오렌지 빌드 이어서` |
 | `$orange-design` | `/orange-design` | `오렌지 디자인 개선` |
 | `$orange-secure` | `/orange-secure` | `오렌지 보안 점검` |
+
+## Orange Build 자체 품질 계약
+
+공개 스킬은 위 네 개만 유지합니다. 별도 심판 스킬을 모든 실행에 붙이거나 숫자 점수로 품질을
+뭉치지 않습니다. 여섯 가지 사용자 여정—기획서 없는 첫 질문, 최신 기획의 STEP-01 승인, 구형
+기획의 재생성, 승인 전 무수정, 완료 수준별 증거, Codex·Claude Code 공용 원본—을
+`PASS | FAIL | EVIDENCE_MISSING`으로 직접 판정합니다.
+
+| 검증 강도 | 실행 시점 |
+|---|---|
+| `targeted` | 구현 중 바뀐 책임과 가장 가까운 fixture·validator만 실행 |
+| `release` | 버전 변경 때 전체 validator·네 스킬·양쪽 manifest·양쪽 smoke·diff 검사 |
+| `independent` | 반복 회귀·고위험·상충 증거·모호한 품질·두 버전 비교가 있을 때만 독립 검토 |
+
+독립 검토의 안정적인 활성화 표기는 `repeated_regression`, `high_risk_external_change`,
+`conflicting_evidence`, `ambiguous_quality`, `version_comparison`입니다. 해당 조건이 없으면
+`NOT_NEEDED`와 이유를 남기고 실행하지 않습니다. 사용자 질문마다 전체 suite를 돌리거나 평가를 위해
+질문을 늘리지 않습니다.
 
 ## 설치와 업데이트
 
@@ -123,6 +141,23 @@ materials/
 
 생성되는 `SOURCE_PLAN.md`에는 대상·문제, 막히는 순간, 해결 방식, 결과물 유형, 사용 흐름, 핵심 기능,
 포함·제외, 자료, AI·사람 역할, 성공·실패 기준, TEST 3개, 함께 구현할 순서, 가정이 들어갑니다.
+
+### AI 작업 스킬의 단일 과업 계약
+
+결과물 유형이 `ai_skill`이면 전체 업무를 먼저 3~7개의 인지 과업으로 나누고, 사람이 맡을 일과 AI
+후보를 구분합니다. 그중 하나만 이번 스킬의 책임으로 고릅니다.
+
+```text
+입력 X → 한 가지 인지 처리 → 관찰 가능한 주 출력 Y
+```
+
+`SOURCE_PLAN.md`에는 인지 과업 지도와 단일 과업 계약을, `PLAN.md`에는 `skill_scope: atomic`과 내장
+평가 계약을 기록합니다. 입력·처리·주 출력·하지 않을 일·사람 판단·다음 스킬 handoff가 분리되지
+않으면 구현 전에 더 작은 스킬로 나눕니다. 각 스킬은 독립적으로 쓸 수 있어야 하며, 결합 스킬은
+각 단일 스킬이 검증된 뒤 사용자가 요청할 때만 별도로 만듭니다.
+
+내장 평가는 구조, 대표 호출, 긍정 트리거, 비트리거, 빈/깨진 입력, 도구 부재, 새 작업 호출, 사람
+검토를 확인합니다. 별도 심판과 점수는 기본값이 아닙니다.
 
 ### 구형 기획서
 
@@ -220,4 +255,4 @@ Codex 교육 환경에서는 Codex의 모델 선택기에서 **GPT-5.6**을 사�
 
 ## 라이선스
 
-MIT · v2.6.0
+MIT · v2.7.0

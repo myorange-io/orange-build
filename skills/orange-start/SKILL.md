@@ -1,6 +1,6 @@
 ---
 name: orange-start
-description: Orange Build App의 최신 IA 기획서나 구현 자료 묶음을 가져오거나, 기획서가 없으면 같은 7단계·최대 10문항 인터뷰로 새 기획서를 만든다. Codex와 Claude Code에서 웹앱·AI 작업 스킬·자동화를 한 단계씩 승인받아 구현하고, local·shared·real_work 중 사용자가 정한 수준까지 검증한다. 구형 기획서는 실행 계약으로 쓰지 않고 초기 아이디어로만 재기획한다. "오렌지 빌드 시작", "이 기획서 구현해줘", "아이디어부터 만들어줘", "orange-start" 같은 요청에 사용한다.
+description: Orange Build App의 최신 IA 기획서나 구현 자료 묶음을 가져오거나, 기획서가 없으면 같은 7단계·최대 10문항 인터뷰로 새 기획서를 만든다. Codex와 Claude Code에서 웹앱·한 가지 인지 과업을 맡는 AI 작업 스킬·자동화를 한 단계씩 승인받아 구현하고, local·shared·real_work 중 사용자가 정한 수준까지 검증한다. 구형 기획서는 실행 계약으로 쓰지 않고 초기 아이디어로만 재기획한다. "오렌지 빌드 시작", "이 기획서 구현해줘", "아이디어부터 만들어줘", "orange-start" 같은 요청에 사용한다.
 ---
 
 # Orange Build — Start
@@ -10,14 +10,17 @@ Orange Build를 IA(Intelligence Augmentation, 지능 증강) 방식으로 진행
 
 ## 먼저 적용할 계약
 
-1. `references/ia-collaboration.md`를 읽고 승인·검토 상태와 완료 수준을 고정한다.
-2. Codex에서 실행 중이면 `references/codex-gpt-5p6.md`를 읽는다. Claude Code에서는 현재 계정의
+1. Orange Build 자체를 수정·릴리스하거나 계약 회귀를 진단할 때만 `references/quality-contract.md`를
+   읽는다. 일반 사용자 실행에서는 이 SKILL의 아래 요약을 적용하고, 사용자 단계마다 전체 검증을
+   돌리거나 별도 심판·숫자 점수를 기본 경로에 추가하지 않는다.
+2. `references/ia-collaboration.md`를 읽고 승인·검토 상태와 완료 수준을 고정한다.
+3. Codex에서 실행 중이면 `references/codex-gpt-5p6.md`를 읽는다. Claude Code에서는 현재 계정의
    고성능 모델을 사용하며 특정 모델 명령을 요구하지 않는다.
-3. 현재 호스트와 프로젝트 지침을 읽는다.
+4. 현재 호스트와 프로젝트 지침을 읽는다.
    - Codex: `$orange-start`, `AGENTS.md`, `.codex-plugin/plugin.json`, `agents/openai.yaml`
    - Claude Code: `/orange-start`, `CLAUDE.md`, `.claude-plugin/plugin.json`, marketplace
    - 두 호스트 모두 `오렌지 빌드 시작` 같은 자연어 호출을 지원한다.
-4. 구조화 질문 기능이 있으면 사용한다. 없으면 같은 2~3개 선택지를 일반 대화로 제시하고 답을
+5. 구조화 질문 기능이 있으면 사용한다. 없으면 같은 2~3개 선택지를 일반 대화로 제시하고 답을
    기다린다. Codex 또는 Claude Code 전용 질문 도구명을 필수 조건으로 삼지 않는다.
 
 ## 입력 경로
@@ -72,6 +75,10 @@ Orange Build를 IA(Intelligence Augmentation, 지능 증강) 방식으로 진행
 7. 결과를 보여주고 세 선택지로 검토: `references/ia-collaboration.md`
 8. 모든 STEP 승인 후 선택한 수준 검증: `references/verification-loop.md`,
    `references/phase-verify.md`
+
+구현 중에는 바뀐 범위와 가장 가까운 결정적 검증만 실행한다. 전체 validator·양쪽 호스트 smoke·
+manifest 검사는 단계 검토나 release 경계에서 실행한다. 반복 회귀·고위험 외부 변경·상충하는 증거·
+모호한 품질·두 버전 비교가 없으면 독립 reviewer를 기본으로 추가하지 않는다.
 
 안전한 오류 수정과 회귀 검증은 `references/self-improvement-loop.md`, 반복 오류와 입문자 안내는
 `references/beginner-guardrails.md`를 적용한다. `web_app`의 공유·실업무 수준에서 배포가 필요하면

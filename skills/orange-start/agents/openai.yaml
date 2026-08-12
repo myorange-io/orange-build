@@ -1,4 +1,4 @@
 interface:
   display_name: "Orange Start"
-  short_description: "IA 방식으로 기획하고 한 단계씩 승인받아 구현합니다."
-  default_prompt: "Use $orange-start to create or import an IA plan, then implement one approved step at a time to my chosen completion level."
+  short_description: "IA 기획과 단일 인지 과업을 한 단계씩 구현합니다."
+  default_prompt: "Use $orange-start to create or import an IA plan, keep each AI skill to one cognitive task, and implement one approved step at a time."

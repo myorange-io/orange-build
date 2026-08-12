@@ -87,6 +87,32 @@ def validate_interview_flow(*, emit: bool = True) -> str:
             if f"- {field}:" not in body:
                 fail(f"{test_id}: missing field {field}")
 
+    task_mapping = expected["ai_skill_task_mapping"]
+    if (task_mapping["task_count_min"], task_mapping["task_count_max"]) != (3, 7):
+        fail("AI skill cognitive task map must stay within three to seven tasks")
+    if task_mapping["reuse_phase_for_scope_confirmation"] != "ai_human_review":
+        fail("AI skill scope confirmation must reuse the existing ai_human_review phase")
+    if task_mapping["add_new_phase"] or not task_mapping["derive_from_existing_answers"]:
+        fail("AI skill mapping must not add an interview phase")
+    if not task_mapping["ask_only_when_multiple_ai_candidates"]:
+        fail("AI skill scope must only add a question when candidates are genuinely distinct")
+    for required in (
+        "전체 업무를 3~7개의 인지 과업으로 나눈다",
+        "기존 `ai_human_review` 질문을 구체화",
+        task_mapping["atomic_sentence"],
+        "별도 phase나 11번째 질문을",
+    ):
+        if required not in reference:
+            fail(f"phase-interview.md is missing AI skill mapping behavior: {required}")
+    for section in task_mapping["required_source_sections"]:
+        if section not in template:
+            fail(f"SOURCE_PLAN template is missing AI skill section {section}")
+    for field in task_mapping["single_task_fields"]:
+        if f"- {field}:" not in template:
+            fail(f"SOURCE_PLAN template is missing single-task field {field}")
+    if not task_mapping["compose_only_after_standalone_validation"]:
+        fail("composition must wait until each atomic skill passes standalone validation")
+
     for required in (
         "## 누구의 어떤 문제인가요?",
         "## 가장 막히는 순간",
@@ -134,7 +160,7 @@ def validate_interview_flow(*, emit: bool = True) -> str:
 
     message = (
         "PASS no-plan-interview.json: phases=7 max_questions=10 tests=3 "
-        "choices=2..3 materials=confirmed completion_levels=3"
+        "choices=2..3 ai_tasks=3..7 atomic=true materials=confirmed completion_levels=3"
     )
     if emit:
         print(message)

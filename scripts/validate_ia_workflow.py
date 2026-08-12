@@ -69,6 +69,7 @@ def validate_ia_workflow(*, emit: bool = True) -> list[str]:
     web_build = (REFS / "phase-build.md").read_text(encoding="utf-8")
     verify = (REFS / "phase-verify.md").read_text(encoding="utf-8")
     memory = (REFS / "memory-log.md").read_text(encoding="utf-8")
+    quality = (REFS / "quality-contract.md").read_text(encoding="utf-8")
     start = (ROOT / "skills" / "orange-start" / "SKILL.md").read_text(encoding="utf-8")
     resume = (ROOT / "skills" / "orange-resume" / "SKILL.md").read_text(encoding="utf-8")
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -99,6 +100,9 @@ def validate_ia_workflow(*, emit: bool = True) -> list[str]:
             "## 반드시 반영할 자료",
             "그대로 유지할 요소",
             "열린 질문",
+            "3~7개의 인지 과업",
+            "## 인지 과업 지도",
+            "## 단일 과업 계약",
         ),
         "phase-interview.md",
     )
@@ -118,6 +122,9 @@ def validate_ia_workflow(*, emit: bool = True) -> list[str]:
             "AWAITING_APPROVAL · NOT_RUN",
             "승인 전에는",
             "프로젝트 파일 생성·수정",
+            "skill_scope: atomic",
+            "atomicity: CONFIRMED | WAITING_USER",
+            "## AI 스킬 내장 평가 계약",
         ),
         "phase-plan.md",
     )
@@ -139,6 +146,42 @@ def validate_ia_workflow(*, emit: bool = True) -> list[str]:
     for choice in expected["review_choices"]:
         if choice not in ia:
             fail(f"ia-collaboration.md is missing review choice: {choice}")
+
+    quality_expected = expected["quality_contract"]
+    if quality_expected["default_evaluator"] != "built_in_contract":
+        fail("quality evaluator must remain built into the contract")
+    if quality_expected["verdicts"] != ["PASS", "FAIL", "EVIDENCE_MISSING"]:
+        fail("quality verdicts changed unexpectedly")
+    if quality_expected["always_on_judge"] or quality_expected["numeric_score"]:
+        fail("always-on judge or numeric scoring cannot be the default")
+    public_skills = [path for path in (ROOT / "skills").iterdir() if path.is_dir()]
+    if len(public_skills) != quality_expected["public_skill_count"]:
+        fail("public skill count changed without a quality-contract decision")
+    require(
+        quality,
+        (
+            "상시 심판 없이 회귀 막기",
+            "PASS | FAIL | EVIDENCE_MISSING",
+            "독립 검토는 기본 완료 조건이 아니다",
+            "사용자 질문마다 전체 품질 suite를 실행하지 않는다",
+        ),
+        "quality-contract.md",
+    )
+
+    atomic = expected["ai_skill_atomic_contract"]
+    if atomic["scope"] != "atomic" or (
+        atomic["cognitive_task_count_min"], atomic["cognitive_task_count_max"]
+    ) != (3, 7):
+        fail("AI skill atomic contract changed unexpectedly")
+    for section in atomic["source_sections"]:
+        if section not in interview:
+            fail(f"phase-interview.md is missing atomic source section {section}")
+    for section in atomic["plan_sections"]:
+        if section not in plan:
+            fail(f"phase-plan.md is missing atomic plan section {section}")
+    for scenario in atomic["built_in_scenarios"]:
+        if scenario not in plan or scenario not in skill_build + verify:
+            fail(f"AI skill built-in evaluation is missing {scenario}")
 
     gates = expected["completion_gates"]
     gate_documents = {
@@ -215,13 +258,15 @@ def validate_ia_workflow(*, emit: bool = True) -> list[str]:
     codex_manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
     claude_manifest = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
     marketplace = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
-    if {codex_manifest["version"], claude_manifest["version"], marketplace["version"]} != {"2.6.0"}:
-        fail("all three manifests must be version 2.6.0")
+    if {codex_manifest["version"], claude_manifest["version"], marketplace["version"]} != {"2.7.0"}:
+        fail("all three manifests must be version 2.7.0")
     if codex_manifest.get("skills") != "./skills/":
         fail("Codex manifest must point at the shared skills directory")
-    default_prompt = codex_manifest.get("interface", {}).get("defaultPrompt")
-    if not isinstance(default_prompt, str) or len(default_prompt) > 128:
-        fail("Codex IA default prompt must be present and at most 128 characters")
+    default_prompts = codex_manifest.get("interface", {}).get("defaultPrompt")
+    if not isinstance(default_prompts, list) or not 1 <= len(default_prompts) <= 3:
+        fail("Codex IA default prompts must contain one to three entries")
+    if any(not isinstance(prompt, str) or not prompt.strip() or len(prompt) > 128 for prompt in default_prompts):
+        fail("Codex IA default prompts must be non-empty and at most 128 characters each")
     if marketplace["plugins"][0].get("source") != "./":
         fail("Claude marketplace must point at the plugin root with the shared skills directory")
 
@@ -236,7 +281,14 @@ def validate_ia_workflow(*, emit: bool = True) -> list[str]:
     )
     require(
         resume,
-        ("completion_level", "current_step", "AWAITING_APPROVAL", "AWAITING_REVIEW"),
+        (
+            "completion_level",
+            "current_step",
+            "AWAITING_APPROVAL",
+            "AWAITING_REVIEW",
+            "atomicity: WAITING_USER",
+            "skill_scope: atomic",
+        ),
         "orange-resume/SKILL.md",
     )
 
@@ -246,6 +298,7 @@ def validate_ia_workflow(*, emit: bool = True) -> list[str]:
         "PASS IA state: approval_before_edit review_choices=3 external_confirmation=separate",
         "PASS IA completion: deliverables=3 levels=3",
         "PASS IA hosts: codex claude_code shared_skills=./skills/",
+        "PASS IA quality: built_in_contract atomic_skill=true always_on_judge=false",
     ]
     if emit:
         print("\n".join(lines))

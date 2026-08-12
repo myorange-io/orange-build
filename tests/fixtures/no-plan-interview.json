@@ -39,6 +39,30 @@
     ],
     "derive_from_answers_without_extra_question": true
   },
+  "ai_skill_task_mapping": {
+    "derive_from_existing_answers": true,
+    "task_count_min": 3,
+    "task_count_max": 7,
+    "reuse_phase_for_scope_confirmation": "ai_human_review",
+    "add_new_phase": false,
+    "ask_only_when_multiple_ai_candidates": true,
+    "atomic_sentence": "입력 [X]를 받아 [한 가지 인지 처리]로 [관찰 가능한 주 출력 Y]를 만든다",
+    "required_source_sections": [
+      "## 인지 과업 지도",
+      "## 단일 과업 계약"
+    ],
+    "single_task_fields": [
+      "사람이 달성하려는 전체 결과",
+      "이번 스킬이 맡을 한 가지 인지 과업",
+      "입력",
+      "처리",
+      "출력",
+      "하지 않을 일",
+      "사람이 판단할 일",
+      "다음 스킬에 넘길 형식"
+    ],
+    "compose_only_after_standalone_validation": true
+  },
   "idea_suggestions": {
     "only_when_user_has_no_idea_or_requests_suggestions": true,
     "suggestion_pool_size": 6,

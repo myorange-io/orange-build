@@ -1,0 +1,70 @@
+{
+  "contract_version": 1,
+  "public_skills": [
+    "orange-design",
+    "orange-resume",
+    "orange-secure",
+    "orange-start"
+  ],
+  "default_evaluator": "built_in_contract",
+  "forbidden_defaults": [
+    "always_on_judge",
+    "numeric_score",
+    "recursive_judge"
+  ],
+  "verdicts": [
+    "PASS",
+    "FAIL",
+    "EVIDENCE_MISSING"
+  ],
+  "canonical_journeys": [
+    {
+      "id": "no_plan_one_question",
+      "document": "phase-interview.md",
+      "required_text": "한 번에 질문은 **하나만**"
+    },
+    {
+      "id": "latest_plan_step_approval",
+      "document": "phase-plan.md",
+      "required_text": "이 단계부터 만들까요?"
+    },
+    {
+      "id": "legacy_plan_regeneration",
+      "document": "phase-plan.md",
+      "required_text": "구형 문서는 계약이 아니라 `legacy_seed` 초기 아이디어"
+    },
+    {
+      "id": "approval_before_write",
+      "document": "phase-plan.md",
+      "required_text": "프로젝트 파일 생성·수정"
+    },
+    {
+      "id": "completion_level_evidence",
+      "document": "phase-verify.md",
+      "required_text": "선택한 `completion_level`"
+    },
+    {
+      "id": "dual_host_shared_source",
+      "document": "orange-start/SKILL.md",
+      "required_text": "두 호스트 모두"
+    }
+  ],
+  "validation_tiers": {
+    "targeted": "changed_responsibility_only",
+    "release": "full_contract_and_dual_host_smoke",
+    "independent": "risk_triggered_only"
+  },
+  "independent_review_triggers": [
+    "repeated_regression",
+    "high_risk_external_change",
+    "conflicting_evidence",
+    "ambiguous_quality",
+    "version_comparison"
+  ],
+  "runtime_guardrails": {
+    "full_suite_per_user_step": false,
+    "extra_interview_question_for_validation": false,
+    "recursive_evaluation": false,
+    "public_skill_count": 4
+  }
+}

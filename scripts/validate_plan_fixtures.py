@@ -130,6 +130,28 @@ def validate_tests(source: str, filename: str) -> None:
                 fail(f"{filename}: {test_id} is missing {field}")
 
 
+def validate_ai_skill_source(source: str, filename: str) -> None:
+    for section in ("## 인지 과업 지도", "## 단일 과업 계약"):
+        if section not in source:
+            fail(f"{filename}: missing AI skill source section {section}")
+    for field in (
+        "전체 업무",
+        "사람이 맡을 과업",
+        "AI 후보 과업",
+        "이번 스킬이 맡을 과업",
+        "사람이 달성하려는 전체 결과",
+        "이번 스킬이 맡을 한 가지 인지 과업",
+        "입력",
+        "처리",
+        "출력",
+        "하지 않을 일",
+        "사람이 판단할 일",
+        "다음 스킬에 넘길 형식",
+    ):
+        if not re.search(rf"^- {re.escape(field)}:\s*\S", source, flags=re.MULTILINE):
+            fail(f"{filename}: AI skill source contract is missing {field}")
+
+
 def validate_fixture_contracts(*, emit: bool = True) -> list[str]:
     expectations = json.loads((FIXTURES / "expectations.json").read_text(encoding="utf-8"))
     expected_names = {
@@ -153,6 +175,9 @@ def validate_fixture_contracts(*, emit: bool = True) -> list[str]:
         "current_step: STEP-NN | complete",
         "검증 시나리오 계약",
         "IA 단계",
+        "현재 App의 `ai_skill` 기획서에 `인지 과업 지도`나 `단일 과업 계약`이 없다는 이유만으로 구형으로",
+        "## AI 스킬 단일 과업 계약",
+        "## AI 스킬 내장 평가 계약",
     ):
         if required not in phase_plan:
             fail(f"phase-plan.md is missing current contract behavior: {required}")
@@ -180,6 +205,29 @@ def validate_fixture_contracts(*, emit: bool = True) -> list[str]:
                     fail(f"{filename}: missing source term {term}")
             validate_tests(source, filename)
             validate_steps(source, filename)
+            if resolution.kind == "ai_skill":
+                validate_ai_skill_source(source, filename)
+                if expected.get("missing_task_map_action") != "enrich_plan_without_legacy_regeneration":
+                    fail(f"{filename}: missing current App AI skill enrichment expectation")
+                source_without_task_map = re.sub(
+                    r"\n## 인지 과업 지도\n.*?(?=\n## 성공 기준\n)",
+                    "\n",
+                    text,
+                    count=1,
+                    flags=re.DOTALL,
+                )
+                if source_without_task_map == text:
+                    fail(f"{filename}: could not build the current App fallback case")
+                fallback = resolve(source_without_task_map)
+                if (fallback.status, fallback.kind, fallback.route) != (
+                    "ready",
+                    "ai_skill",
+                    "phase-build-skill.md",
+                ):
+                    fail(
+                        f"{filename}: current App plan without new task-map sections "
+                        "must be enriched, not regenerated as legacy"
+                    )
             level = expected["completion_level"]
             if level not in source:
                 fail(f"{filename}: missing completion level {level}")
@@ -192,6 +240,7 @@ def validate_fixture_contracts(*, emit: bool = True) -> list[str]:
             lines.append(
                 f"PASS {filename}: kind={resolution.kind} route={resolution.route} "
                 f"source={resolution.source_type} completion={level} tests=3 steps=current"
+                + (" task_map_fallback=enrich" if resolution.kind == "ai_skill" else "")
             )
         else:
             if resolution.status != "update_required":

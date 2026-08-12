@@ -20,9 +20,12 @@
     "source_contract_version": 2,
     "source_type": "orange-build-app",
     "completion_level": "local",
+    "missing_task_map_action": "enrich_plan_without_legacy_regeneration",
     "required_source_terms": [
       "사실만 사용한 초안 생성",
       "단순 문장 교정 요청에는 이 스킬이 개입하지 않는다",
+      "## 인지 과업 지도",
+      "## 단일 과업 계약",
       "## 함께 구현할 순서",
       "현재 호스트 등록과 새 작업 호출"
     ]
