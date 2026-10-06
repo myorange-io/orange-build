@@ -17,6 +17,7 @@ Orange Build를 IA(Intelligence Augmentation, 지능 증강) 방식으로 진행
 3. Codex에서 실행 중이면 `references/codex-gpt-5p6.md`를 읽는다. Claude Code에서는 현재 계정의
    고성능 모델을 사용하며 특정 모델 명령을 요구하지 않는다.
 4. 현재 호스트와 프로젝트 지침을 읽는다.
+   - 루트 `DESIGN.md` 또는 `TEAM.md`가 있으면 `references/project-design-contract.md`를 읽어 설계·구현·검수에 적용한다. App의 `implementation_stage` 또는 명시적 사전 설계 요청이 있어도 이 계약을 읽는다.
    - Codex: `$orange-start`, `AGENTS.md`, `.codex-plugin/plugin.json`, `agents/openai.yaml`
    - Claude Code: `/orange-start`, `CLAUDE.md`, `.claude-plugin/plugin.json`, marketplace
    - 두 호스트 모두 `오렌지 빌드 시작` 같은 자연어 호출을 지원한다.
@@ -82,7 +83,7 @@ manifest 검사는 단계 검토나 release 경계에서 실행한다. 반복 �
 
 안전한 오류 수정과 회귀 검증은 `references/self-improvement-loop.md`, 반복 오류와 입문자 안내는
 `references/beginner-guardrails.md`를 적용한다. `web_app`의 공유·실업무 수준에서 배포가 필요하면
-`references/codex-sites.md`로 기존 경로·Codex Sites·Vercel/Supabase를 판정한다. 기본 구현 흐름에서
+`references/codex-sites.md`로 기존 경로·Codex Sites·Vercel/Supabase를 판정한다. 명시적인 사전 설계 요청은 `references/project-design-contract.md`로 처리한다. 기본 구현 흐름에서
 Stitch나 디자인 picker를 열지 않는다. 선택한 완료 수준의 최종 검증 뒤 디자인 개선을 요청받았을
 때만 `orange-design`으로 전환한다.
 

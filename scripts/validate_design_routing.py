@@ -13,6 +13,8 @@ FIXTURE = ROOT / "tests" / "fixtures" / "design-routing-expectations.json"
 
 
 def route(spec: dict) -> str:
+    if spec["intent"] == "design_planning":
+        return "PRE_IMPLEMENTATION_DESIGN"
     if spec["intent"] != "design_improvement":
         return "ORANGE_START"
     if not spec["final_verification_passed"]:
@@ -29,6 +31,10 @@ def stitch_mode(spec: dict) -> str:
 
 
 def recommendation_mode(spec: dict) -> str:
+    if spec.get("intent") == "design_planning":
+        if not spec["catalog_links_verified"]:
+            return "PROVIDE_CATALOG_SEARCH_LINK"
+        return "RECOMMEND_WITHIN_APPROVED_SYSTEM" if spec["has_project_design_md"] else "PROPOSE_UP_TO_TWO_LINKED_OPTIONS"
     if not spec["final_verification_passed"]:
         return "RETURN_TO_ORANGE_START"
     if spec["has_project_design_md"] and not spec["compare_new_direction"]:

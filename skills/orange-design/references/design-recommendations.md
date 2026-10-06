@@ -54,3 +54,12 @@ getdesign.md의 카탈로그를 프로젝트 목적·밀도·톤으로 검색한
 canonical component 규칙만 `DESIGN.md` 초안에 기록한다. 출처로 getdesign.md 분석 URL과 원본 공식 URL
 (있는 경우)을 `reference only`로 남긴다. 기존 `DESIGN.md`와 `PLAN.md`의 고정 조건을 우선하고,
 functional/visual QA를 통과한 작은 변경만 채택한다.
+
+## 5. 명시적인 첫 구현 전 설계 요청
+
+App의 `implementation_stage: design` 또는 사용자가 첫 구현 전 사례 비교와 시안을 명시적으로
+요청했으면 `orange-start/references/project-design-contract.md`로 이 추천 원칙을 사전 설계에
+확장합니다. 새 프로젝트에는 production URL을 요구하지 않고 기획서·자료·DESIGN.md·기존 화면을
+근거로 사용합니다. 조직 고정 기준을 유지한 사례를 최대 두 개 제안하고 참가자의 시안 선택을
+기다립니다. 이 경로는 전체 orange-design 스킬을 검증 전 실행하는 것이 아니며 후속 개선의
+최종 검증 게이트를 우회하지 않습니다.
