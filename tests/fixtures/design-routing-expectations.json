@@ -59,11 +59,31 @@
         "extraction_approved": false
       },
       "expected": "ORANGE_START"
+    },
+    "explicit_design_before_build": {
+      "input": {
+        "intent": "design_planning",
+        "final_verification_passed": false,
+        "has_project_design_md": true,
+        "organization_homepage": null,
+        "extraction_approved": false
+      },
+      "expected": "PRE_IMPLEMENTATION_DESIGN"
     }
   },
   "stitch": {
-    "not-requested": {"input": {"stitch_requested": false}, "expected": "SKIP_STITCH"},
-    "explicit-request": {"input": {"stitch_requested": true}, "expected": "USE_STITCH_REFERENCE"}
+    "not-requested": {
+      "input": {
+        "stitch_requested": false
+      },
+      "expected": "SKIP_STITCH"
+    },
+    "explicit-request": {
+      "input": {
+        "stitch_requested": true
+      },
+      "expected": "USE_STITCH_REFERENCE"
+    }
   },
   "recommendations": {
     "not-finally-verified": {
@@ -101,6 +121,36 @@
         "catalog_links_verified": true
       },
       "expected": "PROPOSE_UP_TO_TWO_LINKED_OPTIONS"
+    },
+    "planning_organization_preserved": {
+      "input": {
+        "intent": "design_planning",
+        "final_verification_passed": false,
+        "has_project_design_md": true,
+        "compare_new_direction": false,
+        "catalog_links_verified": true
+      },
+      "expected": "RECOMMEND_WITHIN_APPROVED_SYSTEM"
+    },
+    "planning_no_organization": {
+      "input": {
+        "intent": "design_planning",
+        "final_verification_passed": false,
+        "has_project_design_md": false,
+        "compare_new_direction": false,
+        "catalog_links_verified": true
+      },
+      "expected": "PROPOSE_UP_TO_TWO_LINKED_OPTIONS"
+    },
+    "planning_unverified_links": {
+      "input": {
+        "intent": "design_planning",
+        "final_verification_passed": false,
+        "has_project_design_md": false,
+        "compare_new_direction": false,
+        "catalog_links_verified": false
+      },
+      "expected": "PROVIDE_CATALOG_SEARCH_LINK"
     }
   }
 }

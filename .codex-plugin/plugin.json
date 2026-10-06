@@ -1,6 +1,6 @@
 {
   "name": "orange-build",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "최신 IA 기획서를 가져오거나 같은 구조로 만들고, Codex의 GPT-5.6이 웹앱·한 가지 인지 과업을 맡는 AI 작업 스킬·자동화를 한 단계씩 승인받아 선택한 완료 수준까지 구현·검증하도록 돕는 스킬 팩.",
   "author": {
     "name": "pengdo"

@@ -112,8 +112,8 @@ def validate_quality_contract(*, emit: bool = True) -> str:
         ROOT / ".claude-plugin" / "marketplace.json",
     ):
         data = json.loads(manifest.read_text(encoding="utf-8"))
-        if data.get("version") != "2.7.0":
-            fail(f"{manifest.relative_to(ROOT)} is not version 2.7.0")
+        if data.get("version") != "2.8.0":
+            fail(f"{manifest.relative_to(ROOT)} is not version 2.8.0")
 
     message = (
         "PASS quality contract: journeys=6 public_skills=4 verdicts=3 "
