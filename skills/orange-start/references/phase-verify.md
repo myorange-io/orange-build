@@ -1,10 +1,5 @@
 # 최종 검증 — 원본 기획서와 결과물을 다시 맞추기
 
-루트 DESIGN.md와 TEAM.md가 있거나 App의 implementation_stage가 명시되면
-`project-design-contract.md`를 먼저 읽습니다. 승인된 조직 디자인은 설계·구현·검수의 기준이며
-화면 없는 결과물에는 시각 규격을 강제하지 않습니다. 현재 단계와 승인된 작은 완성만 진행합니다.
-
-
 목표: 만든 파일 수가 아니라 `SOURCE_PLAN.md`의 약속이 실제로 충족됐는지 증거로 판정한다.
 
 시작할 때 `ia-collaboration.md`, `verification-loop.md`, `self-improvement-loop.md`, `memory-log.md`를 읽는다. TEST↔REQ 연결,

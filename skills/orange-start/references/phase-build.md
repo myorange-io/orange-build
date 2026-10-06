@@ -1,10 +1,5 @@
 # 웹앱 구현 — 승인받은 IA 단계 완성하기
 
-루트 DESIGN.md와 TEAM.md가 있거나 App의 implementation_stage가 명시되면
-`project-design-contract.md`를 먼저 읽습니다. 승인된 조직 디자인은 설계·구현·검수의 기준이며
-화면 없는 결과물에는 시각 규격을 강제하지 않습니다. 현재 단계와 승인된 작은 완성만 진행합니다.
-
-
 목표: `PLAN.md`의 현재 IA STEP을 완결 흐름으로 구현하고 선택한 `completion_level`의 환경에서
 사용자가 직접 확인할 결과를 보여준다.
 
