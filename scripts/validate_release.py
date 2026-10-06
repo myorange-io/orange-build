@@ -65,9 +65,9 @@ def validate_versions() -> str:
     version = versions.pop()
     if not re.fullmatch(r"\d+\.\d+\.\d+", version):
         fail(f"version is not stable semver: {version}")
-    if version != "2.8.0":
-        fail(f"this release must be 2.8.0, got {version}")
-    require_text(ROOT / "README.md", (f"v{version}", "Orange Build 2.8.0"))
+    if version != "2.7.0":
+        fail(f"this release must be 2.7.0, got {version}")
+    require_text(ROOT / "README.md", (f"v{version}", "Orange Build 2.7.0"))
     for policy_name in ("AGENTS.md", "CLAUDE.md"):
         require_text(
             ROOT / policy_name,

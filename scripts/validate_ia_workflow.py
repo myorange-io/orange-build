@@ -258,8 +258,8 @@ def validate_ia_workflow(*, emit: bool = True) -> list[str]:
     codex_manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
     claude_manifest = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
     marketplace = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
-    if {codex_manifest["version"], claude_manifest["version"], marketplace["version"]} != {"2.8.0"}:
-        fail("all three manifests must be version 2.8.0")
+    if {codex_manifest["version"], claude_manifest["version"], marketplace["version"]} != {"2.7.0"}:
+        fail("all three manifests must be version 2.7.0")
     if codex_manifest.get("skills") != "./skills/":
         fail("Codex manifest must point at the shared skills directory")
     default_prompts = codex_manifest.get("interface", {}).get("defaultPrompt")

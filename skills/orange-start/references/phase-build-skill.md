@@ -1,10 +1,5 @@
 # AI 작업 스킬 구현
 
-루트 DESIGN.md와 TEAM.md가 있거나 App의 implementation_stage가 명시되면
-`project-design-contract.md`를 먼저 읽습니다. 승인된 조직 디자인은 설계·구현·검수의 기준이며
-화면 없는 결과물에는 시각 규격을 강제하지 않습니다. 현재 단계와 승인된 작은 완성만 진행합니다.
-
-
 목표: `PLAN.md`의 현재 IA STEP 범위에서 Codex와 Claude Code가 같은 원본을 읽는 작고 검증 가능한
 스킬을 만든다. 설명문만 작성하고 끝내지 않고 실제 예시 입력으로 새 작업 호출까지 확인한다.
 
